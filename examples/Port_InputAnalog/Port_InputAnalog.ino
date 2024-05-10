@@ -17,6 +17,7 @@ void setup()
 {
 	serial.Open(av::Serial::BaudRate57600);
 	av::InitPort<>();
+#if 0
 	av::InitADC<
 		0b0000,		// MUX: Analog Channel Selection Bits = ADC0
 		0b000		// ADPS: ADC Prescaler Select Bits = 1/128
@@ -25,11 +26,10 @@ void setup()
 	serial.Println(F("Analog Print"));
 	for (;;) {
 		portD2.ToggleDigital();
-		//portD2.OutputDigital<av::High>();
-		//portD2.OutputDigital<av::High>();
-		//portD2.OutputDigital<av::High>();
 		portA0.InputAnalog();
 	}
+#endif
+	av::InitADC<>();
 }
 
 void loop()
