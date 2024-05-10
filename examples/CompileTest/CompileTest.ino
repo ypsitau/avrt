@@ -136,7 +136,7 @@ void CompileTest_Ports()
 void CompileTest_ADConv()
 {
 	av::ADConv<>::Init();
-	av::ADConv_8bit<>::Init();
+	av::ADConv<>::InitAs8bit();
 }
 
 void CompileTest_AnalogComparator()
