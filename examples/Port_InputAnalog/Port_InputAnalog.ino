@@ -16,9 +16,9 @@ av::Port<av::A5> portA6;
 void setup()
 {
 	serial.Open(av::Serial::BaudRate57600);
-	av::InitPort<>();
+	av::Ports<>::SetMode();
 #if 0
-	av::InitADC<
+	av::ADConv<>::Init<
 		0b0000,		// MUX: Analog Channel Selection Bits = ADC0
 		0b000		// ADPS: ADC Prescaler Select Bits = 1/128
 	>();
@@ -29,7 +29,7 @@ void setup()
 		portA0.InputAnalog();
 	}
 #endif
-	av::InitADC<>();
+	av::ADConv<>::Init();
 }
 
 void loop()

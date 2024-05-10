@@ -10,8 +10,8 @@ av::Port<av::D3> portPWM;
 void setup()
 {
 	serial.Open(av::Serial::BaudRate57600);
-	av::InitPort<>();
-	av::InitADC_8bit<>();
+	av::Ports<>::SetMode();
+	av::ADConv_8bit<>::Init();
 	portPWM.SetMode<av::Out>();
 	portPWM.EnablePWM();
 }
