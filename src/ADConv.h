@@ -23,7 +23,6 @@ template <
 	uint8_t dataADEN	= 0b1		// ADEN: ADC Enable = true
 > class ADConv {
 public:
-	ADConv() {}
 	static void Init() {
 		ADMUX = (dataREFS << REFS0) | (dataADLAR << ADLAR) | (dataMUX << MUX0);
 		ADCSRA = (dataADEN << ADEN) | (dataADSC << ADSC) | (dataADATE << ADATE) |
@@ -46,8 +45,8 @@ template <
 	uint8_t dataADSC	= 0b0,		// ADSC: ADC Start Conversion = false
 	uint8_t dataADIF	= 0b1,		// ADIF: ADC Interrupt Flag .. set one to clear
 	uint8_t dataADEN	= 0b1		// ADEN: ADC Enable = true
-> class ADConv_8bit : ADConv<
-	dataMUX, dataADPS, dataADATE, dataADTS, dataADIE, dataREFS, dataADLAR, dataADSC, dataADIE, dataADEN
+> class ADConv_8bit : public ADConv<
+	dataMUX, dataADPS, dataADATE, dataADTS, dataADIE, dataREFS, dataADLAR, dataADSC, dataADIF, dataADEN
 > {};
 
 }

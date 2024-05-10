@@ -36,10 +36,10 @@ constexpr av::Port<av::A4> portA4;
 constexpr av::Port<av::A5> portA5;
 constexpr av::Port<av::A6> portA6;
 
-void CompileTest_InitPort()
+void CompileTest_Ports()
 {
-	av::InitPort<>();
-	av::InitPort<
+	av::Ports<>::SetMode();
+	av::Ports<
 		av::In,			// D0: PD0(RXD/PCINT16)
 		av::In,			// D1: PD1(TXD/PCINT17)
 		av::In,			// D2: PD2(INT0/PCINT18)
@@ -61,8 +61,8 @@ void CompileTest_InitPort()
 		av::In,			// D18: PC4(ADC4/SDA/PCINT12)
 		av::In,			// D19: PC5(ADC5/SCL/PCINT13)
 		av::In			// D20: PC6(RESET/PCINT14)
-	>();
-	av::InitPort<
+	>::SetMode();
+	av::Ports<
 		av::Out,		// D0: PD0(RXD/PCINT16)
 		av::Out,		// D1: PD1(TXD/PCINT17)
 		av::Out,		// D2: PD2(INT0/PCINT18)
@@ -84,8 +84,8 @@ void CompileTest_InitPort()
 		av::Out,		// D18: PC4(ADC4/SDA/PCINT12)
 		av::Out,		// D19: PC5(ADC5/SCL/PCINT13)
 		av::Out			// D20: PC6(RESET/PCINT14)
-	>();
-	av::InitPort<
+	>::SetMode();
+	av::Ports<
 		av::InPullup,	// D0: PD0(RXD/PCINT16)
 		av::InPullup,	// D1: PD1(TXD/PCINT17)
 		av::InPullup,	// D2: PD2(INT0/PCINT18)
@@ -107,8 +107,8 @@ void CompileTest_InitPort()
 		av::InPullup,	// D18: PC4(ADC4/SDA/PCINT12)
 		av::InPullup,	// D19: PC5(ADC5/SCL/PCINT13)
 		av::InPullup	// D20: PC6(RESET/PCINT14)
-	>();
-	av::InitPort<
+	>::SetMode();
+	av::Ports<
 		av::OutHigh,	// D0: PD0(RXD/PCINT16)
 		av::OutHigh,	// D1: PD1(TXD/PCINT17)
 		av::OutHigh,	// D2: PD2(INT0/PCINT18)
@@ -130,27 +130,16 @@ void CompileTest_InitPort()
 		av::OutHigh,	// D18: PC4(ADC4/SDA/PCINT12)
 		av::OutHigh,	// D19: PC5(ADC5/SCL/PCINT13)
 		av::OutHigh		// D20: PC6(RESET/PCINT14)
-	>();
+	>::SetMode();
 }
 
-void CompileTest_InitADC()
+void CompileTest_ADConv()
 {
 	av::ADConv<>::Init();
-	av::ADConv<
-		0b0,	// ADATE: ADC Auto Trigger Enable = false .. Single conversion triggered by ADSC
-		0b000,	// ADTS: ADC Auto Trigger Source = Free Running mode
-		0b0,	// ADIE: ADC Interrupt Enable = false
-		0b01,	// REFS: Reference Selction Bits = AVcc with external capacitor at AREF pin 
-		0b111,	// ADPS: ADC Prescaler Select Bits = 1/128
-		0b0,	// ADLAR: ADC Left Adjust Result = false
-		0b0000,	// MUX: Analog Channel Selection Bits = ADC0
-		0b0,	// ADSC: ADC Start Conversion = false
-		0b1,	// ADIF: ADC Interrupt Flag .. clear by setting one
-		0b1		// ADEN: ADC Enable = true
-	>();
+	av::ADConv_8bit<>::Init();
 }
 
-void CompileTest_InitAnalogComparator()
+void CompileTest_AnalogComparator()
 {
 	av::AnalogComparator<>::Init();
 }
@@ -733,9 +722,9 @@ void CompileTest_Port_InputAnalog()
 
 void setup()
 {
-	CompileTest_InitPort();
-	CompileTest_InitADC();
-	CompileTest_InitAnalogComparator();
+	CompileTest_Ports();
+	CompileTest_ADConv();
+	CompileTest_AnalogComparator();
 	CompileTest_Port_SetMode();
 	CompileTest_Port_OutputDigital();
 	CompileTest_Port_InputDigital();

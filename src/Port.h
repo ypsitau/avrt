@@ -9,7 +9,7 @@
 namespace avrt {
 
 //------------------------------------------------------------------------------
-// InitPort
+// Ports
 //------------------------------------------------------------------------------
 template<
 	uint8_t mode0	= In,	// D0: PD0(RXD/PCINT16)
@@ -33,20 +33,23 @@ template<
 	uint8_t mode18	= In,	// D18: PC4(ADC4/SDA/PCINT12)
 	uint8_t mode19	= In,	// D19: PC5(ADC5/SCL/PCINT13)
 	uint8_t mode20	= In	// D20: PC6(RESET/PCINT14)
-> void InitPort() {
-	DDRD = ((mode0 & 1) << 0) | ((mode1 & 1) << 1) | ((mode2 & 1) << 2) | ((mode3 & 1) << 3) |
-		((mode4 & 1) << 4) | ((mode5 & 1) << 5) | ((mode6 & 1) << 6) | ((mode7 & 1) << 7);
-	DDRB = ((mode8 & 1) << 0) | ((mode9 & 1) << 1) | ((mode10 & 1) << 2) | ((mode11 & 1) << 3) |
-		((mode12 & 1) << 4) | ((mode13 & 1) << 5);
-	DDRC = ((mode14 & 1) << 0) | ((mode15 & 1) << 1) | ((mode16 & 1) << 2) | ((mode17 & 1) << 3) |
-		((mode18 & 1) << 4) | ((mode19 & 1) << 5) | ((mode20 & 1) << 6);
-	PORTD = ((mode0 >> 1) << 0) | ((mode1 >> 1) << 1) | ((mode2 >> 1) << 2) | ((mode3 >> 1) << 3) |
-		((mode4 >> 1) << 4) | ((mode5 >> 1) << 5) | ((mode6 >> 1) << 6) | ((mode7 >> 1) << 7);
-	PORTB = ((mode8 >> 1) << 0) | ((mode9 >> 1) << 1) | ((mode10 >> 1) << 2) | ((mode11 >> 1) << 3) |
-		((mode12 >> 1) << 4) | ((mode13 >> 1) << 5);
-	PORTC = ((mode14 >> 1) << 0) | ((mode15 >> 1) << 1) | ((mode16 >> 1) << 2) | ((mode17 >> 1) << 3) |
-		((mode18 >> 1) << 4) | ((mode19 >> 1) << 5) | ((mode20 >> 1) << 6);
-}
+> class Ports {
+public:
+	static void SetMode() {
+		DDRD = ((mode0 & 1) << 0) | ((mode1 & 1) << 1) | ((mode2 & 1) << 2) | ((mode3 & 1) << 3) |
+			((mode4 & 1) << 4) | ((mode5 & 1) << 5) | ((mode6 & 1) << 6) | ((mode7 & 1) << 7);
+		DDRB = ((mode8 & 1) << 0) | ((mode9 & 1) << 1) | ((mode10 & 1) << 2) | ((mode11 & 1) << 3) |
+			((mode12 & 1) << 4) | ((mode13 & 1) << 5);
+		DDRC = ((mode14 & 1) << 0) | ((mode15 & 1) << 1) | ((mode16 & 1) << 2) | ((mode17 & 1) << 3) |
+			((mode18 & 1) << 4) | ((mode19 & 1) << 5) | ((mode20 & 1) << 6);
+		PORTD = ((mode0 >> 1) << 0) | ((mode1 >> 1) << 1) | ((mode2 >> 1) << 2) | ((mode3 >> 1) << 3) |
+			((mode4 >> 1) << 4) | ((mode5 >> 1) << 5) | ((mode6 >> 1) << 6) | ((mode7 >> 1) << 7);
+		PORTB = ((mode8 >> 1) << 0) | ((mode9 >> 1) << 1) | ((mode10 >> 1) << 2) | ((mode11 >> 1) << 3) |
+			((mode12 >> 1) << 4) | ((mode13 >> 1) << 5);
+		PORTC = ((mode14 >> 1) << 0) | ((mode15 >> 1) << 1) | ((mode16 >> 1) << 2) | ((mode17 >> 1) << 3) |
+			((mode18 >> 1) << 4) | ((mode19 >> 1) << 5) | ((mode20 >> 1) << 6);
+	}
+};
 
 //------------------------------------------------------------------------------
 // Port
@@ -54,6 +57,7 @@ template<
 template<int pin_> class Port {
 public:
 	constexpr static int pin = pin_;
+public:
 	template<int mode> void SetMode() const {
 		if constexpr (pin == 0)         {
 			if constexpr (mode & 1) { DDRD |= (1 << 0); } else { DDRD &= ~(1 << 0); if constexpr (mode >> 1) { PORTD |= (1 << 0); } else { PORTD &= ~(1 << 0); } }
@@ -146,6 +150,10 @@ public:
 		} else if (pin == 19)   { if (logic) { PORTC |= (1 << 5); } else { PORTC &= ~(1 << 5); }
 		} else if (pin == 20)   { if (logic) { PORTC |= (1 << 6); } else { PORTC &= ~(1 << 6); }
 		}
+	}
+	void ImpulseDigital() const {
+		OutputDigital<High>();
+		OutputDigital<Low>();
 	}
 	void ToggleDigital() const {
 		if constexpr (pin == 0)         { PORTD ^= (1 << 0);
