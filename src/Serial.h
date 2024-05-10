@@ -67,11 +67,13 @@ template<
 	uint8_t dataRXEN0		= 0b1,			// RXENn: Receiver Enable n = true
 	uint8_t dataTXEN0		= 0b1			// TXENn: Transmitter Enable n = true
 > class Serial0 : public Serial {
+public:
+	using FIFOBuffEx = FIFOBuff<uint8_t, 32>;
 private:
-	FIFOBuff<> buffs_[enableReceive? 1 : 0];
+	FIFOBuffEx buffs_[enableReceive? 1 : 0];
 public:
 	Serial0() {}
-	FIFOBuff<>& GetBuffForRead() { return buffs_[0]; }
+	FIFOBuffEx& GetBuffForRead() { return buffs_[0]; }
 	void Open(BaudRate baudRate, uint8_t charSize = CharSize8, uint8_t stopBit = StopBit1, uint8_t parity = ParityNone) {
 		constexpr uint8_t dataRXCIE0 = enableReceive? 0b1 : 0b0; // RXCIEn: RX Complete Interrupt Enable n
 		uint8_t dataUCSZ = charSize;
@@ -106,7 +108,7 @@ public:
 	}
 	virtual uint8_t RecvData() override {
 		if constexpr (enableReceive) {
-			return GetBuffForRead().ReadByte();
+			return GetBuffForRead().ReadData();
 		} else {
 			return 0x00;
 		}
@@ -119,7 +121,7 @@ public:
 		}
 	}
 	void HandleIRQ_USART_RX() {
-		while (UCSR0A & (0b1 << RXC0)) GetBuffForRead().WriteByte(UDR0);
+		while (UCSR0A & (0b1 << RXC0)) GetBuffForRead().WriteData(UDR0);
 	}
 };
 

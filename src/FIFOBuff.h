@@ -9,24 +9,24 @@ namespace avrt {
 //------------------------------------------------------------------------------
 // FIFOBuff
 //------------------------------------------------------------------------------
-template<int size = 32> class FIFOBuff {
+template<typename T_Elem, int size> class FIFOBuff {
 public:
 	static constexpr uint8_t sizeMinusOne = static_cast<uint8_t>(size - 1);
 private:
 	volatile uint8_t posRead_;
 	volatile uint8_t posWrite_;
-	volatile uint8_t buff_[size];
+	volatile T_Elem buff_[size];
 public:
 	FIFOBuff() : posRead_(0), posWrite_(0) {}
-	void WriteByte(uint8_t data) {
+	void WriteData(T_Elem data) {
 		uint8_t posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
 		if (posWriteNext == posRead_) return;
 		buff_[posWrite_] = data;
 		posWrite_ = posWriteNext;
 	}
-	uint8_t ReadByte() {
+	T_Elem ReadData() {
 		if (IsEmpty()) return 0x00;
-		uint8_t data = buff_[posRead_];
+		T_Elem data = buff_[posRead_];
 		posRead_ = (posRead_ == sizeMinusOne)? 0 : posRead_ + 1;
 		return data;
 	}
