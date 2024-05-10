@@ -135,8 +135,8 @@ void CompileTest_InitPort()
 
 void CompileTest_InitADC()
 {
-	av::InitADC<>();
-	av::InitADC<
+	av::ADConv<>::Init();
+	av::ADConv<
 		0b0,	// ADATE: ADC Auto Trigger Enable = false .. Single conversion triggered by ADSC
 		0b000,	// ADTS: ADC Auto Trigger Source = Free Running mode
 		0b0,	// ADIE: ADC Interrupt Enable = false
@@ -152,7 +152,7 @@ void CompileTest_InitADC()
 
 void CompileTest_InitAnalogComparator()
 {
-	av::InitAnalogComparator();
+	av::AnalogComparator<>::Init();
 }
 
 void CompileTest_Port_SetMode()

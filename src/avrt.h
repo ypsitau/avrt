@@ -12,7 +12,8 @@
 #include <avr/interrupt.h>
 #include "Util.h"
 #include "Port.h"
-#include "Analog.h"
+#include "ADConv.h"
+#include "AnalogComparator.h"
 #include "Serial.h"
 
 namespace avrt {
