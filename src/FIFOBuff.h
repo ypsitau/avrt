@@ -9,17 +9,17 @@ namespace avrt {
 //------------------------------------------------------------------------------
 // FIFOBuff
 //------------------------------------------------------------------------------
-template<typename T_Elem, int size> class FIFOBuff {
+template<typename T_Elem, int size, typename T_Pos = uint8_t> class FIFOBuff {
 public:
-	static constexpr uint8_t sizeMinusOne = static_cast<uint8_t>(size - 1);
+	static constexpr T_Pos sizeMinusOne = static_cast<T_Pos>(size - 1);
 private:
-	volatile uint8_t posRead_;
-	volatile uint8_t posWrite_;
+	volatile T_Pos posRead_;
+	volatile T_Pos posWrite_;
 	volatile T_Elem buff_[size];
 public:
 	FIFOBuff() : posRead_(0), posWrite_(0) {}
 	void WriteData(T_Elem data) {
-		uint8_t posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
+		T_Pos posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
 		if (posWriteNext == posRead_) return;
 		buff_[posWrite_] = data;
 		posWrite_ = posWriteNext;
@@ -32,7 +32,7 @@ public:
 	}
 	bool IsEmpty() { return posRead_ == posWrite_; }
 	bool HasRoom() {
-		uint8_t posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
+		T_Pos posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
 		return posWriteNext != posRead_;
 	}
 };
