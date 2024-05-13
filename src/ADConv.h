@@ -22,14 +22,14 @@ template <
 	uint8_t dataADEN	= 0b1		// ADEN: ADC Enable = true
 > class ADConv {
 public:
-	static void Init() {
+	void Init() const {
 		constexpr uint8_t dataADLAR = 0b0;	// ADLAR: ADC Left Adjust Result = false
 		ADMUX = (dataREFS << REFS0) | (dataADLAR << ADLAR) | (dataMUX << MUX0);
 		ADCSRA = (dataADEN << ADEN) | (dataADSC << ADSC) | (dataADATE << ADATE) |
 			(dataADIF << ADIF) | (dataADIE << ADIE) | (dataADPS << ADPS0);
 		ADCSRB = ADCSRB & ~(0b111 << ADTS0) | (dataADTS << ADTS0);
 	}
-	static void InitAs8bit() {
+	void InitAs8bit() const {
 		constexpr uint8_t dataADLAR = 0b1;	// ADLAR: ADC Left Adjust Result = true
 		ADMUX = (dataREFS << REFS0) | (dataADLAR << ADLAR) | (dataMUX << MUX0);
 		ADCSRA = (dataADEN << ADEN) | (dataADSC << ADSC) | (dataADATE << ADATE) |

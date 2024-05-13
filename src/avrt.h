@@ -15,6 +15,7 @@
 #include "ADConv.h"
 #include "AnalogComparator.h"
 #include "Serial.h"
+#include "Timer.h"
 
 namespace avrt {
 }
