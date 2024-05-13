@@ -10,7 +10,22 @@
     "Includepath": "C:\\Users\\ypsit\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\eightanaloginputs"
   },
   {
-    "Sourcefile": "C:\\Users\\ypsit\\source\\Arduino\\exp-analog-print\\build\\sketch\\exp-analog-print.ino.cpp",
+    "Sourcefile": "C:\\Users\\ypsit\\source\\arduino\\libraries\\avrt\\examples\\Port_InputAnalog\\build\\sketch\\Port_InputAnalog.ino.cpp",
+    "Include": "avrt.h",
+    "Includepath": "C:\\users\\ypsit\\source\\Arduino\\libraries\\avrt\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\ypsit\\source\\arduino\\libraries\\avrt\\examples\\Port_InputAnalog\\build\\sketch\\Port_InputAnalog.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\users\\ypsit\\source\\Arduino\\libraries\\avrt\\src\\Stream.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\users\\ypsit\\source\\Arduino\\libraries\\avrt\\src\\avrt.cpp",
     "Include": "",
     "Includepath": null
   }

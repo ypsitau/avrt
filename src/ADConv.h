@@ -7,6 +7,13 @@
 #include "FIFOBuff.h"
 namespace avrt {
 
+#define AVRT_IMPLEMENT_ADConv(variableName, prescalerSel) \
+avrt::ADConv<false, prescalerSel> variableName;
+
+#define AVRT_IMPLEMENT_ADConv_AutoTrigger(variableName, prescalerSel) \
+avrt::ADConv<true, prescalerSel> variableName; \
+ISR(ADC_vect) { variableName.HandleIRQ_ADC(); }
+
 //------------------------------------------------------------------------------
 // ADConv
 //------------------------------------------------------------------------------
@@ -16,12 +23,12 @@ template <
 	uint8_t dataREFS		= 0b01		// REFS: Reference Selction Bits = AVcc with external capacitor at AREF pin 
 > class ADConv {
 public:
-	using FIFOBuffEx = FIFOBuff<uint8_t, 32>;
+	using FIFOBuffEx = FIFOBuff<uint16_t, 32>;
 private:
 	FIFOBuffEx buffs_[enableAutoTrigger? 1 : 0];
 public:
 	ADConv() {}
-	FIFOBuffEx& GetBuff() { return buffs_[0]; }
+	FIFOBuffEx& GetBuffForAutoTrigger() { return buffs_[0]; }
 	void Init() const {
 		constexpr uint8_t dataADLAR = 0b0;		// ADLAR: ADC Left Adjust Result = false
 		constexpr uint8_t dataMUX	= 0b0000;	// MUX: Analog Channel Selection Bits = ADC0
@@ -56,6 +63,10 @@ public:
 		ADCSRB = ADCSRB & ~(0b111 << ADTS0) | (autoTriggerSource << ADTS0);
 		ADCSRA |= dataADSC << ADSC;
 	}
+	void HandleIRQ_ADC() {
+		GetBuffForAutoTrigger().WriteData(ADC);
+	}
+
 };
 
 }

@@ -5,6 +5,6 @@
   "customBuildProperties": "build.warn_data_percentage=75",
   "fqbn": "arduino:avr:pro",
   "hardwareFolders": "C:\\Users\\ypsit\\AppData\\Local\\Arduino15\\packages",
-  "otherLibrariesFolders": "C:\\Users\\ypsit\\Documents\\Arduino\\libraries",
-  "sketchLocation": "C:\\Users\\ypsit\\source\\Arduino\\exp-analog-print"
+  "otherLibrariesFolders": "C:\\users\\ypsit\\source\\Arduino\\libraries",
+  "sketchLocation": "C:\\Users\\ypsit\\source\\Arduino\\libraries\\avrt\\examples\\Port_InputAnalog"
 }
