@@ -4,25 +4,31 @@
 #ifndef AVRT_ADCONV_H
 #define AVRT_ADCONV_H
 #include <avr/io.h>
-
+#include "FIFOBuff.h"
 namespace avrt {
 
 //------------------------------------------------------------------------------
 // ADConv
 //------------------------------------------------------------------------------
 template <
-	uint8_t dataADPS	= 0b111,	// ADPS: ADC Prescaler Select Bits = 1/128
-	uint8_t dataADIE	= 0b0,		// ADIE: ADC Interrupt Enable = false
-	uint8_t dataREFS	= 0b01		// REFS: Reference Selction Bits = AVcc with external capacitor at AREF pin 
+	bool enableAutoTrigger	= false,
+	uint8_t dataADPS		= 0b111,	// ADPS: ADC Prescaler Select Bits = 1/128
+	uint8_t dataREFS		= 0b01		// REFS: Reference Selction Bits = AVcc with external capacitor at AREF pin 
 > class ADConv {
 public:
+	using FIFOBuffEx = FIFOBuff<uint8_t, 32>;
+private:
+	FIFOBuffEx buffs_[enableAutoTrigger? 1 : 0];
 public:
+	ADConv() {}
+	FIFOBuffEx& GetBuff() { return buffs_[0]; }
 	void Init() const {
 		constexpr uint8_t dataADLAR = 0b0;		// ADLAR: ADC Left Adjust Result = false
 		constexpr uint8_t dataMUX	= 0b0000;	// MUX: Analog Channel Selection Bits = ADC0
 		constexpr uint8_t dataADATE	= 0b0;		// ADATE: ADC Auto Trigger Enable = false .. Single conversion triggered by ADSC
 		constexpr uint8_t dataADTS	= 0b000;	// ADTS: ADC Auto Trigger Source = Free Running mode
 		constexpr uint8_t dataADSC	= 0b0;		// ADSC: ADC Start Conversion = false
+		constexpr uint8_t dataADIE	= enableAutoTrigger? 0b1 : 0b0; // ADIE: ADC Interrupt Enable = false
 		constexpr uint8_t dataADIF	= 0b1;		// ADIF: ADC Interrupt Flag .. set one to clear
 		constexpr uint8_t dataADEN	= 0b1;		// ADEN: ADC Enable = true
 		ADMUX = (dataREFS << REFS0) | (dataADLAR << ADLAR) | (dataMUX << MUX0);
@@ -36,6 +42,7 @@ public:
 		constexpr uint8_t dataADATE	= 0b0;		// ADATE: ADC Auto Trigger Enable = false .. Single conversion triggered by ADSC
 		constexpr uint8_t dataADTS	= 0b000;	// ADTS: ADC Auto Trigger Source = Free Running mode
 		constexpr uint8_t dataADSC	= 0b0;		// ADSC: ADC Start Conversion = false
+		constexpr uint8_t dataADIE	= enableAutoTrigger? 0b1 : 0b0; // ADIE: ADC Interrupt Enable = false
 		constexpr uint8_t dataADIF	= 0b1;		// ADIF: ADC Interrupt Flag .. set one to clear
 		constexpr uint8_t dataADEN	= 0b1;		// ADEN: ADC Enable = true
 		ADMUX = (dataREFS << REFS0) | (dataADLAR << ADLAR) | (dataMUX << MUX0);

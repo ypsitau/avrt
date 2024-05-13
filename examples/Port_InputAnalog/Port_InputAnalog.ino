@@ -13,23 +13,15 @@ av::Port<av::A4> portA4;
 av::Port<av::A5> portA5;
 av::Port<av::A5> portA6;
 
+av::ADConv<> adConv;
+
 void setup()
 {
 	serial.Open(av::Serial::BaudRate57600);
 	av::Ports<>::SetMode();
-#if 0
-	av::ADConv<>::Init<
-		0b0000,		// MUX: Analog Channel Selection Bits = ADC0
-		0b000		// ADPS: ADC Prescaler Select Bits = 1/128
-	>();
 	portD2.SetMode<av::Out>();
+	adConv.Init();
 	serial.Println(F("Analog Print"));
-	for (;;) {
-		portD2.ToggleDigital();
-		portA0.InputAnalog();
-	}
-#endif
-	av::ADConv<>::Init();
 }
 
 void loop()
