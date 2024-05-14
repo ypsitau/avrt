@@ -89,7 +89,7 @@ public:
 		uint8_t dataADTS = static_cast<uint8_t>(trigSrc);
 		ADMUX = ADMUX & ~(0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
 		ADCSRB = ADCSRB & ~(0b111 << ADTS0) | (dataADTS << ADTS0);
-		ADCSRA = ADCSRA | (0b1 << ADIE) | (0b1 << ADSC);	// ADSC: ADC Start Conversion
+		ADCSRA = ADCSRA | (0b1 << ADATE) | (0b1 << ADIE) | (0b1 << ADSC);	// ADSC: ADC Start Conversion
 	}
 	T_Data ReadResult() const {
 		if constexpr (data8bitFlag) { return ADCH; } else { return ADC; }
