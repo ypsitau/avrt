@@ -5,7 +5,6 @@
 #define AVRT_ADCONV_H
 #include <avr/io.h>
 #include "FIFOBuff.h"
-namespace avrt {
 
 #define AVRT_IMPLEMENT_ADConv(variableName) \
 avrt::ADConv<> variableName;
@@ -20,6 +19,8 @@ ISR(ADC_vect) { variableName.HandleISR_ADC(); }
 #define AVRT_IMPLEMENT_ADConv8bit_AutoTrigger(variableName) \
 avrt::ADConv8bit<32> variableName; \
 ISR(ADC_vect) { variableName.HandleISR_ADC(); }
+
+namespace avrt {
 
 //------------------------------------------------------------------------------
 // ADConvBase
@@ -79,7 +80,7 @@ public:
 	template<uint8_t pin>
 	T_Data InputSingle() const {
 		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
-		ADCSRA |= (0b1 << ADSC);				// ADSC: ADC Start Conversion
+		ADCSRA |= (0b1 << ADSC);							// ADSC: ADC Start Conversion
 		while (ADCSRA & (0b1 << ADSC)) ;
 		return ReadResult();
 	}
@@ -95,6 +96,7 @@ public:
 	}
 	void HandleISR_ADC() {
 		GetBuffForAutoTrigger().WriteData(ReadResult());
+
 	}
 };
 
