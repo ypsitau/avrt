@@ -57,7 +57,7 @@ private:
 	FIFOBuffEx buffs_[(buffSize > 0)? 1 : 0];
 public:
 	ADConvBase() {}
-	FIFOBuffEx& GetBuffForAutoTrigger() { return buffs_[0]; }
+	FIFOBuffEx& GetBuff() { return buffs_[0]; }
 	void Init(uint8_t div = Div128, VoltRef voltRef = VoltRef::AVcc) const {
 												// REFS: Reference Selction Bits = AVcc with external capacitor at AREF pin
 		uint8_t dataADPS = div;					// ADPS: ADC Prescaler Select Bits
@@ -77,8 +77,7 @@ public:
 			(dataADIF << ADIF) | (dataADIE << ADIE) | (dataADPS << ADPS0);
 		ADCSRB = ADCSRB & ~(0b111 << ADTS0) | (dataADTS << ADTS0);
 	}
-	template<uint8_t pin, TrigSrc trigSrc = TrigSrc::FreeRunning>
-	void StartAutoTrigger() const {
+	template<uint8_t pin, TrigSrc trigSrc> void StartAutoTrigger() const {
 		uint8_t dataADTS = static_cast<uint8_t>(trigSrc);
 		ADMUX = ADMUX & ~(0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
 		ADCSRB = ADCSRB & ~(0b111 << ADTS0) | (dataADTS << ADTS0);
@@ -86,19 +85,18 @@ public:
 	}
 	void HandleISR_ADC() {
 		volatile T_Result result = ReadRawResult();
-		GetBuffForAutoTrigger().WriteData(result);
-		//GetBuffForAutoTrigger().WriteData(1234);
+		GetBuff().WriteData(result);
 	}
 	bool IsResultReady() const {
 		if constexpr (buffSize > 0) {
-			return GetBuffForAutoTrigger().HasData();
+			return GetBuff().HasData();
 		} else {
 			return !(ADCSRA & (0b1 << ADSC));
 		}
 	}
 	T_Result ReadRawResult() const { if constexpr (data8bitFlag) { return ADCH; } else { return ADC; } }
 	T_Result ReadResult() const {
-		if constexpr (buffSize > 0) { return GetBuffForAutoTrigger().ReadData(); } else { return ReadRawResult(); }
+		if constexpr (buffSize > 0) { return GetBuff().ReadData(); } else { return ReadRawResult(); }
 	}
 	template<uint8_t pin> T_Result InputSingle() const {
 		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
