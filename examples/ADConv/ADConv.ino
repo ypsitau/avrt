@@ -12,7 +12,7 @@ avrt::ADConv<32> adConv;
 ISR(ADC_vect)
 {
 	//serial.Printf("ADC_vect\n");
-	//portD2.ImpulseDigital();
+	portD2.ImpulseDigital();
 	adConv.HandleISR_ADC();
 }
 
@@ -23,7 +23,7 @@ void setup()
 	serial.Open(serial.BaudRate57600);
 	portD2.SetMode<av::Out>();
 	portA0.SetMode<av::In>();
-	adConv.Init();
+	adConv.Init(adConv.Div128, adConv.VoltRef::AVcc);
 	adConv.StartAutoTrigger<av::A0, adConv.TrigSrc::FreeRunning>();
 	serial.Printf("ADConv Test\n");
 }
@@ -31,7 +31,7 @@ void setup()
 void loop()
 {
 	while (adConv.IsResultReady()) {
-		serial.Printf("%d\n", adConv.ReadResult());
+		serial.Printf("%d %d\n", adConv.GetBuff().GetLength(), adConv.ReadResult());
 	}
 	//serial.Printf("%d\n", adConv.InputSingle<av::A0>());
 }
