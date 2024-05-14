@@ -77,13 +77,6 @@ public:
 			(dataADIF << ADIF) | (dataADIE << ADIE) | (dataADPS << ADPS0);
 		ADCSRB = ADCSRB & ~(0b111 << ADTS0) | (dataADTS << ADTS0);
 	}
-	template<uint8_t pin>
-	T_Data InputSingle() const {
-		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
-		ADCSRA |= (0b1 << ADSC);							// ADSC: ADC Start Conversion
-		while (ADCSRA & (0b1 << ADSC)) ;
-		return ReadResult();
-	}
 	template<uint8_t pin, TrigSrc trigSrc = TrigSrc::FreeRunning>
 	void StartAutoTrigger() const {
 		uint8_t dataADTS = static_cast<uint8_t>(trigSrc);
@@ -91,12 +84,30 @@ public:
 		ADCSRB = ADCSRB & ~(0b111 << ADTS0) | (dataADTS << ADTS0);
 		ADCSRA = ADCSRA | (0b1 << ADATE) | (0b1 << ADIE) | (0b1 << ADSC);	// ADSC: ADC Start Conversion
 	}
-	T_Data ReadResult() const {
-		if constexpr (data8bitFlag) { return ADCH; } else { return ADC; }
-	}
 	void HandleISR_ADC() {
 		GetBuffForAutoTrigger().WriteData(ReadResult());
-
+	}
+	bool IsResultReady() const {
+		if constexpr (buffSize > 0) {
+			return GetBuffForAutoTrigger().HasData();
+		} else {
+			return !(ADCSRA & (0b1 << ADSC));
+		}
+	}
+	T_Data ReadResult() const {
+		if constexpr (buffSize > 0) {
+			return GetBuffForAutoTrigger().ReadData();
+		} else if (data8bitFlag) {
+			return ADCH;
+		} else {
+			return ADC;
+		}
+	}
+	template<uint8_t pin> T_Data InputSingle() const {
+		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
+		ADCSRA |= (0b1 << ADSC);							// ADSC: ADC Start Conversion
+		while (ADCSRA & (0b1 << ADSC)) ;
+		return ReadResult();
 	}
 };
 

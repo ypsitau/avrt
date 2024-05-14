@@ -18,6 +18,13 @@ private:
 	volatile T_Elem buff_[buffSize];
 public:
 	FIFOBuff() : posRead_(0), posWrite_(0) {}
+	bool IsEmpty() const { return posRead_ == posWrite_; }
+	bool HasData() const { return posRead_ != posWrite_; }
+	bool IsFull() const {
+		T_Pos posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
+		return posWriteNext == posRead_;
+	}
+	bool HasRoom() const { return !IsFull(); }
 	void WriteData(T_Elem data) {
 		T_Pos posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
 		if (posWriteNext == posRead_) return;
@@ -25,15 +32,10 @@ public:
 		posWrite_ = posWriteNext;
 	}
 	T_Elem ReadData() {
-		if (IsEmpty()) return 0x00;
+		if (posRead_ == posWrite_) return 0;
 		T_Elem data = buff_[posRead_];
 		posRead_ = (posRead_ == sizeMinusOne)? 0 : posRead_ + 1;
 		return data;
-	}
-	bool IsEmpty() { return posRead_ == posWrite_; }
-	bool HasRoom() {
-		T_Pos posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
-		return posWriteNext != posRead_;
 	}
 };
 
