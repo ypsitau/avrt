@@ -25,6 +25,9 @@ public:
 		return posWriteNext == posRead_;
 	}
 	bool HasRoom() const { return !IsFull(); }
+	T_Pos GetLength() const {
+		return (posRead_ <= posWrite_)? posWrite_ - posRead_ : buffSize - posRead_ + posWrite_;
+	}
 	void WriteData(T_Elem data) {
 		T_Pos posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
 		if (posWriteNext == posRead_) return;
