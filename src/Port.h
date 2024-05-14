@@ -284,27 +284,11 @@ public:
 			OutputPWM(value);
 		}
 	}
-	static uint8_t PinToADCChannel(int pin) { return static_cast<uint8_t>(pin - A0); }
-	void StartADC() const {
-		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCChannel(pin) << MUX0);
-		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
-	}
-	void WaitADC() const {
-		while (ADCSRA & (0b1 << ADSC)) ;
-	}
-	static uint16_t GetADC() { return ADC; }
-	static uint8_t GetADC_8bit() { return ADCH; }
 	uint16_t InputAnalog() const {
-		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCChannel(pin) << MUX0);
+		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
 		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
 		while (ADCSRA & (0b1 << ADSC)) ;
 		return ADC;
-	}
-	uint8_t InputAnalog_8bit() const {
-		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCChannel(pin) << MUX0);
-		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
-		while (ADCSRA & (0b1 << ADSC)) ;
-		return ADCH;
 	}
 };
 

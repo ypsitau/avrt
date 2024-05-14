@@ -9,13 +9,13 @@ namespace avrt {
 //------------------------------------------------------------------------------
 // FIFOBuff
 //------------------------------------------------------------------------------
-template<typename T_Elem, int size, typename T_Pos = uint8_t> class FIFOBuff {
+template<typename T_Elem, int buffSize, typename T_Pos = uint8_t> class FIFOBuff {
 public:
-	static constexpr T_Pos sizeMinusOne = static_cast<T_Pos>(size - 1);
+	static constexpr T_Pos sizeMinusOne = static_cast<T_Pos>(buffSize - 1);
 private:
 	volatile T_Pos posRead_;
 	volatile T_Pos posWrite_;
-	volatile T_Elem buff_[size];
+	volatile T_Elem buff_[buffSize];
 public:
 	FIFOBuff() : posRead_(0), posWrite_(0) {}
 	void WriteData(T_Elem data) {

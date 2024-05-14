@@ -50,6 +50,8 @@ constexpr int A4			= 18;
 constexpr int A5			= 19;
 constexpr int A6			= 20;
 
+constexpr uint8_t PinToADCMux(uint8_t pin) { return pin - A0; }
+
 }
 
 #endif

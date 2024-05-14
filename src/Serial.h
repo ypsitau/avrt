@@ -38,14 +38,17 @@ public:
 		BaudRate500000,
 		BaudRate1000000,
 	};	
+public:
 	constexpr static uint8_t CharSize5	= 0b000;
 	constexpr static uint8_t CharSize6	= 0b001;
 	constexpr static uint8_t CharSize7	= 0b010;
 	constexpr static uint8_t CharSize8	= 0b011;
 	constexpr static uint8_t CharSize9	= 0b111;
+public:
 	constexpr static uint8_t ParityNone	= 0b00;
 	constexpr static uint8_t ParityEven	= 0b10;
 	constexpr static uint8_t ParityOdd	= 0b11;
+public:
 	constexpr static uint8_t StopBit1	= 0b0;
 	constexpr static uint8_t StopBit2	= 0b1;
 public:
