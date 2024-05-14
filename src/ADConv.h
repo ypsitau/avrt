@@ -25,9 +25,9 @@ namespace avrt {
 //------------------------------------------------------------------------------
 // ADConvBase
 //------------------------------------------------------------------------------
-template <typename T_Data, bool data8bitFlag = false, int buffSize = 0> class ADConvBase {
+template <typename T_Result, bool data8bitFlag = false, int buffSize = 0> class ADConvBase {
 public:
-	using FIFOBuffEx = FIFOBuff<T_Data, buffSize>;
+	using FIFOBuffEx = FIFOBuff<T_Result, buffSize>;
 public:
 	constexpr static uint8_t Div2	= 0b001;
 	constexpr static uint8_t Div4	= 0b010;
@@ -85,7 +85,9 @@ public:
 		ADCSRA = ADCSRA | (0b1 << ADATE) | (0b1 << ADIE) | (0b1 << ADSC);	// ADSC: ADC Start Conversion
 	}
 	void HandleISR_ADC() {
-		GetBuffForAutoTrigger().WriteData(ReadResult());
+		volatile T_Result result = ReadRawResult();
+		GetBuffForAutoTrigger().WriteData(result);
+		//GetBuffForAutoTrigger().WriteData(1234);
 	}
 	bool IsResultReady() const {
 		if constexpr (buffSize > 0) {
@@ -94,20 +96,15 @@ public:
 			return !(ADCSRA & (0b1 << ADSC));
 		}
 	}
-	T_Data ReadResult() const {
-		if constexpr (buffSize > 0) {
-			return GetBuffForAutoTrigger().ReadData();
-		} else if (data8bitFlag) {
-			return ADCH;
-		} else {
-			return ADC;
-		}
+	T_Result ReadRawResult() const { if constexpr (data8bitFlag) { return ADCH; } else { return ADC; } }
+	T_Result ReadResult() const {
+		if constexpr (buffSize > 0) { return GetBuffForAutoTrigger().ReadData(); } else { return ReadRawResult(); }
 	}
-	template<uint8_t pin> T_Data InputSingle() const {
+	template<uint8_t pin> T_Result InputSingle() const {
 		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
 		ADCSRA |= (0b1 << ADSC);							// ADSC: ADC Start Conversion
 		while (ADCSRA & (0b1 << ADSC)) ;
-		return ReadResult();
+		return ReadRawResult();
 	}
 };
 
