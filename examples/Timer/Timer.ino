@@ -8,8 +8,6 @@ AVRT_IMPLEMENT_Serial0(serial)
 av::Port<av::D2> portD2;
 
 av::Timer0<
-	0b011,	// CS0: Clock Select = clk/64
-	0b011,	// WGM0: Waveform Generation Mode = Fast PWM
 	0b1		// TOIE0: Timer/Counter0 Overflow Interrupt Enable (TIMER0_OVF) = enable
 > timer0;
 
@@ -43,9 +41,9 @@ void setup()
 {
 	serial.Open(serial.BaudRate57600);
 	portD2.SetMode<av::Out>();
-	timer0.Init();
-	timer1.Init();
-	timer2.Init();
+	timer0.Start(timer0.Clock::Div64, timer0.Waveform::FastPWM_UptoFF);
+	timer1.Start();
+	timer2.Start();
 }
 
 void loop()

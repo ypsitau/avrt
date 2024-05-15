@@ -228,48 +228,48 @@ public:
 		return 0x00;
 	}
 	void EnablePWM() const {
-		if constexpr (pin == 3) { // PD3 is controlled by OC2B
-			TCCR2A |= (1 << COM2B1);
-		} else if (pin == 5) { // PD5 is controlled by OC0B
-			TCCR0A |= (1 << COM0B1);
-		} else if (pin == 6) { // PD6 is controlled by OC0A
-			TCCR0A |= (1 << COM0A1);
-		} else if (pin == 9) { // PB1 is controlled by OC1A
-			TCCR1A |= (1 << COM1A1);
-		} else if (pin == 10) { // PB2 is controlled by OC1B
-			TCCR1A |= (1 << COM1B1);
-		} else if (pin == 11) { // PB3 is controlled by OC2A
-			TCCR2A |= (1 << COM2A1);
+		if constexpr (pin == 3) {
+			TCCR2A |= (1 << COM2B1);	// Connects OC2B pin to PD3
+		} else if (pin == 5) {
+			TCCR0A |= (1 << COM0B1);	// Connects OC0B pin to PD5
+		} else if (pin == 6) {
+			TCCR0A |= (1 << COM0A1);	// Connects OC0A pin to PD6
+		} else if (pin == 9) {
+			TCCR1A |= (1 << COM1A1);	// Connects OC1A pin to PB1
+		} else if (pin == 10) {
+			TCCR1A |= (1 << COM1B1);	// Connects OC1B pin to PB2
+		} else if (pin == 11) {
+			TCCR2A |= (1 << COM2A1);	// Connects OC2A pin to PB3
 		}
 	}
 	void DisablePWM() const {
-		if constexpr (pin == 3) { // PD3 is controlled by OC2B
-			TCCR2A &= ~(1 << COM2B1);
-		} else if (pin == 5) { // PD5 is controlled by OC0B
-			TCCR0A &= ~(1 << COM0B1);
-		} else if (pin == 6) { // PD6 is controlled by OC0A
-			TCCR0A &= ~(1 << COM0A1);
-		} else if (pin == 9) { // PB1 is controlled by OC1A
-			TCCR1A &= ~(1 << COM1A1);
-		} else if (pin == 10) { // PB2 is controlled by OC1B
-			TCCR1A &= ~(1 << COM1B1);
-		} else if (pin == 11) { // PB3 is controlled by OC2A
-			TCCR2A &= ~(1 << COM2A1);
+		if constexpr (pin == 3) {
+			TCCR2A &= ~(1 << COM2B1);	// Disconnects OC2B pin from PD3
+		} else if (pin == 5) {
+			TCCR0A &= ~(1 << COM0B1);	// Disconnects OC0B pin from PD5
+		} else if (pin == 6) {
+			TCCR0A &= ~(1 << COM0A1);	// Disconnects OC0A pin from PD6
+		} else if (pin == 9) {
+			TCCR1A &= ~(1 << COM1A1);	// Disconnects OC1A pin from PB1
+		} else if (pin == 10) {
+			TCCR1A &= ~(1 << COM1B1);	// Disconnects OC1B pin from PB2
+		} else if (pin == 11) {
+			TCCR2A &= ~(1 << COM2A1);	// Disconnects OC2A pin from PB3
 		}
 	}
 	void OutputPWM(uint8_t value) const {
-		if constexpr (pin == 3) { // PD3 is controlled by OC2B
-			OCR2B = value;
-		} else if (pin == 5) { // PD5 is controlled by OC0B
-			OCR0B = value;
-		} else if (pin == 6) { // PD6 is controlled by OC0A
-			OCR0A = value;
-		} else if (pin == 9) { // PB1 is controlled by OC1A
-			OCR1A = value;
-		} else if (pin == 10) { // PB2 is controlled by OC1B
-			OCR1B = value;
-		} else if (pin == 11) { // PB3 is controlled by OC2A
-			OCR2A = value;
+		if constexpr (pin == 3) {
+			OCR2B = value;				// Set compare value for OC2B
+		} else if (pin == 5) {
+			OCR0B = value;				// Set compare value for OC0B
+		} else if (pin == 6) {
+			OCR0A = value;				// Set compare value for OC0A
+		} else if (pin == 9) {
+			OCR1A = value;				// Set compare value for OC1A
+		} else if (pin == 10) {
+			OCR1B = value;				// Set compare value for OC1B
+		} else if (pin == 11) {
+			OCR2A = value;				// Set compare value for OC2A
 		}
 	}
 	void OutputFinePWM(uint8_t value) const {
@@ -289,6 +289,12 @@ public:
 		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
 		while (ADCSRA & (0b1 << ADSC)) ;
 		return ADC;
+	}
+	uint8_t InputAnalog8bit() const {
+		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
+		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
+		while (ADCSRA & (0b1 << ADSC)) ;
+		return ADCH;
 	}
 };
 
