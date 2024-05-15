@@ -9,6 +9,7 @@ av::Port<av::D2> portD2;
 
 av::Timer0<true> timer0;	// enable interrupt: TIMER0_OVF 
 av::Timer1<true> timer1;	// enable interrupt: TIMER1_OVF
+av::Timer2<true> timer2;	// enable interrupt: TIMER2_OVF
 
 ISR(TIMER1_OVF_vect)
 {
@@ -16,15 +17,9 @@ ISR(TIMER1_OVF_vect)
 	portD2.ToggleDigital();
 }
 
-av::Timer2<
-	0b100,	// CS2: Clock Select = clk/64
-	0b001,	// WGM2: Waveform Generation Mode = PWM, Phase Correct
-	0b1		// TOIE2: Timer/Counter2 Overflow Interrupt Enable (TIMER2_OVF) = enable
-> timer2;
-
 ISR(TIMER2_OVF_vect)
 {
-	//serial.Printf("TIMER1_OVF\n");
+	serial.Printf("TIMER2_OVF\n");
 	//portD2.ImpulseDigital();
 }
 
