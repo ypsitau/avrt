@@ -31,7 +31,8 @@ void setup()
 	portD3.SetMode<av::Out>();
 	timer0.Start(timer0.Clock::Div64, timer0.Waveform::FastPWM_UptoFF);
 	timer1.Start(timer1.Clock::Div64, timer1.Waveform::FastPWM_Upto00FF);
-	timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoFF);
+	timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoOCR2A);
+	OCR2A = 0x20;
 }
 
 void loop()
