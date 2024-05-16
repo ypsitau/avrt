@@ -11,31 +11,31 @@ namespace avrt {
 //------------------------------------------------------------------------------
 // Ports
 //------------------------------------------------------------------------------
-template<
-	uint8_t mode0	= In,	// D0: PD0(RXD/PCINT16)
-	uint8_t mode1	= In,	// D1: PD1(TXD/PCINT17)
-	uint8_t mode2	= In,	// D2: PD2(INT0/PCINT18)
-	uint8_t mode3	= In,	// D3: PD3(INT1/OC2B/PCINT19)
-	uint8_t mode4	= In,	// D4: PD4(XCK/T0/PCINT20)
-	uint8_t mode5	= In,	// D5: PD5(T1/OC0B/PCINT21)
-	uint8_t mode6	= In,	// D6: PD6(AIN0/OC0A/PCINT22)
-	uint8_t mode7	= In,	// D7: PD7(AIN1/PCINT23)
-	uint8_t mode8	= In,	// D8: PB0(ICP1/CLKO/PCINT0)
-	uint8_t mode9	= In,	// D9: PB1(OC1A/PCINT1)
-	uint8_t mode10	= In,	// D10: PB2(SS/OC1B/PCINT2)
-	uint8_t mode11	= In,	// D11: PB3(MOSI/OC2A/PCINT3)
-	uint8_t mode12	= In,	// D12: PB4(MISO/PCINT4)
-	uint8_t mode13	= In,	// D13: PB5(SCK/PCINT5)
-	uint8_t mode14	= In,	// D14: PC0(ADC0/PCINT8)
-	uint8_t mode15	= In,	// D15: PC1(ADC1/PCINT9)
-	uint8_t mode16	= In,	// D16: PC2(ADC2/PCINT10)
-	uint8_t mode17	= In,	// D17: PC3(ADC3/PCINT11)
-	uint8_t mode18	= In,	// D18: PC4(ADC4/SDA/PCINT12)
-	uint8_t mode19	= In,	// D19: PC5(ADC5/SCL/PCINT13)
-	uint8_t mode20	= In	// D20: PC6(RESET/PCINT14)
-> class Ports {
+class Ports {
 public:
-	static void SetMode() {
+	template<
+		uint8_t mode0	= In,	// D0: PD0(RXD/PCINT16)
+		uint8_t mode1	= In,	// D1: PD1(TXD/PCINT17)
+		uint8_t mode2	= In,	// D2: PD2(INT0/PCINT18)
+		uint8_t mode3	= In,	// D3: PD3(INT1/OC2B/PCINT19)
+		uint8_t mode4	= In,	// D4: PD4(XCK/T0/PCINT20)
+		uint8_t mode5	= In,	// D5: PD5(T1/OC0B/PCINT21)
+		uint8_t mode6	= In,	// D6: PD6(AIN0/OC0A/PCINT22)
+		uint8_t mode7	= In,	// D7: PD7(AIN1/PCINT23)
+		uint8_t mode8	= In,	// D8: PB0(ICP1/CLKO/PCINT0)
+		uint8_t mode9	= In,	// D9: PB1(OC1A/PCINT1)
+		uint8_t mode10	= In,	// D10: PB2(SS/OC1B/PCINT2)
+		uint8_t mode11	= In,	// D11: PB3(MOSI/OC2A/PCINT3)
+		uint8_t mode12	= In,	// D12: PB4(MISO/PCINT4)
+		uint8_t mode13	= In,	// D13: PB5(SCK/PCINT5)
+		uint8_t mode14	= In,	// D14: PC0(ADC0/PCINT8)
+		uint8_t mode15	= In,	// D15: PC1(ADC1/PCINT9)
+		uint8_t mode16	= In,	// D16: PC2(ADC2/PCINT10)
+		uint8_t mode17	= In,	// D17: PC3(ADC3/PCINT11)
+		uint8_t mode18	= In,	// D18: PC4(ADC4/SDA/PCINT12)
+		uint8_t mode19	= In,	// D19: PC5(ADC5/SCL/PCINT13)
+		uint8_t mode20	= In	// D20: PC6(RESET/PCINT14)
+	> static void SetMode() {
 		DDRD = ((mode0 & 1) << 0) | ((mode1 & 1) << 1) | ((mode2 & 1) << 2) | ((mode3 & 1) << 3) |
 			((mode4 & 1) << 4) | ((mode5 & 1) << 5) | ((mode6 & 1) << 6) | ((mode7 & 1) << 7);
 		DDRB = ((mode8 & 1) << 0) | ((mode9 & 1) << 1) | ((mode10 & 1) << 2) | ((mode11 & 1) << 3) |
@@ -173,8 +173,8 @@ public:
 		else if (pin == 20)		{ if (logic) { PORTC |= (1 << 6); } else { PORTC &= ~(1 << 6); } }
 	}
 	void DigitalImpulse() const {
-		DigitalOutput<High>();
-		DigitalOutput<Low>();
+		DigitalHigh();
+		DigitalLow();
 	}
 	void DigitalToggle() const {
 		if constexpr (pin == 0)			{ PORTD ^= (1 << 0); }
@@ -295,10 +295,10 @@ public:
 	void PWMOutputFine(uint8_t value) const {
 		if (value == 0) {
 			PWMDisable();
-			DigitalOutput<Low>();
+			DigitalLow();
 		} else if (value == 255) {
 			PWMDisable();
-			DigitalOutput<High>();
+			DigitalHigh();
 		} else {
 			PWMEnable();
 			PWMOutput(value);
