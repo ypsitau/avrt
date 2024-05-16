@@ -23,35 +23,42 @@ constexpr uint8_t Out		= 1;
 constexpr uint8_t InPullup	= 2;
 constexpr uint8_t OutHigh	= 3;
 
-constexpr int D0			= 0;
-constexpr int D1			= 1;
-constexpr int D2			= 2;
-constexpr int D3			= 3;
-constexpr int D4			= 4;
-constexpr int D5			= 5;
-constexpr int D6			= 6;
-constexpr int D7			= 7;
-constexpr int D8			= 8;
-constexpr int D9			= 9;
-constexpr int D10			= 10;
-constexpr int D11			= 11;
-constexpr int D12			= 12;
-constexpr int D13			= 13;
-constexpr int D14			= 14;
-constexpr int D15			= 15;
-constexpr int D16			= 16;
-constexpr int D17			= 17;
-constexpr int D18			= 18;
-constexpr int D19			= 19;
-constexpr int D20			= 20;
+enum class Sense {
+	Low		= 0,
+	Change	= 1,
+	Falling	= 2,
+	Rising	= 3,
+};
 
-constexpr int A0			= 14;
-constexpr int A1			= 15;
-constexpr int A2			= 16;
-constexpr int A3			= 17;
-constexpr int A4			= 18;
-constexpr int A5			= 19;
-constexpr int A6			= 20;
+constexpr uint8_t D0	= 0;
+constexpr uint8_t D1	= 1;
+constexpr uint8_t D2	= 2;
+constexpr uint8_t D3	= 3;
+constexpr uint8_t D4	= 4;
+constexpr uint8_t D5	= 5;
+constexpr uint8_t D6	= 6;
+constexpr uint8_t D7	= 7;
+constexpr uint8_t D8	= 8;
+constexpr uint8_t D9	= 9;
+constexpr uint8_t D10	= 10;
+constexpr uint8_t D11	= 11;
+constexpr uint8_t D12	= 12;
+constexpr uint8_t D13	= 13;
+constexpr uint8_t D14	= 14;
+constexpr uint8_t D15	= 15;
+constexpr uint8_t D16	= 16;
+constexpr uint8_t D17	= 17;
+constexpr uint8_t D18	= 18;
+constexpr uint8_t D19	= 19;
+constexpr uint8_t D20	= 20;
+
+constexpr uint8_t A0			= 14;
+constexpr uint8_t A1			= 15;
+constexpr uint8_t A2			= 16;
+constexpr uint8_t A3			= 17;
+constexpr uint8_t A4			= 18;
+constexpr uint8_t A5			= 19;
+constexpr uint8_t A6			= 20;
 
 constexpr uint8_t PinToADCMux(uint8_t pin) { return pin - A0; }
 

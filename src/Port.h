@@ -126,7 +126,7 @@ public:
 		else if (pin == 20)		return (PINC >> 6) & 1;
 		return Low;
 	}
-	static uint8_t DigitalSense(uint8_t pin) {
+	static uint8_t DigitalProbe(uint8_t pin) {
 		if (pin == 0)			return PIND & (1 << 0);
 		else if (pin == 1)		return PIND & (1 << 1);
 		else if (pin == 2)		return PIND & (1 << 2);
@@ -156,13 +156,6 @@ public:
 // Port
 //------------------------------------------------------------------------------
 template<int pin_> class Port {
-public:
-	enum class Sense {
-		Low		= 0,
-		Change	= 1,
-		Falling	= 2,
-		Rising	= 3,
-	};
 public:
 	constexpr static uint8_t pin = pin_;
 public:
