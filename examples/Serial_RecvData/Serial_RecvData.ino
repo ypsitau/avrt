@@ -6,8 +6,8 @@ AVRT_IMPLEMENT_Serial0(serial)
 
 void setup()
 {
-	serial.Open(av::Serial::BaudRate57600, av::Serial::CharSize8, av::Serial::StopBit1, av::Serial::ParityNone);
-	serial.Println("Test of RecvData");
+	serial.Open(serial.Speed::Bps57600, serial.CharSize::Bits8, serial.StopBit::Bits1, serial.Parity::None);
+	serial.Println("Test of RecvData: Echo back typed-in messages.");
 }
 
 
@@ -18,5 +18,6 @@ void loop()
 		while (serial.HasRecvData()) {
 			serial.SendData(serial.RecvData());
 		}
+		serial.Println();
 	}
 }

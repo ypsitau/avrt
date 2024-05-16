@@ -103,131 +103,151 @@ public:
 			if constexpr (mode & 1) { DDRC |= (1 << 6); } else { DDRC &= ~(1 << 6); if constexpr (mode >> 1) { PORTC |= (1 << 6); } else { PORTC &= ~(1 << 6); } }
 		}
 	}
-	template<Logic logic> void OutputDigital() const {
-		if constexpr (pin == 0)         { if constexpr (logic) { PORTD |= (1 << 0); } else { PORTD &= ~(1 << 0); }
-		} else if constexpr (pin == 1)  { if constexpr (logic) { PORTD |= (1 << 1); } else { PORTD &= ~(1 << 1); }
-		} else if constexpr (pin == 2)  { if constexpr (logic) { PORTD |= (1 << 2); } else { PORTD &= ~(1 << 2); }
-		} else if constexpr (pin == 3)  { if constexpr (logic) { PORTD |= (1 << 3); } else { PORTD &= ~(1 << 3); }
-		} else if constexpr (pin == 4)  { if constexpr (logic) { PORTD |= (1 << 4); } else { PORTD &= ~(1 << 4); }
-		} else if constexpr (pin == 5)  { if constexpr (logic) { PORTD |= (1 << 5); } else { PORTD &= ~(1 << 5); }
-		} else if constexpr (pin == 6)  { if constexpr (logic) { PORTD |= (1 << 6); } else { PORTD &= ~(1 << 6); }
-		} else if constexpr (pin == 7)  { if constexpr (logic) { PORTD |= (1 << 7); } else { PORTD &= ~(1 << 7); }
-		} else if constexpr (pin == 8)  { if constexpr (logic) { PORTB |= (1 << 0); } else { PORTB &= ~(1 << 0); }
-		} else if constexpr (pin == 9)  { if constexpr (logic) { PORTB |= (1 << 1); } else { PORTB &= ~(1 << 1); }
-		} else if constexpr (pin == 10) { if constexpr (logic) { PORTB |= (1 << 2); } else { PORTB &= ~(1 << 2); }
-		} else if constexpr (pin == 11) { if constexpr (logic) { PORTB |= (1 << 3); } else { PORTB &= ~(1 << 3); }
-		} else if constexpr (pin == 12) { if constexpr (logic) { PORTB |= (1 << 4); } else { PORTB &= ~(1 << 4); }
-		} else if constexpr (pin == 13) { if constexpr (logic) { PORTB |= (1 << 5); } else { PORTB &= ~(1 << 5); }
-		} else if constexpr (pin == 14) { if constexpr (logic) { PORTC |= (1 << 0); } else { PORTC &= ~(1 << 0); }
-		} else if constexpr (pin == 15) { if constexpr (logic) { PORTC |= (1 << 1); } else { PORTC &= ~(1 << 1); }
-		} else if constexpr (pin == 16) { if constexpr (logic) { PORTC |= (1 << 2); } else { PORTC &= ~(1 << 2); }
-		} else if constexpr (pin == 17) { if constexpr (logic) { PORTC |= (1 << 3); } else { PORTC &= ~(1 << 3); }
-		} else if constexpr (pin == 18) { if constexpr (logic) { PORTC |= (1 << 4); } else { PORTC &= ~(1 << 4); }
-		} else if constexpr (pin == 19) { if constexpr (logic) { PORTC |= (1 << 5); } else { PORTC &= ~(1 << 5); }
-		} else if constexpr (pin == 20) { if constexpr (logic) { PORTC |= (1 << 6); } else { PORTC &= ~(1 << 6); }
-		}
+	void DigitalHigh() const {
+		if constexpr (pin == 0)			{ PORTD |= (1 << 0); }
+		else if constexpr (pin == 1)	{ PORTD |= (1 << 1); }
+		else if constexpr (pin == 2)	{ PORTD |= (1 << 2); }
+		else if constexpr (pin == 3)	{ PORTD |= (1 << 3); }
+		else if constexpr (pin == 4)	{ PORTD |= (1 << 4); }
+		else if constexpr (pin == 5)	{ PORTD |= (1 << 5); }
+		else if constexpr (pin == 6)	{ PORTD |= (1 << 6); }
+		else if constexpr (pin == 7)	{ PORTD |= (1 << 7); }
+		else if constexpr (pin == 8)	{ PORTB |= (1 << 0); }
+		else if constexpr (pin == 9)	{ PORTB |= (1 << 1); }
+		else if constexpr (pin == 10)	{ PORTB |= (1 << 2); }
+		else if constexpr (pin == 11)	{ PORTB |= (1 << 3); }
+		else if constexpr (pin == 12)	{ PORTB |= (1 << 4); }
+		else if constexpr (pin == 13)	{ PORTB |= (1 << 5); }
+		else if constexpr (pin == 14)	{ PORTC |= (1 << 0); }
+		else if constexpr (pin == 15)	{ PORTC |= (1 << 1); }
+		else if constexpr (pin == 16)	{ PORTC |= (1 << 2); }
+		else if constexpr (pin == 17)	{ PORTC |= (1 << 3); }
+		else if constexpr (pin == 18)	{ PORTC |= (1 << 4); }
+		else if constexpr (pin == 19)	{ PORTC |= (1 << 5); }
+		else if constexpr (pin == 20)	{ PORTC |= (1 << 6); }
 	}
-	void OutputDigital(Logic logic) const {
-		if constexpr (pin == 0) { if (logic) { PORTD |= (1 << 0); } else { PORTD &= ~(1 << 0); }
-		} else if (pin == 1)    { if (logic) { PORTD |= (1 << 1); } else { PORTD &= ~(1 << 1); }
-		} else if (pin == 2)    { if (logic) { PORTD |= (1 << 2); } else { PORTD &= ~(1 << 2); }
-		} else if (pin == 3)    { if (logic) { PORTD |= (1 << 3); } else { PORTD &= ~(1 << 3); }
-		} else if (pin == 4)    { if (logic) { PORTD |= (1 << 4); } else { PORTD &= ~(1 << 4); }
-		} else if (pin == 5)    { if (logic) { PORTD |= (1 << 5); } else { PORTD &= ~(1 << 5); }
-		} else if (pin == 6)    { if (logic) { PORTD |= (1 << 6); } else { PORTD &= ~(1 << 6); }
-		} else if (pin == 7)    { if (logic) { PORTD |= (1 << 7); } else { PORTD &= ~(1 << 7); }
-		} else if (pin == 8)    { if (logic) { PORTB |= (1 << 0); } else { PORTB &= ~(1 << 0); }
-		} else if (pin == 9)    { if (logic) { PORTB |= (1 << 1); } else { PORTB &= ~(1 << 1); }
-		} else if (pin == 10)   { if (logic) { PORTB |= (1 << 2); } else { PORTB &= ~(1 << 2); }
-		} else if (pin == 11)   { if (logic) { PORTB |= (1 << 3); } else { PORTB &= ~(1 << 3); }
-		} else if (pin == 12)   { if (logic) { PORTB |= (1 << 4); } else { PORTB &= ~(1 << 4); }
-		} else if (pin == 13)   { if (logic) { PORTB |= (1 << 5); } else { PORTB &= ~(1 << 5); }
-		} else if (pin == 14)   { if (logic) { PORTC |= (1 << 0); } else { PORTC &= ~(1 << 0); }
-		} else if (pin == 15)   { if (logic) { PORTC |= (1 << 1); } else { PORTC &= ~(1 << 1); }
-		} else if (pin == 16)   { if (logic) { PORTC |= (1 << 2); } else { PORTC &= ~(1 << 2); }
-		} else if (pin == 17)   { if (logic) { PORTC |= (1 << 3); } else { PORTC &= ~(1 << 3); }
-		} else if (pin == 18)   { if (logic) { PORTC |= (1 << 4); } else { PORTC &= ~(1 << 4); }
-		} else if (pin == 19)   { if (logic) { PORTC |= (1 << 5); } else { PORTC &= ~(1 << 5); }
-		} else if (pin == 20)   { if (logic) { PORTC |= (1 << 6); } else { PORTC &= ~(1 << 6); }
-		}
+	void DigitalLow() const {
+		if constexpr (pin == 0)			{ PORTD &= ~(1 << 0); }
+		else if constexpr (pin == 1)	{ PORTD &= ~(1 << 1); }
+		else if constexpr (pin == 2)	{ PORTD &= ~(1 << 2); }
+		else if constexpr (pin == 3)	{ PORTD &= ~(1 << 3); }
+		else if constexpr (pin == 4)	{ PORTD &= ~(1 << 4); }
+		else if constexpr (pin == 5)	{ PORTD &= ~(1 << 5); }
+		else if constexpr (pin == 6)	{ PORTD &= ~(1 << 6); }
+		else if constexpr (pin == 7)	{ PORTD &= ~(1 << 7); }
+		else if constexpr (pin == 8)	{ PORTB &= ~(1 << 0); }
+		else if constexpr (pin == 9)	{ PORTB &= ~(1 << 1); }
+		else if constexpr (pin == 10)	{ PORTB &= ~(1 << 2); }
+		else if constexpr (pin == 11)	{ PORTB &= ~(1 << 3); }
+		else if constexpr (pin == 12)	{ PORTB &= ~(1 << 4); }
+		else if constexpr (pin == 13)	{ PORTB &= ~(1 << 5); }
+		else if constexpr (pin == 14)	{ PORTC &= ~(1 << 0); }
+		else if constexpr (pin == 15)	{ PORTC &= ~(1 << 1); }
+		else if constexpr (pin == 16)	{ PORTC &= ~(1 << 2); }
+		else if constexpr (pin == 17)	{ PORTC &= ~(1 << 3); }
+		else if constexpr (pin == 18)	{ PORTC &= ~(1 << 4); }
+		else if constexpr (pin == 19)	{ PORTC &= ~(1 << 5); }
+		else if constexpr (pin == 20)	{ PORTC &= ~(1 << 6); }
 	}
-	void ImpulseDigital() const {
-		OutputDigital<High>();
-		OutputDigital<Low>();
+	void DigitalOutput(Logic logic) const {
+		if constexpr (pin == 0)	{ if (logic) { PORTD |= (1 << 0); } else { PORTD &= ~(1 << 0); } }
+		else if (pin == 1)		{ if (logic) { PORTD |= (1 << 1); } else { PORTD &= ~(1 << 1); } }
+		else if (pin == 2)		{ if (logic) { PORTD |= (1 << 2); } else { PORTD &= ~(1 << 2); } }
+		else if (pin == 3)		{ if (logic) { PORTD |= (1 << 3); } else { PORTD &= ~(1 << 3); } }
+		else if (pin == 4)		{ if (logic) { PORTD |= (1 << 4); } else { PORTD &= ~(1 << 4); } }
+		else if (pin == 5)		{ if (logic) { PORTD |= (1 << 5); } else { PORTD &= ~(1 << 5); } }
+		else if (pin == 6)		{ if (logic) { PORTD |= (1 << 6); } else { PORTD &= ~(1 << 6); } }
+		else if (pin == 7)		{ if (logic) { PORTD |= (1 << 7); } else { PORTD &= ~(1 << 7); } }
+		else if (pin == 8)		{ if (logic) { PORTB |= (1 << 0); } else { PORTB &= ~(1 << 0); } }
+		else if (pin == 9)		{ if (logic) { PORTB |= (1 << 1); } else { PORTB &= ~(1 << 1); } }
+		else if (pin == 10)		{ if (logic) { PORTB |= (1 << 2); } else { PORTB &= ~(1 << 2); } }
+		else if (pin == 11)		{ if (logic) { PORTB |= (1 << 3); } else { PORTB &= ~(1 << 3); } }
+		else if (pin == 12)		{ if (logic) { PORTB |= (1 << 4); } else { PORTB &= ~(1 << 4); } }
+		else if (pin == 13)		{ if (logic) { PORTB |= (1 << 5); } else { PORTB &= ~(1 << 5); } }
+		else if (pin == 14)		{ if (logic) { PORTC |= (1 << 0); } else { PORTC &= ~(1 << 0); } }
+		else if (pin == 15)		{ if (logic) { PORTC |= (1 << 1); } else { PORTC &= ~(1 << 1); } }
+		else if (pin == 16)		{ if (logic) { PORTC |= (1 << 2); } else { PORTC &= ~(1 << 2); } }
+		else if (pin == 17)		{ if (logic) { PORTC |= (1 << 3); } else { PORTC &= ~(1 << 3); } }
+		else if (pin == 18)		{ if (logic) { PORTC |= (1 << 4); } else { PORTC &= ~(1 << 4); } }
+		else if (pin == 19)		{ if (logic) { PORTC |= (1 << 5); } else { PORTC &= ~(1 << 5); } }
+		else if (pin == 20)		{ if (logic) { PORTC |= (1 << 6); } else { PORTC &= ~(1 << 6); } }
 	}
-	void ToggleDigital() const {
-		if constexpr (pin == 0)         { PORTD ^= (1 << 0);
-		} else if constexpr (pin == 1)  { PORTD ^= (1 << 1);
-		} else if constexpr (pin == 2)  { PORTD ^= (1 << 2);
-		} else if constexpr (pin == 3)  { PORTD ^= (1 << 3);
-		} else if constexpr (pin == 4)  { PORTD ^= (1 << 4);
-		} else if constexpr (pin == 5)  { PORTD ^= (1 << 5);
-		} else if constexpr (pin == 6)  { PORTD ^= (1 << 6);
-		} else if constexpr (pin == 7)  { PORTD ^= (1 << 7);
-		} else if constexpr (pin == 8)  { PORTB ^= (1 << 0);
-		} else if constexpr (pin == 9)  { PORTB ^= (1 << 1);
-		} else if constexpr (pin == 10) { PORTB ^= (1 << 2);
-		} else if constexpr (pin == 11) { PORTB ^= (1 << 3);
-		} else if constexpr (pin == 12) { PORTB ^= (1 << 4);
-		} else if constexpr (pin == 13) { PORTB ^= (1 << 5);
-		} else if constexpr (pin == 14) { PORTC ^= (1 << 0);
-		} else if constexpr (pin == 15) { PORTC ^= (1 << 1);
-		} else if constexpr (pin == 16) { PORTC ^= (1 << 2);
-		} else if constexpr (pin == 17) { PORTC ^= (1 << 3);
-		} else if constexpr (pin == 18) { PORTC ^= (1 << 4);
-		} else if constexpr (pin == 19) { PORTC ^= (1 << 5);
-		} else if constexpr (pin == 20) { PORTC ^= (1 << 6);
-		}
+	void DigitalImpulse() const {
+		DigitalOutput<High>();
+		DigitalOutput<Low>();
 	}
-	Logic InputDigital() const {
-		if constexpr (pin == 0) return (PIND >> 0) & 1;
-		else if (pin == 1)      return (PIND >> 1) & 1;
-		else if (pin == 2)      return (PIND >> 2) & 1;
-		else if (pin == 3)      return (PIND >> 3) & 1;
-		else if (pin == 4)      return (PIND >> 4) & 1;
-		else if (pin == 5)      return (PIND >> 5) & 1;
-		else if (pin == 6)      return (PIND >> 6) & 1;
-		else if (pin == 7)      return (PIND >> 7) & 1;
-		else if (pin == 8)      return (PINB >> 0) & 1;
-		else if (pin == 9)      return (PINB >> 1) & 1;
-		else if (pin == 10)     return (PINB >> 2) & 1;
-		else if (pin == 11)     return (PINB >> 3) & 1;
-		else if (pin == 12)     return (PINB >> 4) & 1;
-		else if (pin == 13)     return (PINB >> 5) & 1;
-		else if (pin == 14)     return (PINC >> 0) & 1;
-		else if (pin == 15)     return (PINC >> 1) & 1;
-		else if (pin == 16)     return (PINC >> 2) & 1;
-		else if (pin == 17)     return (PINC >> 3) & 1;
-		else if (pin == 18)     return (PINC >> 4) & 1;
-		else if (pin == 19)     return (PINC >> 5) & 1;
-		else if (pin == 20)     return (PINC >> 6) & 1;
+	void DigitalToggle() const {
+		if constexpr (pin == 0)			{ PORTD ^= (1 << 0); }
+		else if constexpr (pin == 1)	{ PORTD ^= (1 << 1); }
+		else if constexpr (pin == 2)	{ PORTD ^= (1 << 2); }
+		else if constexpr (pin == 3)	{ PORTD ^= (1 << 3); }
+		else if constexpr (pin == 4)	{ PORTD ^= (1 << 4); }
+		else if constexpr (pin == 5)	{ PORTD ^= (1 << 5); }
+		else if constexpr (pin == 6)	{ PORTD ^= (1 << 6); }
+		else if constexpr (pin == 7)	{ PORTD ^= (1 << 7); }
+		else if constexpr (pin == 8)	{ PORTB ^= (1 << 0); }
+		else if constexpr (pin == 9)	{ PORTB ^= (1 << 1); }
+		else if constexpr (pin == 10)	{ PORTB ^= (1 << 2); }
+		else if constexpr (pin == 11)	{ PORTB ^= (1 << 3); }
+		else if constexpr (pin == 12)	{ PORTB ^= (1 << 4); }
+		else if constexpr (pin == 13)	{ PORTB ^= (1 << 5); }
+		else if constexpr (pin == 14)	{ PORTC ^= (1 << 0); }
+		else if constexpr (pin == 15)	{ PORTC ^= (1 << 1); }
+		else if constexpr (pin == 16)	{ PORTC ^= (1 << 2); }
+		else if constexpr (pin == 17)	{ PORTC ^= (1 << 3); }
+		else if constexpr (pin == 18)	{ PORTC ^= (1 << 4); }
+		else if constexpr (pin == 19)	{ PORTC ^= (1 << 5); }
+		else if constexpr (pin == 20)	{ PORTC ^= (1 << 6); }
+	}
+	Logic DigitalInput() const {
+		if constexpr (pin == 0)	return (PIND >> 0) & 1;
+		else if (pin == 1)		return (PIND >> 1) & 1;
+		else if (pin == 2)		return (PIND >> 2) & 1;
+		else if (pin == 3)		return (PIND >> 3) & 1;
+		else if (pin == 4)		return (PIND >> 4) & 1;
+		else if (pin == 5)		return (PIND >> 5) & 1;
+		else if (pin == 6)		return (PIND >> 6) & 1;
+		else if (pin == 7)		return (PIND >> 7) & 1;
+		else if (pin == 8)		return (PINB >> 0) & 1;
+		else if (pin == 9)		return (PINB >> 1) & 1;
+		else if (pin == 10)		return (PINB >> 2) & 1;
+		else if (pin == 11)		return (PINB >> 3) & 1;
+		else if (pin == 12)		return (PINB >> 4) & 1;
+		else if (pin == 13)		return (PINB >> 5) & 1;
+		else if (pin == 14)		return (PINC >> 0) & 1;
+		else if (pin == 15)		return (PINC >> 1) & 1;
+		else if (pin == 16)		return (PINC >> 2) & 1;
+		else if (pin == 17)		return (PINC >> 3) & 1;
+		else if (pin == 18)		return (PINC >> 4) & 1;
+		else if (pin == 19)		return (PINC >> 5) & 1;
+		else if (pin == 20)		return (PINC >> 6) & 1;
 		return Low;
 	}
-	uint8_t ProbeDigital() const {
-		if constexpr (pin == 0) return PIND & (1 << 0);
-		else if (pin == 1)      return PIND & (1 << 1);
-		else if (pin == 2)      return PIND & (1 << 2);
-		else if (pin == 3)      return PIND & (1 << 3);
-		else if (pin == 4)      return PIND & (1 << 4);
-		else if (pin == 5)      return PIND & (1 << 5);
-		else if (pin == 6)      return PIND & (1 << 6);
-		else if (pin == 7)      return PIND & (1 << 7);
-		else if (pin == 8)      return PINB & (1 << 0);
-		else if (pin == 9)      return PINB & (1 << 1);
-		else if (pin == 10)     return PINB & (1 << 2);
-		else if (pin == 11)     return PINB & (1 << 3);
-		else if (pin == 12)     return PINB & (1 << 4);
-		else if (pin == 13)     return PINB & (1 << 5);
-		else if (pin == 14)     return PINC & (1 << 0);
-		else if (pin == 15)     return PINC & (1 << 1);
-		else if (pin == 16)     return PINC & (1 << 2);
-		else if (pin == 17)     return PINC & (1 << 3);
-		else if (pin == 18)     return PINC & (1 << 4);
-		else if (pin == 19)     return PINC & (1 << 5);
-		else if (pin == 20)     return PINC & (1 << 6);
+	uint8_t DigitalSense() const {
+		if constexpr (pin == 0)	return PIND & (1 << 0);
+		else if (pin == 1)		return PIND & (1 << 1);
+		else if (pin == 2)		return PIND & (1 << 2);
+		else if (pin == 3)		return PIND & (1 << 3);
+		else if (pin == 4)		return PIND & (1 << 4);
+		else if (pin == 5)		return PIND & (1 << 5);
+		else if (pin == 6)		return PIND & (1 << 6);
+		else if (pin == 7)		return PIND & (1 << 7);
+		else if (pin == 8)		return PINB & (1 << 0);
+		else if (pin == 9)		return PINB & (1 << 1);
+		else if (pin == 10)		return PINB & (1 << 2);
+		else if (pin == 11)		return PINB & (1 << 3);
+		else if (pin == 12)		return PINB & (1 << 4);
+		else if (pin == 13)		return PINB & (1 << 5);
+		else if (pin == 14)		return PINC & (1 << 0);
+		else if (pin == 15)		return PINC & (1 << 1);
+		else if (pin == 16)		return PINC & (1 << 2);
+		else if (pin == 17)		return PINC & (1 << 3);
+		else if (pin == 18)		return PINC & (1 << 4);
+		else if (pin == 19)		return PINC & (1 << 5);
+		else if (pin == 20)		return PINC & (1 << 6);
 		return 0x00;
 	}
-	void EnablePWM() const {
+	void PWMEnable() const {
 		if constexpr (pin == 3) {
 			TCCR2A |= (1 << COM2B1);	// Connects OC2B pin to PD3
 		} else if (pin == 5) {
@@ -242,7 +262,7 @@ public:
 			TCCR2A |= (1 << COM2A1);	// Connects OC2A pin to PB3
 		}
 	}
-	void DisablePWM() const {
+	void PWMDisable() const {
 		if constexpr (pin == 3) {
 			TCCR2A &= ~(1 << COM2B1);	// Disconnects OC2B pin from PD3
 		} else if (pin == 5) {
@@ -257,7 +277,7 @@ public:
 			TCCR2A &= ~(1 << COM2A1);	// Disconnects OC2A pin from PB3
 		}
 	}
-	void OutputPWM(uint8_t value) const {
+	void PWMOutput(uint8_t value) const {
 		if constexpr (pin == 3) {
 			OCR2B = value;				// Set compare value for OC2B
 		} else if (pin == 5) {
@@ -272,25 +292,25 @@ public:
 			OCR2A = value;				// Set compare value for OC2A
 		}
 	}
-	void OutputFinePWM(uint8_t value) const {
+	void PWMOutputFine(uint8_t value) const {
 		if (value == 0) {
-			DisablePWM();
-			OutputDigital<Low>();
+			PWMDisable();
+			DigitalOutput<Low>();
 		} else if (value == 255) {
-			DisablePWM();
-			OutputDigital<High>();
+			PWMDisable();
+			DigitalOutput<High>();
 		} else {
-			EnablePWM();
-			OutputPWM(value);
+			PWMEnable();
+			PWMOutput(value);
 		}
 	}
-	uint16_t InputAnalog() const {
+	uint16_t AnalogInput() const {
 		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
 		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
 		while (ADCSRA & (0b1 << ADSC)) ;
 		return ADC;
 	}
-	uint8_t InputAnalog8bit() const {
+	uint8_t AnalogInput8bit() const {
 		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
 		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
 		while (ADCSRA & (0b1 << ADSC)) ;

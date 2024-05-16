@@ -17,7 +17,7 @@ av::ADConv<> adConv;
 
 void setup()
 {
-	serial.Open(av::Serial::BaudRate57600);
+	serial.Open(serial.Speed::Bps57600);
 	av::Ports<>::SetMode();
 	portD2.SetMode<av::Out>();
 	adConv.Init();
