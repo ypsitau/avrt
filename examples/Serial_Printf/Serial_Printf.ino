@@ -6,7 +6,7 @@ AVRT_IMPLEMENT_Serial0_NoRecv(serial)
 
 void setup()
 {
-	serial.Open(av::Serial::BaudRate57600, av::Serial::CharSize8, av::Serial::StopBit1, av::Serial::ParityNone);
+	serial.Open(serial.Speed::Bps57600, serial.CharSize::Bits8, serial.StopBit::Bits1, serial.Parity::None);
 	serial.Println("---- %d specifier ----");
 	serial.Printf(F("%%d 0              '%d'\n"), 0);
 	serial.Printf(F("%%d 1234           '%d'\n"), 1234);

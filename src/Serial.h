@@ -22,37 +22,40 @@ namespace avrt {
 //------------------------------------------------------------------------------
 class Serial : public Stream {
 public:
-	enum BaudRate {
-		BaudRate2400,
-		BaudRate4800,
-		BaudRate9600,
-		BaudRate14400,
-		BaudRate19200,
-		BaudRate28800,
-		BaudRate38400,
-		BaudRate57600,
-		BaudRate76800,
-		BaudRate115200,
-		BaudRate230400,
-		BaudRate250000,
-		BaudRate500000,
-		BaudRate1000000,
+	enum class Speed {
+		Bps2400,
+		Bps4800,
+		Bps9600,
+		Bps14400,
+		Bps19200,
+		Bps28800,
+		Bps38400,
+		Bps57600,
+		Bps76800,
+		Bps115200,
+		Bps230400,
+		Bps250000,
+		Bps500000,
+		Bps1000000,
 	};	
+	enum class CharSize {
+		Bits5	= 0,
+		Bits6	= 1,
+		Bits7	= 2,
+		Bits8	= 3,
+		Bits9	= 7,
+	};
+	enum class StopBit {
+		Bits1	= 0,
+		Bits2	= 1,
+	};
+	enum class Parity {
+		None	= 0,
+		Even	= 2,
+		Odd		= 3,
+	};
 public:
-	constexpr static uint8_t CharSize5	= 0b000;
-	constexpr static uint8_t CharSize6	= 0b001;
-	constexpr static uint8_t CharSize7	= 0b010;
-	constexpr static uint8_t CharSize8	= 0b011;
-	constexpr static uint8_t CharSize9	= 0b111;
-public:
-	constexpr static uint8_t ParityNone	= 0b00;
-	constexpr static uint8_t ParityEven	= 0b10;
-	constexpr static uint8_t ParityOdd	= 0b11;
-public:
-	constexpr static uint8_t StopBit1	= 0b0;
-	constexpr static uint8_t StopBit2	= 0b1;
-public:
-	static uint16_t LookupUBRR(BaudRate baudRate, bool doubleSpeedFlag);
+	static uint16_t LookupUBRR(Speed speed, bool doubleSpeedFlag);
 };
 
 //------------------------------------------------------------------------------
@@ -77,11 +80,11 @@ private:
 public:
 	Serial0() {}
 	FIFOBuffEx& GetBuffForRead() { return buffs_[0]; }
-	void Open(BaudRate baudRate, uint8_t charSize = CharSize8, uint8_t stopBit = StopBit1, uint8_t parity = ParityNone) {
+	void Open(Speed speed, CharSize charSize = CharSize::Bits8, StopBit stopBit = StopBit::Bits1, Parity parity = Parity::None) {
 		constexpr uint8_t dataRXCIE0 = enableReceive? 0b1 : 0b0; // RXCIEn: RX Complete Interrupt Enable n
-		uint8_t dataUCSZ = charSize;
-		uint8_t dataUSBS = stopBit;
-		uint8_t dataUPM = parity;
+		uint8_t dataUCSZ = static_cast<uint8_t>(charSize);
+		uint8_t dataUSBS = static_cast<uint8_t>(stopBit);
+		uint8_t dataUPM = static_cast<uint8_t>(parity);
 		UCSR0A =
 			(0b1 << TXC0) |					// TXCn: USART Transmit Complete .. set one to clear
 			(dataU2X << U2X0) |				// U2Xn: Double the USART Transmission Speed
@@ -100,7 +103,7 @@ public:
 			(dataUSBS << USBS0) |			// USBSn: Stop Bit Select
 			((dataUCSZ & 0b11) << UCSZ00) |	// UCSZn: Character Size
 			(dataUCPOL0 << UCPOL0);			// UCPOLn: Clock Polarity = Tx on Rising XCKn & Rx on Falling XCKn
-		uint16_t dataUBRR = LookupUBRR(baudRate, dataU2X);
+		uint16_t dataUBRR = LookupUBRR(speed, dataU2X);
 		UBRR0H = static_cast<uint8_t>((dataUBRR >> 8) & 0xff); // this must be written first
 		UBRR0L = static_cast<uint8_t>(dataUBRR & 0xff);
 	}
