@@ -49,7 +49,7 @@ public:
 		PORTC =	((mode14 >> 1) << 0) | ((mode15 >> 1) << 1) | ((mode16 >> 1) << 2) | ((mode17 >> 1) << 3) |
 				((mode18 >> 1) << 4) | ((mode19 >> 1) << 5) | ((mode20 >> 1) << 6);
 	}
-	void DigitalHigh(int pin) const {
+	static void DigitalHigh(uint8_t pin) {
 		if (pin == 0)		{ PORTD |= (1 << 0); }
 		else if (pin == 1)	{ PORTD |= (1 << 1); }
 		else if (pin == 2)	{ PORTD |= (1 << 2); }
@@ -72,7 +72,7 @@ public:
 		else if (pin == 19)	{ PORTC |= (1 << 5); }
 		else if (pin == 20)	{ PORTC |= (1 << 6); }
 	}
-	void DigitalLow(int pin) const {
+	static DigitalLow(uint8_t pin) {
 		if (pin == 0)		{ PORTD &= ~(1 << 0); }
 		else if (pin == 1)	{ PORTD &= ~(1 << 1); }
 		else if (pin == 2)	{ PORTD &= ~(1 << 2); }
@@ -95,12 +95,60 @@ public:
 		else if (pin == 19)	{ PORTC &= ~(1 << 5); }
 		else if (pin == 20)	{ PORTC &= ~(1 << 6); }
 	}
-	void DigitalOutput(int pin, Logic logic) const {
+	static void DigitalOutput(uint8_t pin, Logic logic) {
 		if (logic) {
 			DigitalHigh(pin);
 		} else {
 			DigitalLow(pin);
 		}
+	}
+	static Logic DigitalInput(uint8_t pin) {
+		if (pin == 0)			return (PIND >> 0) & 1;
+		else if (pin == 1)		return (PIND >> 1) & 1;
+		else if (pin == 2)		return (PIND >> 2) & 1;
+		else if (pin == 3)		return (PIND >> 3) & 1;
+		else if (pin == 4)		return (PIND >> 4) & 1;
+		else if (pin == 5)		return (PIND >> 5) & 1;
+		else if (pin == 6)		return (PIND >> 6) & 1;
+		else if (pin == 7)		return (PIND >> 7) & 1;
+		else if (pin == 8)		return (PINB >> 0) & 1;
+		else if (pin == 9)		return (PINB >> 1) & 1;
+		else if (pin == 10)		return (PINB >> 2) & 1;
+		else if (pin == 11)		return (PINB >> 3) & 1;
+		else if (pin == 12)		return (PINB >> 4) & 1;
+		else if (pin == 13)		return (PINB >> 5) & 1;
+		else if (pin == 14)		return (PINC >> 0) & 1;
+		else if (pin == 15)		return (PINC >> 1) & 1;
+		else if (pin == 16)		return (PINC >> 2) & 1;
+		else if (pin == 17)		return (PINC >> 3) & 1;
+		else if (pin == 18)		return (PINC >> 4) & 1;
+		else if (pin == 19)		return (PINC >> 5) & 1;
+		else if (pin == 20)		return (PINC >> 6) & 1;
+		return Low;
+	}
+	static uint8_t DigitalSense(uint8_t pin) {
+		if (pin == 0)			return PIND & (1 << 0);
+		else if (pin == 1)		return PIND & (1 << 1);
+		else if (pin == 2)		return PIND & (1 << 2);
+		else if (pin == 3)		return PIND & (1 << 3);
+		else if (pin == 4)		return PIND & (1 << 4);
+		else if (pin == 5)		return PIND & (1 << 5);
+		else if (pin == 6)		return PIND & (1 << 6);
+		else if (pin == 7)		return PIND & (1 << 7);
+		else if (pin == 8)		return PINB & (1 << 0);
+		else if (pin == 9)		return PINB & (1 << 1);
+		else if (pin == 10)		return PINB & (1 << 2);
+		else if (pin == 11)		return PINB & (1 << 3);
+		else if (pin == 12)		return PINB & (1 << 4);
+		else if (pin == 13)		return PINB & (1 << 5);
+		else if (pin == 14)		return PINC & (1 << 0);
+		else if (pin == 15)		return PINC & (1 << 1);
+		else if (pin == 16)		return PINC & (1 << 2);
+		else if (pin == 17)		return PINC & (1 << 3);
+		else if (pin == 18)		return PINC & (1 << 4);
+		else if (pin == 19)		return PINC & (1 << 5);
+		else if (pin == 20)		return PINC & (1 << 6);
+		return 0x00;
 	}
 };
 
@@ -109,7 +157,7 @@ public:
 //------------------------------------------------------------------------------
 template<int pin_> class Port {
 public:
-	constexpr static int pin = pin_;
+	constexpr static uint8_t pin = pin_;
 public:
 	template<int mode> void SetMode() const {
 		if constexpr (pin == 0)         {
