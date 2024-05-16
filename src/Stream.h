@@ -229,30 +229,6 @@ const char* FormatterFlags::FormatNumber_x(T num, char* buff, size_t size) const
 }
 
 //------------------------------------------------------------------------------
-// StringPtr
-//------------------------------------------------------------------------------
-class StringPtr {
-public:
-	virtual char Next() = 0;
-};
-
-class StringPtr_SRAM : public StringPtr {
-private:
-	const char* p_;
-public:
-	StringPtr_SRAM(const char* p) : p_(p) {}
-	virtual char Next() override { return *p_++; }
-};
-
-class StringPtr_Flash : public StringPtr {
-private:
-	const char* p_;
-public:
-	StringPtr_Flash(const __FlashStringHelper* p) : p_(reinterpret_cast<const char*>(p)) {}
-	virtual char Next() override { char ch = pgm_read_byte(p_); p_++; return ch; }
-};
-
-//------------------------------------------------------------------------------
 // Stream
 //------------------------------------------------------------------------------
 class Stream {
@@ -272,6 +248,7 @@ public:
 	bool PrintfV(const __FlashStringHelper* format, va_list ap);
 	bool PrintfV(StringPtr& format, va_list ap);
 	void PutAlignedString(const FormatterFlags& formatterFlags, const char* str, int cntMax = -1);
+	void PutAlignedStringInFlash(const FormatterFlags& formatterFlags, const __FlashStringHelper* str, int cntMax = -1);
 public:
 	virtual void SendData(uint8_t) = 0;
 	virtual uint8_t RecvData() = 0;

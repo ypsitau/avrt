@@ -55,6 +55,30 @@ constexpr int A6			= 20;
 
 constexpr uint8_t PinToADCMux(uint8_t pin) { return pin - A0; }
 
+//------------------------------------------------------------------------------
+// StringPtr
+//------------------------------------------------------------------------------
+class StringPtr {
+public:
+	virtual char Next() = 0;
+};
+
+class StringPtr_SRAM : public StringPtr {
+private:
+	const char* p_;
+public:
+	StringPtr_SRAM(const char* p) : p_(p) {}
+	virtual char Next() override { return *p_++; }
+};
+
+class StringPtr_Flash : public StringPtr {
+private:
+	const char* p_;
+public:
+	StringPtr_Flash(const __FlashStringHelper* p) : p_(reinterpret_cast<const char*>(p)) {}
+	virtual char Next() override { char ch = pgm_read_byte(p_); p_++; return ch; }
+};
+
 }
 
 #endif

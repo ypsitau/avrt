@@ -7,6 +7,15 @@ AVRT_IMPLEMENT_Serial0_NoRecv(serial)
 void setup()
 {
 	serial.Open(serial.Speed::Bps57600, serial.CharSize::Bits8, serial.StopBit::Bits1, serial.Parity::None);
+
+	const char* str = PSTR("Hello");
+	//serial.Printf(F("'%S'\n"), str);
+	for (const char* p = reinterpret_cast<const char*>(str); ; p++) {
+		char ch = pgm_read_byte(*p);
+		if (ch == '\0') break;
+		serial.PutChar(ch);
+	}
+	return;
 	serial.Println("---- %d specifier ----");
 	serial.Printf(F("%%d 0              '%d'\n"), 0);
 	serial.Printf(F("%%d 1234           '%d'\n"), 1234);
@@ -154,12 +163,10 @@ void setup()
 	serial.Printf(F("%%lx 2147483647L   '%lx'\n"), 2147483647L);
 	serial.Printf(F("%%lx -2147483648L  '%lx'\n"), -2147483648L);
 	serial.Printf(F("%%lx 4294967295L   '%lx'\n"), 4294967295L);
-	serial.Println("---- %ls specifier ----");
-	serial.Printf(F("%%s \"Hello\"        '%s'\n"), F("Hello"));
-	serial.Printf(F("%%8s \"Hello\"       '%8s'\n"), F("Hello"));
-	serial.Printf(F("%%-8s \"Hello\"      '%-8s'\n"), F("Hello"));
-	//serial.Println("---- %f specifier ----");
-	//serial.Printf(F("%%f 0              '%f'\n"), 0);
+	serial.Println("---- %S specifier ----");
+	serial.Printf(F("%%S \"Hello\"        '%S'\n"), F("Hello"));
+	serial.Printf(F("%%8S \"Hello\"       '%8S'\n"), F("Hello"));
+	serial.Printf(F("%%-8S \"Hello\"      '%-8S'\n"), F("Hello"));
 }
 
 void loop()

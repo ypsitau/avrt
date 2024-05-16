@@ -6,5 +6,5 @@
   "fqbn": "arduino:avr:pro",
   "hardwareFolders": "C:\\Users\\ypsit\\AppData\\Local\\Arduino15\\packages",
   "otherLibrariesFolders": "C:\\users\\ypsit\\source\\Arduino\\libraries",
-  "sketchLocation": "C:\\Users\\ypsit\\source\\Arduino\\exp-avrt\\Serial_Printf"
+  "sketchLocation": "C:\\Users\\ypsit\\source\\Arduino\\libraries\\avrt\\examples\\Serial_Printf"
 }
