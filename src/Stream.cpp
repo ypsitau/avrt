@@ -393,16 +393,16 @@ void Stream::PutAlignedString(const FormatterFlags& formatterFlags, const char* 
 void Stream::PutAlignedStringInFlash(const FormatterFlags& formatterFlags, const __FlashStringHelper* str, int cntMax)
 {
 	int cnt = 0;
-	for (const char* p = reinterpret_cast<const char*>(str); pgm_read_byte(*p); p++, cnt++) ;
+	for (const char* p = reinterpret_cast<const char*>(str); pgm_read_byte(p); p++, cnt++) ;
 	if (cntMax >= 0 && cnt > cntMax) cnt = cntMax;
 	int cntPadding = formatterFlags.fieldMinWidth - cnt;
 	const char* p = reinterpret_cast<const char*>(str);
 	if (formatterFlags.leftAlignFlag) {
-		for ( ; cnt > 0; p++, cnt--) PutChar(pgm_read_byte(*p));
+		for ( ; cnt > 0; p++, cnt--) PutChar(pgm_read_byte(p));
 		while (cntPadding-- > 0) PutChar(formatterFlags.charPadding);
 	} else {
 		while (cntPadding-- > 0) PutChar(formatterFlags.charPadding);
-		for ( ; cnt > 0; p++, cnt--) PutChar(pgm_read_byte(*p));
+		for ( ; cnt > 0; p++, cnt--) PutChar(pgm_read_byte(p));
 	}
 }
 
