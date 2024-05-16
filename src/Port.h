@@ -339,68 +339,6 @@ public:
 		else if (pin == 20)		return PINC & (1 << 6);
 		return 0x00;
 	}
-	void EnableExternalInterrupt(Sense sense) const {
-		if constexpr (pin == 2) {	// INT0
-			EICRA = EICRA & ~(0b11 << ISC00) | (static_cast<uint8_t>(sense) << ISC00);
-			EIMSK |= 0b1 << INT0;
-		} else if (pin == 3) {		// INT1
-			EICRA = EICRA & ~(0b11 << ISC10) | (static_cast<uint8_t>(sense) << ISC10);
-			EIMSK |= 0b1 << INT1;
-		}
-	}
-	void DisableExternalInterrupt(Sense sense) const {
-		if constexpr (pin == 2) {	// INT0
-			EIMSK &= ~(0b1 << INT0);
-		} else if (pin == 3) {		// INT1
-			EIMSK &= ~(0b1 << INT1);
-		}
-	}
-	void EnablePinChangeInterrupt() const {
-		if constexpr (pin == 0)	{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 0); } // PCINT16
-		else if (pin == 1)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 1); } // PCINT17
-		else if (pin == 2)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 2); } // PCINT18
-		else if (pin == 3)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 3); } // PCINT19
-		else if (pin == 4)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 4); } // PCINT20
-		else if (pin == 5)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 5); } // PCINT21
-		else if (pin == 6)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 6); } // PCINT22
-		else if (pin == 7)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 7); } // PCINT23
-		else if (pin == 8)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 0); } // PCINT0
-		else if (pin == 9)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 1); } // PCINT1
-		else if (pin == 10)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 2); } // PCINT2
-		else if (pin == 11)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 3); } // PCINT3
-		else if (pin == 12)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 4); } // PCINT4
-		else if (pin == 13)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 5); } // PCINT5
-		else if (pin == 14)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 0); } // PCINT8
-		else if (pin == 15)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 1); } // PCINT9
-		else if (pin == 16)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 2); } // PCINT10
-		else if (pin == 17)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 3); } // PCINT11
-		else if (pin == 18)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 4); } // PCINT12
-		else if (pin == 19)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 5); } // PCINT13
-		else if (pin == 20)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 6); } // PCINT14
-	}
-	void DisablePinChangeInterrupt() const {
-		if constexpr (pin == 0)	{ PCMSK2 &= ~(1 << 0); } // PCINT16
-		else if (pin == 1)		{ PCMSK2 &= ~(1 << 1); } // PCINT17
-		else if (pin == 2)		{ PCMSK2 &= ~(1 << 2); } // PCINT18
-		else if (pin == 3)		{ PCMSK2 &= ~(1 << 3); } // PCINT19
-		else if (pin == 4)		{ PCMSK2 &= ~(1 << 4); } // PCINT20
-		else if (pin == 5)		{ PCMSK2 &= ~(1 << 5); } // PCINT21
-		else if (pin == 6)		{ PCMSK2 &= ~(1 << 6); } // PCINT22
-		else if (pin == 7)		{ PCMSK2 &= ~(1 << 7); } // PCINT23
-		else if (pin == 8)		{ PCMSK0 &= ~(1 << 0); } // PCINT0
-		else if (pin == 9)		{ PCMSK0 &= ~(1 << 1); } // PCINT1
-		else if (pin == 10)		{ PCMSK0 &= ~(1 << 2); } // PCINT2
-		else if (pin == 11)		{ PCMSK0 &= ~(1 << 3); } // PCINT3
-		else if (pin == 12)		{ PCMSK0 &= ~(1 << 4); } // PCINT4
-		else if (pin == 13)		{ PCMSK0 &= ~(1 << 5); } // PCINT5
-		else if (pin == 14)		{ PCMSK1 &= ~(1 << 0); } // PCINT8
-		else if (pin == 15)		{ PCMSK1 &= ~(1 << 1); } // PCINT9
-		else if (pin == 16)		{ PCMSK1 &= ~(1 << 2); } // PCINT10
-		else if (pin == 17)		{ PCMSK1 &= ~(1 << 3); } // PCINT11
-		else if (pin == 18)		{ PCMSK1 &= ~(1 << 4); } // PCINT12
-		else if (pin == 19)		{ PCMSK1 &= ~(1 << 5); } // PCINT13
-		else if (pin == 20)		{ PCMSK1 &= ~(1 << 6); } // PCINT14
-	}
 	void PWMEnable() const {
 		if constexpr (pin == 3) {
 			TCCR2A |= (1 << COM2B1);	// Connects OC2B pin to PD3
@@ -469,6 +407,68 @@ public:
 		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
 		while (ADCSRA & (0b1 << ADSC)) ;
 		return ADCH;
+	}
+	void EnableExternalInterrupt(Sense sense) const {
+		if constexpr (pin == 2) {	// INT0
+			EICRA = EICRA & ~(0b11 << ISC00) | (static_cast<uint8_t>(sense) << ISC00);
+			EIMSK |= 0b1 << INT0;
+		} else if (pin == 3) {		// INT1
+			EICRA = EICRA & ~(0b11 << ISC10) | (static_cast<uint8_t>(sense) << ISC10);
+			EIMSK |= 0b1 << INT1;
+		}
+	}
+	void DisableExternalInterrupt(Sense sense) const {
+		if constexpr (pin == 2) {	// INT0
+			EIMSK &= ~(0b1 << INT0);
+		} else if (pin == 3) {		// INT1
+			EIMSK &= ~(0b1 << INT1);
+		}
+	}
+	void EnablePinChangeInterrupt() const {
+		if constexpr (pin == 0)	{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 0); } // PCINT16
+		else if (pin == 1)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 1); } // PCINT17
+		else if (pin == 2)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 2); } // PCINT18
+		else if (pin == 3)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 3); } // PCINT19
+		else if (pin == 4)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 4); } // PCINT20
+		else if (pin == 5)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 5); } // PCINT21
+		else if (pin == 6)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 6); } // PCINT22
+		else if (pin == 7)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 7); } // PCINT23
+		else if (pin == 8)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 0); } // PCINT0
+		else if (pin == 9)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 1); } // PCINT1
+		else if (pin == 10)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 2); } // PCINT2
+		else if (pin == 11)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 3); } // PCINT3
+		else if (pin == 12)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 4); } // PCINT4
+		else if (pin == 13)		{ PCICR |= (1 << PCIE0); PCMSK0 |= (1 << 5); } // PCINT5
+		else if (pin == 14)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 0); } // PCINT8
+		else if (pin == 15)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 1); } // PCINT9
+		else if (pin == 16)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 2); } // PCINT10
+		else if (pin == 17)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 3); } // PCINT11
+		else if (pin == 18)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 4); } // PCINT12
+		else if (pin == 19)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 5); } // PCINT13
+		else if (pin == 20)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 6); } // PCINT14
+	}
+	void DisablePinChangeInterrupt() const {
+		if constexpr (pin == 0)	{ PCMSK2 &= ~(1 << 0); } // PCINT16
+		else if (pin == 1)		{ PCMSK2 &= ~(1 << 1); } // PCINT17
+		else if (pin == 2)		{ PCMSK2 &= ~(1 << 2); } // PCINT18
+		else if (pin == 3)		{ PCMSK2 &= ~(1 << 3); } // PCINT19
+		else if (pin == 4)		{ PCMSK2 &= ~(1 << 4); } // PCINT20
+		else if (pin == 5)		{ PCMSK2 &= ~(1 << 5); } // PCINT21
+		else if (pin == 6)		{ PCMSK2 &= ~(1 << 6); } // PCINT22
+		else if (pin == 7)		{ PCMSK2 &= ~(1 << 7); } // PCINT23
+		else if (pin == 8)		{ PCMSK0 &= ~(1 << 0); } // PCINT0
+		else if (pin == 9)		{ PCMSK0 &= ~(1 << 1); } // PCINT1
+		else if (pin == 10)		{ PCMSK0 &= ~(1 << 2); } // PCINT2
+		else if (pin == 11)		{ PCMSK0 &= ~(1 << 3); } // PCINT3
+		else if (pin == 12)		{ PCMSK0 &= ~(1 << 4); } // PCINT4
+		else if (pin == 13)		{ PCMSK0 &= ~(1 << 5); } // PCINT5
+		else if (pin == 14)		{ PCMSK1 &= ~(1 << 0); } // PCINT8
+		else if (pin == 15)		{ PCMSK1 &= ~(1 << 1); } // PCINT9
+		else if (pin == 16)		{ PCMSK1 &= ~(1 << 2); } // PCINT10
+		else if (pin == 17)		{ PCMSK1 &= ~(1 << 3); } // PCINT11
+		else if (pin == 18)		{ PCMSK1 &= ~(1 << 4); } // PCINT12
+		else if (pin == 19)		{ PCMSK1 &= ~(1 << 5); } // PCINT13
+		else if (pin == 20)		{ PCMSK1 &= ~(1 << 6); } // PCINT14
 	}
 };
 
