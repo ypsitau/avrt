@@ -154,6 +154,10 @@ void setup()
 	serial.Printf(F("%%lx 2147483647L   '%lx'\n"), 2147483647L);
 	serial.Printf(F("%%lx -2147483648L  '%lx'\n"), -2147483648L);
 	serial.Printf(F("%%lx 4294967295L   '%lx'\n"), 4294967295L);
+	serial.Println("---- %ls specifier ----");
+	serial.Printf(F("%%s \"Hello\"        '%s'\n"), F("Hello"));
+	serial.Printf(F("%%8s \"Hello\"       '%8s'\n"), F("Hello"));
+	serial.Printf(F("%%-8s \"Hello\"      '%-8s'\n"), F("Hello"));
 	//serial.Println("---- %f specifier ----");
 	//serial.Printf(F("%%f 0              '%f'\n"), 0);
 }
