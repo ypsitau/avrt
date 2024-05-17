@@ -8,9 +8,9 @@ AVRT_IMPLEMENT_Serial0(serial)
 av::Port<av::D2> portD2;
 av::Port<av::D3> portD3;
 
-av::Timer0<true> timer0;	// enable interrupt: TIMER0_OVF 
-av::Timer1<true> timer1;	// enable interrupt: TIMER1_OVF
-av::Timer2<true> timer2;	// enable interrupt: TIMER2_OVF
+av::Timer0<true> timer0;	// enabled interrupt: TIMER0_OVF
+av::Timer1<true> timer1;	// enabled interrupt: TIMER1_OVF
+av::Timer2<true> timer2;	// enabled interrupt: TIMER2_OVF
 
 ISR(TIMER1_OVF_vect)
 {
