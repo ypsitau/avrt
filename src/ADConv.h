@@ -42,17 +42,17 @@ public:
 	enum class VoltRef {
 		ARef			= 0b00,
 		AVcc			= 0b01,
-		Int1V1			= 0b11
+		Int1V1			= 0b11,
 	};
 public:
 	enum class Trigger {
 		FreeRunning			= 0x0,
-		Rising_ANALOG_COMP	= 0x1,
-		Rising_INT0			= 0x2,
-		Rising_TIMER0_COMPA	= 0x3,
-		Rising_TIMER1_COMPB	= 0x5,
-		Rising_TIMER1_OVF	= 0x6,
-		Rising_TIMER_CAPT	= 0x7
+		Int_ANALOG_COMP		= 0x1,
+		Int_INT0			= 0x2,
+		Int_TIMER0_COMPA	= 0x3,
+		Int_TIMER1_COMPB	= 0x5,
+		Int_TIMER1_OVF		= 0x6,
+		Int_TIMER_CAPT		= 0x7,
 	};
 private:
 	FIFOBuffEx buffs_[(buffSize > 0)? 1 : 0];
