@@ -390,13 +390,13 @@ public:
 		}
 	}
 	uint16_t AnalogInput() const {
-		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
+		ADMUX = ADMUX & ~(0b1111 << MUX0) & ~(0b1 << ADLAR) | (PinToADCMux(pin) << MUX0);
 		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
 		while (ADCSRA & (0b1 << ADSC)) ;
 		return ADC;
 	}
 	uint8_t AnalogInput8bit() const {
-		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
+		ADMUX = ADMUX & ~(0b1111 << MUX0) | (0b1 << ADLAR) | (PinToADCMux(pin) << MUX0);
 		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
 		while (ADCSRA & (0b1 << ADSC)) ;
 		return ADCH;

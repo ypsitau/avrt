@@ -1,7 +1,0 @@
-#line 1 "C:\\Users\\ypsit\\source\\Arduino\\libraries\\avrt\\examples\\Port_InputAnalog\\.vscode\\arduino.json"
-{
-    "configuration": "cpu=16MHzatmega328",
-    "board": "arduino:avr:pro",
-    "port": "COM5",
-    "sketch": "Port_InputAnalog.ino"
-}
