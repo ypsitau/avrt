@@ -43,16 +43,14 @@ public:
 	};
 public:
 	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const {
-		uint8_t dataCS0 = static_cast<uint8_t>(clock);
-											// CS0: Clock Select
-		uint8_t dataWGM0 = static_cast<uint8_t>(waveform);
-											// WGM0: Waveform Generation Mode
+		uint8_t dataCS0 = static_cast<uint8_t>(clock);		// CS0: Clock Select
+		uint8_t dataWGM0 = static_cast<uint8_t>(waveform);	// WGM0: Waveform Generation Mode
 		uint8_t dataTOIE0 = (flags >> 0) & 1;	// TOIE0: Timer/Counter0 Overflow Interrupt Enable (TIMER0_OVF)
 		uint8_t dataOCIE0A = (flags >> 1) & 1;	// OCIE0A: Timer/Counter0 Output Compare Match A Interrupt Enable (TIMER0_COMPA)
 		uint8_t dataOCIE0B = (flags >> 2) & 1;	// OCIE0B: Timer/Counter0 Output Compare Match B Interrupt Enable (TIMER0_COMPB)
-		constexpr uint8_t dataOCF0A	= 0b1;	// OCF0A: Timer/Counter0 Output Compare A Match Flag = Set One to Clear
-		constexpr uint8_t dataOCF0B	= 0b1;	// OCF0B: Timer/Counter0 Output Compare B Match Flag = Set One to Clear
-		constexpr uint8_t dataTOV0	= 0b1;	// TOV0: Timer/Counter0 Overflow Flag = Set One to Clear
+		constexpr uint8_t dataOCF0A	= 0b1;		// OCF0A: Timer/Counter0 Output Compare A Match Flag = Set One to Clear
+		constexpr uint8_t dataOCF0B	= 0b1;		// OCF0B: Timer/Counter0 Output Compare B Match Flag = Set One to Clear
+		constexpr uint8_t dataTOV0	= 0b1;		// TOV0: Timer/Counter0 Overflow Flag = Set One to Clear
 		TCCR0A = (dataCOM0A << COM0A0) | (dataCOM0B << COM0B0) | ((dataWGM0 & 0b11) << WGM00);
 		TCCR0B = (dataFOC0A << FOC0A) | (dataFOC0B << FOC0B) | ((dataWGM0 >> 2) << WGM02) | (dataCS0 << CS00);
 		TCNT0 = 0x00;
@@ -111,16 +109,14 @@ public:
 	};
 public:
 	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const {
+		uint8_t dataCS1 = static_cast<uint8_t>(clock);		// CS1: Clock Select
+		uint8_t dataWGM1 = static_cast<uint8_t>(waveform);	// WGM1: Waveform Generation Mode
 		uint8_t dataTOIE1 = (flags >> 0) & 1;	// TOIE1: Timer/Counter1 Overflow Interrupt Enable .. (TIMER1_OVF)
 		uint8_t dataOCIE1A = (flags >> 1) & 1;	// OCIE1A: Timer/Counter1 Output Compare Match A Interrupt Enable (TIMER1_COMPA)
 		uint8_t dataOCIE1B = (flags >> 2) & 1;	// OCIE1B: Timer/Counter1 Output Compare Match B Interrupt Enable (TIMER1_COMPB)
-		uint8_t dataCS1 = static_cast<uint8_t>(clock);	
-											// CS1: Clock Select
-		uint8_t dataWGM1 = static_cast<uint8_t>(waveform);
-											// WGM1: Waveform Generation Mode
-		constexpr uint8_t dataOCF1A	= 0b1;	// OCF10A: Timer/Counter1 Output Compare A Match Flag = Set One to Clear
-		constexpr uint8_t dataOCF1B	= 0b1;	// OCF1B: Timer/Counter1 Output Compare B Match Flag = Set One to Clear
-		constexpr uint8_t dataTOV1	= 0b1;	// TOV1: Timer/Counter1 Overflow Flag = Set One to Clear
+		constexpr uint8_t dataOCF1A	= 0b1;		// OCF10A: Timer/Counter1 Output Compare A Match Flag = Set One to Clear
+		constexpr uint8_t dataOCF1B	= 0b1;		// OCF1B: Timer/Counter1 Output Compare B Match Flag = Set One to Clear
+		constexpr uint8_t dataTOV1	= 0b1;		// TOV1: Timer/Counter1 Overflow Flag = Set One to Clear
 		TCCR1A = (dataCOM1A << COM1A0) | (dataCOM1B << COM1B0) | ((dataWGM1 & 0b11) << WGM10);
 		TCCR1B = (dataICNC1 << ICNC1) | (dataICES1 << ICES1) | ((dataWGM1 >> 2) << WGM12) | (dataCS1 << CS10);
 		TCCR1C = (dataFOC1A << FOC1A) | (dataFOC1B << FOC1B);
@@ -178,16 +174,14 @@ public:
 	};
 public:
 	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const {
-		uint8_t dataCS2 = static_cast<uint8_t>(clock);
-											// CS2: Clock Select
-		uint8_t dataWGM2 = static_cast<uint8_t>(waveform);
-											// WGM2: Waveform Generation Mode
+		uint8_t dataCS2 = static_cast<uint8_t>(clock);		// CS2: Clock Select
+		uint8_t dataWGM2 = static_cast<uint8_t>(waveform);	// WGM2: Waveform Generation Mode
 		uint8_t dataTOIE2 = (flags >> 0) & 1;	// TOIE2: Timer/Counter2 Overflow Interrupt Enable .. (TIMER2_OVF)
 		uint8_t dataOCIE2A = (flags >> 1) & 1;	// OCIE2A: Timer/Counter2 Output Compare Match A Interrupt Enable (TIMER2_COMPA)
 		uint8_t dataOCIE2B = (flags >> 2) & 1;	// OCIE2B: Timer/Counter2 Output Compare Match B Interrupt Enable (TIMER2_COMPB)
-		constexpr uint8_t dataOCF2A	= 0b1;	// OCF2A: Timer/Counter2 Output Compare A Match Flag = Set One to Clear
-		constexpr uint8_t dataOCF2B	= 0b1;	// OCF2B: Timer/Counter2 Output Compare B Match Flag = Set One to Clear
-		constexpr uint8_t dataTOV2	= 0b1;	// TOV2: Timer/Counter2 Overflow Flag = Set One to Clear
+		constexpr uint8_t dataOCF2A	= 0b1;		// OCF2A: Timer/Counter2 Output Compare A Match Flag = Set One to Clear
+		constexpr uint8_t dataOCF2B	= 0b1;		// OCF2B: Timer/Counter2 Output Compare B Match Flag = Set One to Clear
+		constexpr uint8_t dataTOV2	= 0b1;		// TOV2: Timer/Counter2 Overflow Flag = Set One to Clear
 		TCCR2A = (dataCOM2A << COM2A0) | (dataCOM2B << COM2B0) | ((dataWGM2 & 0b11) << WGM20);
 		TCCR2B = (dataFOC2A << FOC2A) | (dataFOC2B << FOC2B) | ((dataWGM2 >> 2) << WGM22) | (dataCS2 << CS20);
 		TCNT2 = 0x00;
