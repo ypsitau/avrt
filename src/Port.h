@@ -51,7 +51,7 @@ public:
 		uint8_t mode18	= In,	// D18: PC4(ADC4/SDA/PCINT12)
 		uint8_t mode19	= In,	// D19: PC5(ADC5/SCL/PCINT13)
 		uint8_t mode20	= In	// D20: PC6(RESET/PCINT14)
-	> static void SetMode() {
+	> static void ChangeMode() {
 		DDRD = dataDDRD =
 			((mode0 & 1) << 0) | ((mode1 & 1) << 1) | ((mode2 & 1) << 2) | ((mode3 & 1) << 3) |
 			((mode4 & 1) << 4) | ((mode5 & 1) << 5) | ((mode6 & 1) << 6) | ((mode7 & 1) << 7);
@@ -227,7 +227,7 @@ public:
 			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 6); } else { Ports::dataDDRC &= ~(1 << 6); if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 6); } else { Ports::dataPORTC &= ~(1 << 6); } }
 		}
 	}
-	template<int mode> void SetMode() const {
+	template<int mode> void ChangeMode() const {
 		if constexpr (pin == 0)         {
 			if constexpr (mode & 1) { DDRD |= (1 << 0); } else { DDRD &= ~(1 << 0); if constexpr (mode >> 1) { PORTD |= (1 << 0); } else { PORTD &= ~(1 << 0); } }
 		} else if (pin == 1)  {
