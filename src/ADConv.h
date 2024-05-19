@@ -12,12 +12,12 @@ avrt::ADConv<> variableName;
 #define AVRT_IMPLEMENT_ADConv8bit(variableName) \
 avrt::ADConv8bit<> variableName;
 
-#define AVRT_IMPLEMENT_ADConv_AutoTrigger(variableName) \
-avrt::ADConv<32> variableName; \
+#define AVRT_IMPLEMENT_ADConv_AutoTrigger(variableName, buffSize) \
+avrt::ADConv<buffSize> variableName; \
 ISR(ADC_vect) { variableName.HandleISR_ADC(); }
 
-#define AVRT_IMPLEMENT_ADConv8bit_AutoTrigger(variableName) \
-avrt::ADConv8bit<32> variableName; \
+#define AVRT_IMPLEMENT_ADConv8bit_AutoTrigger(variableName, buffSize) \
+avrt::ADConv8bit<buffSize> variableName; \
 ISR(ADC_vect) { variableName.HandleISR_ADC(); }
 
 namespace avrt {
@@ -45,15 +45,14 @@ public:
 		Int1V1			= 0b11
 	};
 public:
-	enum class TrigSrc {
-		FreeRunning		= 0x0,
-		Analog_Comp		= 0x1,
-		Int0			= 0x2,
-		Timer0_CompA	= 0x3,
-		Timer0_Ovf		= 0x4,
-		Timer1_CompB	= 0x5,
-		Timer1_Ovf		= 0x6,
-		Timer1_Capt		= 0x7
+	enum class Trigger {
+		FreeRunning			= 0x0,
+		Rising_ANALOG_COMP	= 0x1,
+		Rising_INT0			= 0x2,
+		Rising_TIMER0_COMPA	= 0x3,
+		Rising_TIMER1_COMPB	= 0x5,
+		Rising_TIMER1_OVF	= 0x6,
+		Rising_TIMER_CAPT	= 0x7
 	};
 private:
 	FIFOBuffEx buffs_[(buffSize > 0)? 1 : 0];
@@ -80,13 +79,13 @@ public:
 			(dataADIF << ADIF) | (dataADIE << ADIE) | (dataADPS << ADPS0);
 		ADCSRB = ADCSRB & ~(0b111 << ADTS0) | (dataADTS << ADTS0);
 	}
-	template<uint8_t pin, TrigSrc trigSrc> void StartAutoTrigger() const {
-		uint8_t dataADTS = static_cast<uint8_t>(trigSrc);
+	void StartAutoTrigger(uint8_t pin, Trigger trigger) const {
+		uint8_t dataADTS = static_cast<uint8_t>(trigger);
 		ADMUX = ADMUX & ~(0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
 		ADCSRB = ADCSRB & ~(0b111 << ADTS0) | (dataADTS << ADTS0);
 		ADCSRA = ADCSRA | (0b1 << ADATE) | (0b1 << ADIE) | (0b1 << ADSC);	// ADSC: ADC Start Conversion
 	}
-	template<uint8_t pin> void StartSingle() const {
+	void StartSingle(uint8_t pin) const {
 		ADMUX = ADMUX & (~0b1111 << MUX0) | (PinToADCMux(pin) << MUX0);
 		ADCSRA |= (0b1 << ADSC);							// ADSC: ADC Start Conversion
 	}
