@@ -38,8 +38,8 @@ av::Port<av::A6> portA6;
 
 void CompileTest_Ports()
 {
-	av::Ports::SetMode<>();
-	av::Ports::SetMode<
+	av::Ports::ChangeMode<>();
+	av::Ports::ChangeMode<
 		av::In,			// D0: PD0(RXD/PCINT16)
 		av::In,			// D1: PD1(TXD/PCINT17)
 		av::In,			// D2: PD2(INT0/PCINT18)
@@ -62,7 +62,7 @@ void CompileTest_Ports()
 		av::In,			// D19: PC5(ADC5/SCL/PCINT13)
 		av::In			// D20: PC6(RESET/PCINT14)
 	>();
-	av::Ports::SetMode<
+	av::Ports::ChangeMode<
 		av::Out,		// D0: PD0(RXD/PCINT16)
 		av::Out,		// D1: PD1(TXD/PCINT17)
 		av::Out,		// D2: PD2(INT0/PCINT18)
@@ -85,7 +85,7 @@ void CompileTest_Ports()
 		av::Out,		// D19: PC5(ADC5/SCL/PCINT13)
 		av::Out			// D20: PC6(RESET/PCINT14)
 	>();
-	av::Ports::SetMode<
+	av::Ports::ChangeMode<
 		av::InPullup,	// D0: PD0(RXD/PCINT16)
 		av::InPullup,	// D1: PD1(TXD/PCINT17)
 		av::InPullup,	// D2: PD2(INT0/PCINT18)
@@ -108,7 +108,7 @@ void CompileTest_Ports()
 		av::InPullup,	// D19: PC5(ADC5/SCL/PCINT13)
 		av::InPullup	// D20: PC6(RESET/PCINT14)
 	>();
-	av::Ports::SetMode<
+	av::Ports::ChangeMode<
 		av::OutHigh,	// D0: PD0(RXD/PCINT16)
 		av::OutHigh,	// D1: PD1(TXD/PCINT17)
 		av::OutHigh,	// D2: PD2(INT0/PCINT18)
@@ -143,71 +143,71 @@ void CompileTest_AnalogComparator()
 	av::AnalogComparator<>::Init();
 }
 
-void CompileTest_Port_SetMode()
+void CompileTest_Port_ChangeMode()
 {
-	portD0.SetMode<av::In>();
-	portD1.SetMode<av::In>();
-	portD2.SetMode<av::In>();
-	portD3.SetMode<av::In>();
-	portD4.SetMode<av::In>();
-	portD5.SetMode<av::In>();
-	portD6.SetMode<av::In>();
-	portD7.SetMode<av::In>();
-	portD8.SetMode<av::In>();
-	portD9.SetMode<av::In>();
-	portD10.SetMode<av::In>();
-	portD11.SetMode<av::In>();
-	portD12.SetMode<av::In>();
-	portD13.SetMode<av::In>();
-	portD14.SetMode<av::In>();
-	portD15.SetMode<av::In>();
-	portD16.SetMode<av::In>();
-	portD17.SetMode<av::In>();
-	portD18.SetMode<av::In>();
-	portD19.SetMode<av::In>();
-	portD20.SetMode<av::In>();
-	portD0.SetMode<av::Out>();
-	portD1.SetMode<av::Out>();
-	portD2.SetMode<av::Out>();
-	portD3.SetMode<av::Out>();
-	portD4.SetMode<av::Out>();
-	portD5.SetMode<av::Out>();
-	portD6.SetMode<av::Out>();
-	portD7.SetMode<av::Out>();
-	portD8.SetMode<av::Out>();
-	portD9.SetMode<av::Out>();
-	portD10.SetMode<av::Out>();
-	portD11.SetMode<av::Out>();
-	portD12.SetMode<av::Out>();
-	portD13.SetMode<av::Out>();
-	portD14.SetMode<av::Out>();
-	portD15.SetMode<av::Out>();
-	portD16.SetMode<av::Out>();
-	portD17.SetMode<av::Out>();
-	portD18.SetMode<av::Out>();
-	portD19.SetMode<av::Out>();
-	portD20.SetMode<av::Out>();
-	portD0.SetMode<av::InPullup>();
-	portD1.SetMode<av::InPullup>();
-	portD2.SetMode<av::InPullup>();
-	portD3.SetMode<av::InPullup>();
-	portD4.SetMode<av::InPullup>();
-	portD5.SetMode<av::InPullup>();
-	portD6.SetMode<av::InPullup>();
-	portD7.SetMode<av::InPullup>();
-	portD8.SetMode<av::InPullup>();
-	portD9.SetMode<av::InPullup>();
-	portD10.SetMode<av::InPullup>();
-	portD11.SetMode<av::InPullup>();
-	portD12.SetMode<av::InPullup>();
-	portD13.SetMode<av::InPullup>();
-	portD14.SetMode<av::InPullup>();
-	portD15.SetMode<av::InPullup>();
-	portD16.SetMode<av::InPullup>();
-	portD17.SetMode<av::InPullup>();
-	portD18.SetMode<av::InPullup>();
-	portD19.SetMode<av::InPullup>();
-	portD20.SetMode<av::InPullup>();
+	portD0.ChangeMode<av::In>();
+	portD1.ChangeMode<av::In>();
+	portD2.ChangeMode<av::In>();
+	portD3.ChangeMode<av::In>();
+	portD4.ChangeMode<av::In>();
+	portD5.ChangeMode<av::In>();
+	portD6.ChangeMode<av::In>();
+	portD7.ChangeMode<av::In>();
+	portD8.ChangeMode<av::In>();
+	portD9.ChangeMode<av::In>();
+	portD10.ChangeMode<av::In>();
+	portD11.ChangeMode<av::In>();
+	portD12.ChangeMode<av::In>();
+	portD13.ChangeMode<av::In>();
+	portD14.ChangeMode<av::In>();
+	portD15.ChangeMode<av::In>();
+	portD16.ChangeMode<av::In>();
+	portD17.ChangeMode<av::In>();
+	portD18.ChangeMode<av::In>();
+	portD19.ChangeMode<av::In>();
+	portD20.ChangeMode<av::In>();
+	portD0.ChangeMode<av::Out>();
+	portD1.ChangeMode<av::Out>();
+	portD2.ChangeMode<av::Out>();
+	portD3.ChangeMode<av::Out>();
+	portD4.ChangeMode<av::Out>();
+	portD5.ChangeMode<av::Out>();
+	portD6.ChangeMode<av::Out>();
+	portD7.ChangeMode<av::Out>();
+	portD8.ChangeMode<av::Out>();
+	portD9.ChangeMode<av::Out>();
+	portD10.ChangeMode<av::Out>();
+	portD11.ChangeMode<av::Out>();
+	portD12.ChangeMode<av::Out>();
+	portD13.ChangeMode<av::Out>();
+	portD14.ChangeMode<av::Out>();
+	portD15.ChangeMode<av::Out>();
+	portD16.ChangeMode<av::Out>();
+	portD17.ChangeMode<av::Out>();
+	portD18.ChangeMode<av::Out>();
+	portD19.ChangeMode<av::Out>();
+	portD20.ChangeMode<av::Out>();
+	portD0.ChangeMode<av::InPullup>();
+	portD1.ChangeMode<av::InPullup>();
+	portD2.ChangeMode<av::InPullup>();
+	portD3.ChangeMode<av::InPullup>();
+	portD4.ChangeMode<av::InPullup>();
+	portD5.ChangeMode<av::InPullup>();
+	portD6.ChangeMode<av::InPullup>();
+	portD7.ChangeMode<av::InPullup>();
+	portD8.ChangeMode<av::InPullup>();
+	portD9.ChangeMode<av::InPullup>();
+	portD10.ChangeMode<av::InPullup>();
+	portD11.ChangeMode<av::InPullup>();
+	portD12.ChangeMode<av::InPullup>();
+	portD13.ChangeMode<av::InPullup>();
+	portD14.ChangeMode<av::InPullup>();
+	portD15.ChangeMode<av::InPullup>();
+	portD16.ChangeMode<av::InPullup>();
+	portD17.ChangeMode<av::InPullup>();
+	portD18.ChangeMode<av::InPullup>();
+	portD19.ChangeMode<av::InPullup>();
+	portD20.ChangeMode<av::InPullup>();
 }
 
 void CompileTest_Port_DigitalLow()
@@ -451,7 +451,7 @@ void setup()
 	CompileTest_Ports();
 	CompileTest_ADConv();
 	CompileTest_AnalogComparator();
-	CompileTest_Port_SetMode();
+	CompileTest_Port_ChangeMode();
 	CompileTest_Port_DigitalLow();
 	CompileTest_Port_DigitalHigh();
 	CompileTest_Port_DigitalOutput();
