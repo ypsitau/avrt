@@ -1,0 +1,77 @@
+#include <avrt.h>
+
+namespace av = avrt;
+
+AVRT_IMPLEMENT_Serial0(serial)
+
+av::Port<av::D2, av::Out> portD2;
+av::Port<av::D3, av::Out> portD3;
+
+av::Timer0<> timer0;
+av::Timer1<> timer1;
+av::Timer2<> timer2;
+
+ISR(TIMER1_OVF_vect)
+{
+	//serial.Printf("TIMER1_OVF\n");
+	portD2.DigitalToggle();
+}
+
+ISR(TIMER2_OVF_vect)
+{
+	//serial.Printf("TIMER2_OVF\n");
+	portD3.DigitalToggle();
+}
+
+void setup()
+{
+	av::Ports::Init();
+	serial.Open(serial.Speed::Bps57600);
+	//--------------------------------------------------------------------------
+	do {
+		uint8_t flags = timer0.EnableInt_TIMER0_OVF;
+		//timer0.Start(timer0.Clock::Div64, timer0.Waveform::Normal, flags);
+		//timer0.Start(timer0.Clock::Div64, timer0.Waveform::PhaseCorrectPWM_UptoFF, flags);
+		//timer0.Start(timer0.Clock::Div64, timer0.Waveform::CTC, flags);
+		timer0.Start(timer0.Clock::Div64, timer0.Waveform::FastPWM_UptoFF, flags);
+		//timer0.Start(timer0.Clock::Div64, timer0.Waveform::PhaseCorrectPWM_UptoOCR0A, flags);
+		//timer0.Start(timer0.Clock::Div64, timer0.Waveform::FastPWM_UptoOCR0A, flags);
+		//OCR0A = 0x20;
+	} while (0);
+	//--------------------------------------------------------------------------
+	do {
+		uint8_t flags = timer1.EnableInt_TIMER1_OVF;
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::Normal, flags);
+		timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseCorrectPWM_Upto00FF, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseCorrectPWM_Upto01FF, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseCorrectPWM_Upto03FF, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::CTC, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::FastPWM_Upto00FF, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::FastPWM_Upto01FF, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::FastPWM_Upto03FF, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseAndFreqCorrectPWM_UptoICR1, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseAndFreqCorrectPWM_UptoOCR1A, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseCorrectPWM_UptoICR1, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseCorrectPWM_UptoOCR1A, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::CTC_UptoICR1, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::FastPWM_UptoICR1, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::FastPWM_UptoOCR1A, flags);
+		//OCR1A = 0x20;
+	} while (0);
+	//--------------------------------------------------------------------------
+	do {
+		uint8_t flags = timer2.EnableInt_TIMER2_OVF;
+		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::Normal, flas);
+		timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoFF, flags);
+		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::CTC, flags);
+		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoFF, flags);
+		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoOCR2A, flags);
+		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoOCR2A, flags);
+		//OCR2A = 0x20;
+	} while (0);
+	serial.Printf(F("test-Timer\n"));
+}
+
+void loop()
+{
+}
