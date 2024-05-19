@@ -13,13 +13,13 @@ namespace avrt {
 // Timer0
 //------------------------------------------------------------------------------
 template<
-	bool enableInt_Ovf		= false,
-	bool enableInt_CompA	= false,
-	bool enableInt_CompB	= false,
-	uint8_t dataCOM0A		= 0b00,		// COM0A: Compare Match Output A Mode
-	uint8_t dataCOM0B		= 0b00,		// COM0B: Compare Match OUtput B Mode
-	uint8_t dataFOC0A		= 0b0,		// FOC0A: Force Output Compare A
-	uint8_t dataFOC0B		= 0b0		// FOC0B: Force Output Compare B
+	bool enableInt_TIMER0_OVF	= false,
+	bool enableInt_TIMER0_COMPA	= false,
+	bool enableInt_TIMER0_COMPB	= false,
+	uint8_t dataCOM0A			= 0b00,		// COM0A: Compare Match Output A Mode
+	uint8_t dataCOM0B			= 0b00,		// COM0B: Compare Match OUtput B Mode
+	uint8_t dataFOC0A			= 0b0,		// FOC0A: Force Output Compare A
+	uint8_t dataFOC0B			= 0b0		// FOC0B: Force Output Compare B
 > class Timer0 {
 public:
 	enum class Clock {
@@ -46,11 +46,11 @@ public:
 											// CS0: Clock Select
 		uint8_t dataWGM0 = static_cast<uint8_t>(waveform);
 											// WGM0: Waveform Generation Mode
-		uint8_t dataTOIE0	= static_cast<uint8_t>(enableInt_Ovf);
+		uint8_t dataTOIE0	= static_cast<uint8_t>(enableInt_TIMER0_OVF);
 											// TOIE0: Timer/Counter0 Overflow Interrupt Enable (TIMER0_OVF)
-		uint8_t dataOCIE0A	= static_cast<uint8_t>(enableInt_CompA);
+		uint8_t dataOCIE0A	= static_cast<uint8_t>(enableInt_TIMER0_COMPA);
 											// OCIE0A: Timer/Counter0 Output Compare Match A Interrupt Enable (TIMER0_COMPA)
-		uint8_t dataOCIE0B	= static_cast<uint8_t>(enableInt_CompB);
+		uint8_t dataOCIE0B	= static_cast<uint8_t>(enableInt_TIMER0_COMPB);
 											// OCIE0B: Timer/Counter0 Output Compare Match B Interrupt Enable (TIMER0_COMPB)
 		constexpr uint8_t dataOCF0A	= 0b1;	// OCF0A: Timer/Counter0 Output Compare A Match Flag = Set One to Clear
 		constexpr uint8_t dataOCF0B	= 0b1;	// OCF0B: Timer/Counter0 Output Compare B Match Flag = Set One to Clear
@@ -69,18 +69,18 @@ public:
 // Timer1
 //------------------------------------------------------------------------------
 template<
-	bool enableInt_Ovf		= false,
-	bool enableInt_CompA	= false,
-	bool enableInt_CompB	= false,
-	uint8_t dataCOM1A		= 0b00,		// COM1A: Compare Match Output A Mode
-	uint8_t dataCOM1B		= 0b00,		// COM1B: Compare Match OUtput B Mode
-	uint8_t dataFOC1A		= 0b0,		// FOC1A: Force Output Compare A
-	uint8_t dataFOC1B		= 0b0,		// FOC1B: Force Output Compare B
+	bool enableInt_TIMER1_OVF	= false,
+	bool enableInt_TIMER1_COMPA	= false,
+	bool enableInt_TIMER1_COMPB	= false,
+	uint8_t dataCOM1A			= 0b00,		// COM1A: Compare Match Output A Mode
+	uint8_t dataCOM1B			= 0b00,		// COM1B: Compare Match OUtput B Mode
+	uint8_t dataFOC1A			= 0b0,		// FOC1A: Force Output Compare A
+	uint8_t dataFOC1B			= 0b0,		// FOC1B: Force Output Compare B
 	// Timer1-specific parameters
-	uint8_t dataICNC1		= 0b0,		// ICNC1: Input Capture Noice Canceler
-	uint8_t dataICES1		= 0b0,		// ICES1: Input Capture Edge Select
-	uint8_t dataICIE1		= 0b0,		// ICIE1: Timer/Counter1 Input Capture Interrupt Enable
-	uint8_t dataICF1		= 0b0		// ICF1: Timer/Counter1 Input Capture Flag
+	uint8_t dataICNC1			= 0b0,		// ICNC1: Input Capture Noice Canceler
+	uint8_t dataICES1			= 0b0,		// ICES1: Input Capture Edge Select
+	uint8_t dataICIE1			= 0b0,		// ICIE1: Timer/Counter1 Input Capture Interrupt Enable
+	uint8_t dataICF1			= 0b0		// ICF1: Timer/Counter1 Input Capture Flag
 > class Timer1 {
 public:
 	enum class Clock {
@@ -112,11 +112,11 @@ public:
 	};
 public:
 	void Start(Clock clock, Waveform waveform) const {
-		uint8_t dataTOIE1 = static_cast<uint8_t>(enableInt_Ovf);
+		uint8_t dataTOIE1 = static_cast<uint8_t>(enableInt_TIMER1_OVF);
 											// TOIE1: Timer/Counter1 Overflow Interrupt Enable .. (TIMER1_OVF)
-		uint8_t dataOCIE1A = static_cast<uint8_t>(enableInt_CompA);
+		uint8_t dataOCIE1A = static_cast<uint8_t>(enableInt_TIMER1_COMPA);
 											// OCIE1A: Timer/Counter1 Output Compare Match A Interrupt Enable (TIMER1_COMPA)
-		uint8_t dataOCIE1B = static_cast<uint8_t>(enableInt_CompB);
+		uint8_t dataOCIE1B = static_cast<uint8_t>(enableInt_TIMER1_COMPB);
 											// OCIE1B: Timer/Counter1 Output Compare Match B Interrupt Enable (TIMER1_COMPB)
 		uint8_t dataCS1 = static_cast<uint8_t>(clock);	
 											// CS1: Clock Select
@@ -141,24 +141,24 @@ public:
 // Timer2
 //------------------------------------------------------------------------------
 template<
-	bool enableInt_Ovf		= false,
-	bool enableInt_CompA	= false,
-	bool enableInt_CompB	= false,
-	uint8_t dataCOM2A		= 0b00,		// COM2A: Compare Match Output A Mode
-	uint8_t dataCOM2B		= 0b00,		// COM2B: Compare Match OUtput B Mode
-	uint8_t dataFOC2A		= 0b0,		// FOC2A: Force Output Compare A
-	uint8_t dataFOC2B		= 0b0,		// FOC2B: Force Output Compare B
+	bool enableInt_TIMER2_OVF	= false,
+	bool enableInt_TIMER2_COMPA	= false,
+	bool enableInt_TIMER2_COMPB	= false,
+	uint8_t dataCOM2A			= 0b00,		// COM2A: Compare Match Output A Mode
+	uint8_t dataCOM2B			= 0b00,		// COM2B: Compare Match OUtput B Mode
+	uint8_t dataFOC2A			= 0b0,		// FOC2A: Force Output Compare A
+	uint8_t dataFOC2B			= 0b0,		// FOC2B: Force Output Compare B
 	// Timer2-specific parameters
-	uint8_t dataEXCLK		= 0b0,		// EXCLK: Enable External Clock Input
-	uint8_t dataAS2			= 0b0,		// AS2: ASynchronous Timer/Counter2
-	uint8_t dataTCN2UB		= 0b0,		// TCN2UB: Timer/Counter2 Update Busy
-	uint8_t dataOCR2AUB		= 0b0,		// OCR2AUB: Output Compare Register2 A Update Busy
-	uint8_t dataOCR2BUB		= 0b0,		// OCR2BUB: Output Compare Register2 B Update Busy
-	uint8_t dataTCR2AUB		= 0b0,		// TCR2AUB: Timer/Counter Control Register2 A Update Busy
-	uint8_t dataTCR2BUB		= 0b0,		// TCR2BUB: Timer/Counter Control Register2 B Update BUsy
-	uint8_t dataTSM			= 0b0,		// TSM: Timer/Counter Synchronization Mode
-	uint8_t dataPSRASY		= 0b0,		// PSRASY: Prescaler Reset Timer/Counter2
-	uint8_t dataPSRSYNC		= 0b0		// PSRSYNC:
+	uint8_t dataEXCLK			= 0b0,		// EXCLK: Enable External Clock Input
+	uint8_t dataAS2				= 0b0,		// AS2: ASynchronous Timer/Counter2
+	uint8_t dataTCN2UB			= 0b0,		// TCN2UB: Timer/Counter2 Update Busy
+	uint8_t dataOCR2AUB			= 0b0,		// OCR2AUB: Output Compare Register2 A Update Busy
+	uint8_t dataOCR2BUB			= 0b0,		// OCR2BUB: Output Compare Register2 B Update Busy
+	uint8_t dataTCR2AUB			= 0b0,		// TCR2AUB: Timer/Counter Control Register2 A Update Busy
+	uint8_t dataTCR2BUB			= 0b0,		// TCR2BUB: Timer/Counter Control Register2 B Update BUsy
+	uint8_t dataTSM				= 0b0,		// TSM: Timer/Counter Synchronization Mode
+	uint8_t dataPSRASY			= 0b0,		// PSRASY: Prescaler Reset Timer/Counter2
+	uint8_t dataPSRSYNC			= 0b0		// PSRSYNC:
 > class Timer2 {
 public:
 	enum class Clock {
@@ -185,11 +185,11 @@ public:
 											// CS2: Clock Select
 		uint8_t dataWGM2 = static_cast<uint8_t>(waveform);
 											// WGM2: Waveform Generation Mode
-		uint8_t dataTOIE2 = static_cast<uint8_t>(enableInt_Ovf);
+		uint8_t dataTOIE2 = static_cast<uint8_t>(enableInt_TIMER2_OVF);
 											// TOIE2: Timer/Counter2 Overflow Interrupt Enable (TIMER2_OVF)
-		uint8_t dataOCIE2A = static_cast<uint8_t>(enableInt_CompA);
+		uint8_t dataOCIE2A = static_cast<uint8_t>(enableInt_TIMER2_COMPA);
 											// OCIE2A: Timer/Counter2 Output Compare Match A Interrupt Enable (TIMER2_COMPA)
-		uint8_t dataOCIE2B = static_cast<uint8_t>(enableInt_CompB);
+		uint8_t dataOCIE2B = static_cast<uint8_t>(enableInt_TIMER2_COMPB);
 											// OCIE2B: Timer/Counter2 Output Compare Match B Interrupt Enable (TIMER2_COMPB)
 		constexpr uint8_t dataOCF2A	= 0b1;	// OCF2A: Timer/Counter2 Output Compare A Match Flag = Set One to Clear
 		constexpr uint8_t dataOCF2B	= 0b1;	// OCF2B: Timer/Counter2 Output Compare B Match Flag = Set One to Clear
