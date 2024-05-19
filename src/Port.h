@@ -469,7 +469,7 @@ public:
 		while (ADCSRA & (0b1 << ADSC)) ;
 		return ADCH;
 	}
-	void EnableExternalInterrupt(Sense sense) const {
+	void EnableExternalInt(Sense sense) const {
 		if constexpr (pin == 2) {	// INT0
 			EICRA = EICRA & ~(0b11 << ISC00) | (static_cast<uint8_t>(sense) << ISC00);
 			EIMSK |= 0b1 << INT0;
@@ -478,14 +478,14 @@ public:
 			EIMSK |= 0b1 << INT1;
 		}
 	}
-	void DisableExternalInterrupt(Sense sense) const {
+	void DisableExternalInt(Sense sense) const {
 		if constexpr (pin == 2) {	// INT0
 			EIMSK &= ~(0b1 << INT0);
 		} else if (pin == 3) {		// INT1
 			EIMSK &= ~(0b1 << INT1);
 		}
 	}
-	void EnablePinChangeInterrupt() const {
+	void EnablePinChangeInt() const {
 		if constexpr (pin == 0)	{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 0); } // PCINT16
 		else if (pin == 1)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 1); } // PCINT17
 		else if (pin == 2)		{ PCICR |= (1 << PCIE2); PCMSK2 |= (1 << 2); } // PCINT18
@@ -508,7 +508,7 @@ public:
 		else if (pin == 19)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 5); } // PCINT13
 		else if (pin == 20)		{ PCICR |= (1 << PCIE1); PCMSK1 |= (1 << 6); } // PCINT14
 	}
-	void DisablePinChangeInterrupt() const {
+	void DisablePinChangeInt() const {
 		if constexpr (pin == 0)	{ PCMSK2 &= ~(1 << 0); } // PCINT16
 		else if (pin == 1)		{ PCMSK2 &= ~(1 << 1); } // PCINT17
 		else if (pin == 2)		{ PCMSK2 &= ~(1 << 2); } // PCINT18
