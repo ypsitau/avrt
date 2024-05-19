@@ -442,49 +442,50 @@ public:
 		else if (pin == 20)		return PINC & (1 << 6);
 		return 0x00;
 	}
-	void PWMEnable() const {
+	void PWMEnable(bool invertFlag = false) const {
+		uint8_t data = 0b10 | static_cast<uint8_t>(invertFlag);
 		if constexpr (pin == 3) {
-			TCCR2A |= (1 << COM2B1);	// Connects OC2B pin to PD3
+			TCCR2A = TCCR2A & ~(0b11 << COM2B0) | (data << COM2B0);	// Connects OC2B pin to PD3
 		} else if (pin == 5) {
-			TCCR0A |= (1 << COM0B1);	// Connects OC0B pin to PD5
+			TCCR0A = TCCR0A & ~(0b11 << COM0B0) | (data << COM0B0);	// Connects OC0B pin to PD5
 		} else if (pin == 6) {
-			TCCR0A |= (1 << COM0A1);	// Connects OC0A pin to PD6
+			TCCR0A = TCCR0A & ~(0b11 << COM0A0) | (data << COM0A0);	// Connects OC0A pin to PD6
 		} else if (pin == 9) {
-			TCCR1A |= (1 << COM1A1);	// Connects OC1A pin to PB1
+			TCCR1A = TCCR1A & ~(0b11 << COM1A0) | (data << COM1A0);	// Connects OC1A pin to PB1
 		} else if (pin == 10) {
-			TCCR1A |= (1 << COM1B1);	// Connects OC1B pin to PB2
+			TCCR1A = TCCR1A & ~(0b11 << COM1B0) | (data << COM1B0);	// Connects OC1B pin to PB2
 		} else if (pin == 11) {
-			TCCR2A |= (1 << COM2A1);	// Connects OC2A pin to PB3
+			TCCR2A = TCCR2A & ~(0b11 << COM2A0) | (data << COM2A0);	// Connects OC2A pin to PB3
 		}
 	}
 	void PWMDisable() const {
 		if constexpr (pin == 3) {
-			TCCR2A &= ~(1 << COM2B1);	// Disconnects OC2B pin from PD3
+			TCCR2A = TCCR2A & ~(0b11 << COM2B0);					// Disconnects OC2B pin to PD3
 		} else if (pin == 5) {
-			TCCR0A &= ~(1 << COM0B1);	// Disconnects OC0B pin from PD5
+			TCCR0A = TCCR0A & ~(0b11 << COM0B0);					// Disconnects OC0B pin to PD5
 		} else if (pin == 6) {
-			TCCR0A &= ~(1 << COM0A1);	// Disconnects OC0A pin from PD6
+			TCCR0A = TCCR0A & ~(0b11 << COM0A0);					// Disconnects OC0A pin to PD6
 		} else if (pin == 9) {
-			TCCR1A &= ~(1 << COM1A1);	// Disconnects OC1A pin from PB1
+			TCCR1A = TCCR1A & ~(0b11 << COM1A0);					// Disconnects OC1A pin to PB1
 		} else if (pin == 10) {
-			TCCR1A &= ~(1 << COM1B1);	// Disconnects OC1B pin from PB2
+			TCCR1A = TCCR1A & ~(0b11 << COM1B0);					// Disconnects OC1B pin to PB2
 		} else if (pin == 11) {
-			TCCR2A &= ~(1 << COM2A1);	// Disconnects OC2A pin from PB3
+			TCCR2A = TCCR2A & ~(0b11 << COM2A0);					// Disconnects OC2A pin to PB3
 		}
 	}
 	void PWMOutput(uint8_t value) const {
 		if constexpr (pin == 3) {
-			OCR2B = value;				// Set compare value for OC2B
+			OCR2B = value;											// Set compare value for OC2B
 		} else if (pin == 5) {
-			OCR0B = value;				// Set compare value for OC0B
+			OCR0B = value;											// Set compare value for OC0B
 		} else if (pin == 6) {
-			OCR0A = value;				// Set compare value for OC0A
+			OCR0A = value;											// Set compare value for OC0A
 		} else if (pin == 9) {
-			OCR1A = value;				// Set compare value for OC1A
+			OCR1A = value;											// Set compare value for OC1A
 		} else if (pin == 10) {
-			OCR1B = value;				// Set compare value for OC1B
+			OCR1B = value;											// Set compare value for OC1B
 		} else if (pin == 11) {
-			OCR2A = value;				// Set compare value for OC2A
+			OCR2A = value;											// Set compare value for OC2A
 		}
 	}
 	void PWMOutputFine(uint8_t value) const {
