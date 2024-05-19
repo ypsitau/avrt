@@ -9,27 +9,28 @@ namespace avrt {
 //------------------------------------------------------------------------------
 // FIFOBuff
 //------------------------------------------------------------------------------
-template<typename T_Elem, int buffSize, typename T_Pos = uint8_t> class FIFOBuff {
+template<typename T_Elem, int buffSize, typename T_Size = uint8_t> class FIFOBuff {
 public:
-	static constexpr T_Pos sizeMinusOne = static_cast<T_Pos>(buffSize - 1);
+	static constexpr T_Size sizeMinusOne = static_cast<T_Size>(buffSize - 1);
 private:
-	volatile T_Pos posRead_;
-	volatile T_Pos posWrite_;
+	volatile T_Size posRead_;
+	volatile T_Size posWrite_;
 	volatile T_Elem buff_[buffSize];
 public:
 	FIFOBuff() : posRead_(0), posWrite_(0) {}
+	void Clear() { posRead_ = posWrite_ = 0; }
 	bool IsEmpty() const { return posRead_ == posWrite_; }
 	bool HasData() const { return posRead_ != posWrite_; }
 	bool IsFull() const {
-		T_Pos posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
+		T_Size posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
 		return posWriteNext == posRead_;
 	}
 	bool HasRoom() const { return !IsFull(); }
-	T_Pos GetLength() const {
+	T_Size GetLength() const {
 		return (posRead_ <= posWrite_)? posWrite_ - posRead_ : buffSize - posRead_ + posWrite_;
 	}
 	void WriteData(T_Elem data) {
-		T_Pos posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
+		T_Size posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
 		if (posWriteNext == posRead_) return;
 		buff_[posWrite_] = data;
 		posWrite_ = posWriteNext;
