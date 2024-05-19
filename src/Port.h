@@ -184,92 +184,134 @@ public:
 public:
 	Port() {
 		if constexpr (pin == 0) {
-			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 0); } else { Ports::dataDDRD &= ~(1 << 0); if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 0); } else { Ports::dataPORTD &= ~(1 << 0); } }
+			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 0); } else { Ports::dataDDRD &= ~(1 << 0); }
+			if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 0); } else { Ports::dataPORTD &= ~(1 << 0); }
 		} else if (pin == 1)  {
-			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 1); } else { Ports::dataDDRD &= ~(1 << 1); if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 1); } else { Ports::dataPORTD &= ~(1 << 1); } }
+			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 1); } else { Ports::dataDDRD &= ~(1 << 1); }
+			if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 1); } else { Ports::dataPORTD &= ~(1 << 1); }
 		} else if (pin == 2)  {
-			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 2); } else { Ports::dataDDRD &= ~(1 << 2); if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 2); } else { Ports::dataPORTD &= ~(1 << 2); } }
+			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 2); } else { Ports::dataDDRD &= ~(1 << 2); }
+			if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 2); } else { Ports::dataPORTD &= ~(1 << 2); }
 		} else if (pin == 3)  {
-			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 3); } else { Ports::dataDDRD &= ~(1 << 3); if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 3); } else { Ports::dataPORTD &= ~(1 << 3); } }
+			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 3); } else { Ports::dataDDRD &= ~(1 << 3); }
+			if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 3); } else { Ports::dataPORTD &= ~(1 << 3); }
 		} else if (pin == 4)  {
-			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 4); } else { Ports::dataDDRD &= ~(1 << 4); if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 4); } else { Ports::dataPORTD &= ~(1 << 4); } }
+			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 4); } else { Ports::dataDDRD &= ~(1 << 4); }
+			if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 4); } else { Ports::dataPORTD &= ~(1 << 4); }
 		} else if (pin == 5)  {
-			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 5); } else { Ports::dataDDRD &= ~(1 << 5); if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 5); } else { Ports::dataPORTD &= ~(1 << 5); } }
+			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 5); } else { Ports::dataDDRD &= ~(1 << 5); }
+			if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 5); } else { Ports::dataPORTD &= ~(1 << 5); }
 		} else if (pin == 6)  {
-			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 6); } else { Ports::dataDDRD &= ~(1 << 6); if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 6); } else { Ports::dataPORTD &= ~(1 << 6); } }
+			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 6); } else { Ports::dataDDRD &= ~(1 << 6); }
+			if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 6); } else { Ports::dataPORTD &= ~(1 << 6); }
 		} else if (pin == 7)  {
-			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 7); } else { Ports::dataDDRD &= ~(1 << 7); if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 7); } else { Ports::dataPORTD &= ~(1 << 7); } }
+			if constexpr (mode & 1) { Ports::dataDDRD |= (1 << 7); } else { Ports::dataDDRD &= ~(1 << 7); }
+			if constexpr (mode >> 1) { Ports::dataPORTD |= (1 << 7); } else { Ports::dataPORTD &= ~(1 << 7); }
 		} else if (pin == 8)  {
-			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 0); } else { Ports::dataDDRB &= ~(1 << 0); if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 0); } else { Ports::dataPORTB &= ~(1 << 0); } }
+			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 0); } else { Ports::dataDDRB &= ~(1 << 0); }
+			if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 0); } else { Ports::dataPORTB &= ~(1 << 0); }
 		} else if (pin == 9)  {
-			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 1); } else { Ports::dataDDRB &= ~(1 << 1); if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 1); } else { Ports::dataPORTB &= ~(1 << 1); } }
+			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 1); } else { Ports::dataDDRB &= ~(1 << 1); }
+			if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 1); } else { Ports::dataPORTB &= ~(1 << 1); }
 		} else if (pin == 10) {
-			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 2); } else { Ports::dataDDRB &= ~(1 << 2); if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 2); } else { Ports::dataPORTB &= ~(1 << 2); } }
+			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 2); } else { Ports::dataDDRB &= ~(1 << 2); }
+			if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 2); } else { Ports::dataPORTB &= ~(1 << 2); }
 		} else if (pin == 11) {
-			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 3); } else { Ports::dataDDRB &= ~(1 << 3); if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 3); } else { Ports::dataPORTB &= ~(1 << 3); } }
+			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 3); } else { Ports::dataDDRB &= ~(1 << 3); }
+			if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 3); } else { Ports::dataPORTB &= ~(1 << 3); }
 		} else if (pin == 12) {
-			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 4); } else { Ports::dataDDRB &= ~(1 << 4); if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 4); } else { Ports::dataPORTB &= ~(1 << 4); } }
+			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 4); } else { Ports::dataDDRB &= ~(1 << 4); }
+			if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 4); } else { Ports::dataPORTB &= ~(1 << 4); }
 		} else if (pin == 13) {
-			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 5); } else { Ports::dataDDRB &= ~(1 << 5); if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 5); } else { Ports::dataPORTB &= ~(1 << 5); } }
+			if constexpr (mode & 1) { Ports::dataDDRB |= (1 << 5); } else { Ports::dataDDRB &= ~(1 << 5); }
+			if constexpr (mode >> 1) { Ports::dataPORTB |= (1 << 5); } else { Ports::dataPORTB &= ~(1 << 5); }
 		} else if (pin == 14) {
-			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 0); } else { Ports::dataDDRC &= ~(1 << 0); if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 0); } else { Ports::dataPORTC &= ~(1 << 0); } }
+			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 0); } else { Ports::dataDDRC &= ~(1 << 0); }
+			if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 0); } else { Ports::dataPORTC &= ~(1 << 0); }
 		} else if (pin == 15) {
-			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 1); } else { Ports::dataDDRC &= ~(1 << 1); if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 1); } else { Ports::dataPORTC &= ~(1 << 1); } }
+			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 1); } else { Ports::dataDDRC &= ~(1 << 1); }
+			if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 1); } else { Ports::dataPORTC &= ~(1 << 1); }
 		} else if (pin == 16) {
-			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 2); } else { Ports::dataDDRC &= ~(1 << 2); if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 2); } else { Ports::dataPORTC &= ~(1 << 2); } }
+			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 2); } else { Ports::dataDDRC &= ~(1 << 2); }
+			if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 2); } else { Ports::dataPORTC &= ~(1 << 2); }
 		} else if (pin == 17) {
-			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 3); } else { Ports::dataDDRC &= ~(1 << 3); if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 3); } else { Ports::dataPORTC &= ~(1 << 3); } }
+			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 3); } else { Ports::dataDDRC &= ~(1 << 3); }
+			if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 3); } else { Ports::dataPORTC &= ~(1 << 3); }
 		} else if (pin == 18) {
-			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 4); } else { Ports::dataDDRC &= ~(1 << 4); if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 4); } else { Ports::dataPORTC &= ~(1 << 4); } }
+			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 4); } else { Ports::dataDDRC &= ~(1 << 4); }
+			if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 4); } else { Ports::dataPORTC &= ~(1 << 4); }
 		} else if (pin == 19) {
-			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 5); } else { Ports::dataDDRC &= ~(1 << 5); if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 5); } else { Ports::dataPORTC &= ~(1 << 5); } }
+			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 5); } else { Ports::dataDDRC &= ~(1 << 5); }
+			if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 5); } else { Ports::dataPORTC &= ~(1 << 5); }
 		} else if (pin == 20) {
-			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 6); } else { Ports::dataDDRC &= ~(1 << 6); if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 6); } else { Ports::dataPORTC &= ~(1 << 6); } }
+			if constexpr (mode & 1) { Ports::dataDDRC |= (1 << 6); } else { Ports::dataDDRC &= ~(1 << 6); }
+			if constexpr (mode >> 1) { Ports::dataPORTC |= (1 << 6); } else { Ports::dataPORTC &= ~(1 << 6); }
 		}
 	}
 	template<int mode> void ChangeMode() const {
 		if constexpr (pin == 0)         {
-			if constexpr (mode & 1) { DDRD |= (1 << 0); } else { DDRD &= ~(1 << 0); if constexpr (mode >> 1) { PORTD |= (1 << 0); } else { PORTD &= ~(1 << 0); } }
+			if constexpr (mode & 1) { DDRD |= (1 << 0); } else { DDRD &= ~(1 << 0); }
+			if constexpr (mode >> 1) { PORTD |= (1 << 0); } else { PORTD &= ~(1 << 0); }
 		} else if (pin == 1)  {
-			if constexpr (mode & 1) { DDRD |= (1 << 1); } else { DDRD &= ~(1 << 1); if constexpr (mode >> 1) { PORTD |= (1 << 1); } else { PORTD &= ~(1 << 1); } }
+			if constexpr (mode & 1) { DDRD |= (1 << 1); } else { DDRD &= ~(1 << 1); }
+			if constexpr (mode >> 1) { PORTD |= (1 << 1); } else { PORTD &= ~(1 << 1); }
 		} else if (pin == 2)  {
-			if constexpr (mode & 1) { DDRD |= (1 << 2); } else { DDRD &= ~(1 << 2); if constexpr (mode >> 1) { PORTD |= (1 << 2); } else { PORTD &= ~(1 << 2); } }
+			if constexpr (mode & 1) { DDRD |= (1 << 2); } else { DDRD &= ~(1 << 2); }
+			if constexpr (mode >> 1) { PORTD |= (1 << 2); } else { PORTD &= ~(1 << 2); }
 		} else if (pin == 3)  {
-			if constexpr (mode & 1) { DDRD |= (1 << 3); } else { DDRD &= ~(1 << 3); if constexpr (mode >> 1) { PORTD |= (1 << 3); } else { PORTD &= ~(1 << 3); } }
+			if constexpr (mode & 1) { DDRD |= (1 << 3); } else { DDRD &= ~(1 << 3); }
+			if constexpr (mode >> 1) { PORTD |= (1 << 3); } else { PORTD &= ~(1 << 3); }
 		} else if (pin == 4)  {
-			if constexpr (mode & 1) { DDRD |= (1 << 4); } else { DDRD &= ~(1 << 4); if constexpr (mode >> 1) { PORTD |= (1 << 4); } else { PORTD &= ~(1 << 4); } }
+			if constexpr (mode & 1) { DDRD |= (1 << 4); } else { DDRD &= ~(1 << 4); }
+			if constexpr (mode >> 1) { PORTD |= (1 << 4); } else { PORTD &= ~(1 << 4); }
 		} else if (pin == 5)  {
-			if constexpr (mode & 1) { DDRD |= (1 << 5); } else { DDRD &= ~(1 << 5); if constexpr (mode >> 1) { PORTD |= (1 << 5); } else { PORTD &= ~(1 << 5); } }
+			if constexpr (mode & 1) { DDRD |= (1 << 5); } else { DDRD &= ~(1 << 5); }
+			if constexpr (mode >> 1) { PORTD |= (1 << 5); } else { PORTD &= ~(1 << 5); }
 		} else if (pin == 6)  {
-			if constexpr (mode & 1) { DDRD |= (1 << 6); } else { DDRD &= ~(1 << 6); if constexpr (mode >> 1) { PORTD |= (1 << 6); } else { PORTD &= ~(1 << 6); } }
+			if constexpr (mode & 1) { DDRD |= (1 << 6); } else { DDRD &= ~(1 << 6); }
+			if constexpr (mode >> 1) { PORTD |= (1 << 6); } else { PORTD &= ~(1 << 6); }
 		} else if (pin == 7)  {
-			if constexpr (mode & 1) { DDRD |= (1 << 7); } else { DDRD &= ~(1 << 7); if constexpr (mode >> 1) { PORTD |= (1 << 7); } else { PORTD &= ~(1 << 7); } }
+			if constexpr (mode & 1) { DDRD |= (1 << 7); } else { DDRD &= ~(1 << 7); }
+			if constexpr (mode >> 1) { PORTD |= (1 << 7); } else { PORTD &= ~(1 << 7); }
 		} else if (pin == 8)  {
-			if constexpr (mode & 1) { DDRB |= (1 << 0); } else { DDRB &= ~(1 << 0); if constexpr (mode >> 1) { PORTB |= (1 << 0); } else { PORTB &= ~(1 << 0); } }
+			if constexpr (mode & 1) { DDRB |= (1 << 0); } else { DDRB &= ~(1 << 0); }
+			if constexpr (mode >> 1) { PORTB |= (1 << 0); } else { PORTB &= ~(1 << 0); }
 		} else if (pin == 9)  {
-			if constexpr (mode & 1) { DDRB |= (1 << 1); } else { DDRB &= ~(1 << 1); if constexpr (mode >> 1) { PORTB |= (1 << 1); } else { PORTB &= ~(1 << 1); } }
+			if constexpr (mode & 1) { DDRB |= (1 << 1); } else { DDRB &= ~(1 << 1); }
+			if constexpr (mode >> 1) { PORTB |= (1 << 1); } else { PORTB &= ~(1 << 1); }
 		} else if (pin == 10) {
-			if constexpr (mode & 1) { DDRB |= (1 << 2); } else { DDRB &= ~(1 << 2); if constexpr (mode >> 1) { PORTB |= (1 << 2); } else { PORTB &= ~(1 << 2); } }
+			if constexpr (mode & 1) { DDRB |= (1 << 2); } else { DDRB &= ~(1 << 2); }
+			if constexpr (mode >> 1) { PORTB |= (1 << 2); } else { PORTB &= ~(1 << 2); }
 		} else if (pin == 11) {
-			if constexpr (mode & 1) { DDRB |= (1 << 3); } else { DDRB &= ~(1 << 3); if constexpr (mode >> 1) { PORTB |= (1 << 3); } else { PORTB &= ~(1 << 3); } }
+			if constexpr (mode & 1) { DDRB |= (1 << 3); } else { DDRB &= ~(1 << 3); }
+			if constexpr (mode >> 1) { PORTB |= (1 << 3); } else { PORTB &= ~(1 << 3); }
 		} else if (pin == 12) {
-			if constexpr (mode & 1) { DDRB |= (1 << 4); } else { DDRB &= ~(1 << 4); if constexpr (mode >> 1) { PORTB |= (1 << 4); } else { PORTB &= ~(1 << 4); } }
+			if constexpr (mode & 1) { DDRB |= (1 << 4); } else { DDRB &= ~(1 << 4); }
+			if constexpr (mode >> 1) { PORTB |= (1 << 4); } else { PORTB &= ~(1 << 4); }
 		} else if (pin == 13) {
-			if constexpr (mode & 1) { DDRB |= (1 << 5); } else { DDRB &= ~(1 << 5); if constexpr (mode >> 1) { PORTB |= (1 << 5); } else { PORTB &= ~(1 << 5); } }
+			if constexpr (mode & 1) { DDRB |= (1 << 5); } else { DDRB &= ~(1 << 5); }
+			if constexpr (mode >> 1) { PORTB |= (1 << 5); } else { PORTB &= ~(1 << 5); }
 		} else if (pin == 14) {
-			if constexpr (mode & 1) { DDRC |= (1 << 0); } else { DDRC &= ~(1 << 0); if constexpr (mode >> 1) { PORTC |= (1 << 0); } else { PORTC &= ~(1 << 0); } }
+			if constexpr (mode & 1) { DDRC |= (1 << 0); } else { DDRC &= ~(1 << 0); }
+			if constexpr (mode >> 1) { PORTC |= (1 << 0); } else { PORTC &= ~(1 << 0); }
 		} else if (pin == 15) {
-			if constexpr (mode & 1) { DDRC |= (1 << 1); } else { DDRC &= ~(1 << 1); if constexpr (mode >> 1) { PORTC |= (1 << 1); } else { PORTC &= ~(1 << 1); } }
+			if constexpr (mode & 1) { DDRC |= (1 << 1); } else { DDRC &= ~(1 << 1); }
+			if constexpr (mode >> 1) { PORTC |= (1 << 1); } else { PORTC &= ~(1 << 1); }
 		} else if (pin == 16) {
-			if constexpr (mode & 1) { DDRC |= (1 << 2); } else { DDRC &= ~(1 << 2); if constexpr (mode >> 1) { PORTC |= (1 << 2); } else { PORTC &= ~(1 << 2); } }
+			if constexpr (mode & 1) { DDRC |= (1 << 2); } else { DDRC &= ~(1 << 2); }
+			if constexpr (mode >> 1) { PORTC |= (1 << 2); } else { PORTC &= ~(1 << 2); }
 		} else if (pin == 17) {
-			if constexpr (mode & 1) { DDRC |= (1 << 3); } else { DDRC &= ~(1 << 3); if constexpr (mode >> 1) { PORTC |= (1 << 3); } else { PORTC &= ~(1 << 3); } }
+			if constexpr (mode & 1) { DDRC |= (1 << 3); } else { DDRC &= ~(1 << 3); }
+			if constexpr (mode >> 1) { PORTC |= (1 << 3); } else { PORTC &= ~(1 << 3); }
 		} else if (pin == 18) {
-			if constexpr (mode & 1) { DDRC |= (1 << 4); } else { DDRC &= ~(1 << 4); if constexpr (mode >> 1) { PORTC |= (1 << 4); } else { PORTC &= ~(1 << 4); } }
+			if constexpr (mode & 1) { DDRC |= (1 << 4); } else { DDRC &= ~(1 << 4); }
+			if constexpr (mode >> 1) { PORTC |= (1 << 4); } else { PORTC &= ~(1 << 4); }
 		} else if (pin == 19) {
-			if constexpr (mode & 1) { DDRC |= (1 << 5); } else { DDRC &= ~(1 << 5); if constexpr (mode >> 1) { PORTC |= (1 << 5); } else { PORTC &= ~(1 << 5); } }
+			if constexpr (mode & 1) { DDRC |= (1 << 5); } else { DDRC &= ~(1 << 5); }
+			if constexpr (mode >> 1) { PORTC |= (1 << 5); } else { PORTC &= ~(1 << 5); }
 		} else if (pin == 20) {
-			if constexpr (mode & 1) { DDRC |= (1 << 6); } else { DDRC &= ~(1 << 6); if constexpr (mode >> 1) { PORTC |= (1 << 6); } else { PORTC &= ~(1 << 6); } }
+			if constexpr (mode & 1) { DDRC |= (1 << 6); } else { DDRC &= ~(1 << 6); }
+			if constexpr (mode >> 1) { PORTC |= (1 << 6); } else { PORTC &= ~(1 << 6); }
 		}
 	}
 	void DigitalHigh() const {
