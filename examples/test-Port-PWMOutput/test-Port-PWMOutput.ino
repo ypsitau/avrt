@@ -17,9 +17,9 @@ uint8_t valuePrev = 0;
 
 AVRT_IMPLEMENT_Serial0(serial)
 
-av::Timer0<> timer0;
-av::Timer1<> timer1;
-av::Timer2<> timer2;
+av::Timer0 timer0;
+av::Timer1 timer1;
+av::Timer2 timer2;
 
 const __FlashStringHelper* ClockSelToString_OC0_OC1(uint8_t clockSel)
 {
