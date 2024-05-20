@@ -70,7 +70,7 @@ public:
 		uint32_t dataOCR0A = static_cast<uint32_t>(OCR0A);
 		uint32_t dataOCR0ASafe = (dataOCR0A == 0)? 1 : dataOCR0A;
 		freq =
-			(waveform == Waveform::Normal)? freq :
+			(waveform == Waveform::Normal)? freq / (1 + 0xff) :
 			(waveform == Waveform::PhaseCorrectPWM_UptoFF)? freq / (2 * 0xff) :				// 15.7.4
 			(waveform == Waveform::CTC)? freq / (1 + dataOCR0A) :							// 15.7.2 (corrected)
 			(waveform == Waveform::FastPWM_UptoFF)? freq / (1 + 0xff) :						// 15.7.3
@@ -171,7 +171,7 @@ public:
 		uint32_t dataICR1Safe = (dataICR1 == 0)? 1 : dataICR1;
 		uint32_t dataOCR1ASafe = (dataOCR1A == 0)? 1 : dataOCR1A;
 		freq =
-			(waveform == Waveform::Normal)? freq :
+			(waveform == Waveform::Normal)? freq / (1 + 0xff) :
 			(waveform == Waveform::PhaseCorrectPWM_Upto00FF)? freq / (2 * 0xff) :					// 16.9.4
 			(waveform == Waveform::PhaseCorrectPWM_Upto01FF)? freq / (2 * 0x1ff) :					// 16.9.4
 			(waveform == Waveform::PhaseCorrectPWM_Upto03FF)? freq / (2 * 0x3ff) :					// 16.9.4
@@ -273,7 +273,7 @@ public:
 		uint32_t dataOCR2A = static_cast<uint32_t>(OCR2A);
 		uint32_t dataOCR2ASafe = (dataOCR2A == 0)? 1 : dataOCR2A;
 		freq =
-			(waveform == Waveform::Normal)? freq :
+			(waveform == Waveform::Normal)? freq / (1 + 0xff) :
 			(waveform == Waveform::PhaseCorrectPWM_UptoFF)? freq / (2 * 0xff) :				// 18.7.4
 			(waveform == Waveform::CTC)? freq / (1 + dataOCR2A) :							// 18.7.2 (corrected)
 			(waveform == Waveform::FastPWM_UptoFF)? freq / (1 + 0xff) :						// 18.7.3

@@ -65,9 +65,9 @@ void setup()
 	//--------------------------------------------------------------------------
 	do {
 		uint8_t flags = timer2.EnableInt_TIMER2_OVF;
-		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::Normal, flas);
+		timer2.Start(timer2.Clock::Div1024, timer2.Waveform::Normal, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoFF, flags);
-		timer2.Start(timer2.Clock::Div64, timer2.Waveform::CTC, flags);
+		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::CTC, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoFF, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoOCR2A, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoOCR2A, flags);
@@ -79,5 +79,5 @@ void setup()
 void loop()
 {
 	portLED.DigitalToggle();
-	timer2.Delay(500);
+	timer2.Delay(100);
 }
