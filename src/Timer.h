@@ -12,12 +12,7 @@ namespace avrt {
 //------------------------------------------------------------------------------
 // Timer0
 //------------------------------------------------------------------------------
-template<
-	uint8_t dataCOM0A			= 0b00,		// COM0A: Compare Match Output A Mode
-	uint8_t dataCOM0B			= 0b00,		// COM0B: Compare Match OUtput B Mode
-	uint8_t dataFOC0A			= 0b0,		// FOC0A: Force Output Compare A
-	uint8_t dataFOC0B			= 0b0		// FOC0B: Force Output Compare B
-> class Timer0 {
+class Timer0 {
 public:
 	constexpr static uint8_t EnableInt_None			= 0;
 	constexpr static uint8_t EnableInt_TIMER0_OVF	= (1 << 0);
@@ -51,6 +46,10 @@ public:
 		constexpr uint8_t dataOCF0A	= 0b1;		// OCF0A: Timer/Counter0 Output Compare A Match Flag = Set One to Clear
 		constexpr uint8_t dataOCF0B	= 0b1;		// OCF0B: Timer/Counter0 Output Compare B Match Flag = Set One to Clear
 		constexpr uint8_t dataTOV0	= 0b1;		// TOV0: Timer/Counter0 Overflow Flag = Set One to Clear
+		constexpr uint8_t dataCOM0A = 0b00;		// COM0A: Compare Match Output A Mode
+		constexpr uint8_t dataCOM0B = 0b00;		// COM0B: Compare Match OUtput B Mode
+		constexpr uint8_t dataFOC0A = 0b0;		// FOC0A: Force Output Compare A
+		constexpr uint8_t dataFOC0B = 0b0;		// FOC0B: Force Output Compare B
 		TCCR0A = (dataCOM0A << COM0A0) | (dataCOM0B << COM0B0) | ((dataWGM0 & 0b11) << WGM00);
 		TCCR0B = (dataFOC0A << FOC0A) | (dataFOC0B << FOC0B) | ((dataWGM0 >> 2) << WGM02) | (dataCS0 << CS00);
 		TCNT0 = 0x00;
@@ -64,22 +63,13 @@ public:
 //------------------------------------------------------------------------------
 // Timer1
 //------------------------------------------------------------------------------
-template<
-	uint8_t dataCOM1A			= 0b00,		// COM1A: Compare Match Output A Mode
-	uint8_t dataCOM1B			= 0b00,		// COM1B: Compare Match OUtput B Mode
-	uint8_t dataFOC1A			= 0b0,		// FOC1A: Force Output Compare A
-	uint8_t dataFOC1B			= 0b0,		// FOC1B: Force Output Compare B
-	// Timer1-specific parameters
-	uint8_t dataICNC1			= 0b0,		// ICNC1: Input Capture Noice Canceler
-	uint8_t dataICES1			= 0b0,		// ICES1: Input Capture Edge Select
-	uint8_t dataICIE1			= 0b0,		// ICIE1: Timer/Counter1 Input Capture Interrupt Enable
-	uint8_t dataICF1			= 0b0		// ICF1: Timer/Counter1 Input Capture Flag
-> class Timer1 {
+class Timer1 {
 public:
 	constexpr static uint8_t EnableInt_None			= 0;
 	constexpr static uint8_t EnableInt_TIMER1_OVF	= (1 << 0);
 	constexpr static uint8_t EnableInt_TIMER1_COMPA	= (1 << 1);
 	constexpr static uint8_t EnableInt_TIMER1_COMPB	= (1 << 2);
+	constexpr static uint8_t EnableInt_TIMER1_CAPT	= (1 << 3);
 	enum class Clock {
 		None					= 0,
 		Div1					= 1,
@@ -114,9 +104,17 @@ public:
 		uint8_t dataTOIE1 = (flags >> 0) & 1;	// TOIE1: Timer/Counter1 Overflow Interrupt Enable .. (TIMER1_OVF)
 		uint8_t dataOCIE1A = (flags >> 1) & 1;	// OCIE1A: Timer/Counter1 Output Compare Match A Interrupt Enable (TIMER1_COMPA)
 		uint8_t dataOCIE1B = (flags >> 2) & 1;	// OCIE1B: Timer/Counter1 Output Compare Match B Interrupt Enable (TIMER1_COMPB)
+		uint8_t dataICIE1 = (flags >> 3) & 1;	// ICIE1: Timer/Counter1 Input Capture Interrupt Enable
 		constexpr uint8_t dataOCF1A	= 0b1;		// OCF10A: Timer/Counter1 Output Compare A Match Flag = Set One to Clear
 		constexpr uint8_t dataOCF1B	= 0b1;		// OCF1B: Timer/Counter1 Output Compare B Match Flag = Set One to Clear
 		constexpr uint8_t dataTOV1	= 0b1;		// TOV1: Timer/Counter1 Overflow Flag = Set One to Clear
+		constexpr uint8_t dataCOM1A = 0b00;		// COM1A: Compare Match Output A Mode
+		constexpr uint8_t dataCOM1B = 0b00;		// COM1B: Compare Match OUtput B Mode
+		constexpr uint8_t dataFOC1A = 0b0;		// FOC1A: Force Output Compare A
+		constexpr uint8_t dataFOC1B = 0b0;		// FOC1B: Force Output Compare B
+		constexpr uint8_t dataICNC1 = 0b0;		// ICNC1: Input Capture Noice Canceler
+		constexpr uint8_t dataICES1 = 0b0;		// ICES1: Input Capture Edge Select
+		constexpr uint8_t dataICF1 = 0b1;		// ICF1: Timer/Counter1 Input Capture Flag = Set One to Clear
 		TCCR1A = (dataCOM1A << COM1A0) | (dataCOM1B << COM1B0) | ((dataWGM1 & 0b11) << WGM10);
 		TCCR1B = (dataICNC1 << ICNC1) | (dataICES1 << ICES1) | ((dataWGM1 >> 2) << WGM12) | (dataCS1 << CS10);
 		TCCR1C = (dataFOC1A << FOC1A) | (dataFOC1B << FOC1B);
@@ -132,23 +130,7 @@ public:
 //------------------------------------------------------------------------------
 // Timer2
 //------------------------------------------------------------------------------
-template<
-	uint8_t dataCOM2A			= 0b00,		// COM2A: Compare Match Output A Mode
-	uint8_t dataCOM2B			= 0b00,		// COM2B: Compare Match OUtput B Mode
-	uint8_t dataFOC2A			= 0b0,		// FOC2A: Force Output Compare A
-	uint8_t dataFOC2B			= 0b0,		// FOC2B: Force Output Compare B
-	// Timer2-specific parameters
-	uint8_t dataEXCLK			= 0b0,		// EXCLK: Enable External Clock Input
-	uint8_t dataAS2				= 0b0,		// AS2: ASynchronous Timer/Counter2
-	uint8_t dataTCN2UB			= 0b0,		// TCN2UB: Timer/Counter2 Update Busy
-	uint8_t dataOCR2AUB			= 0b0,		// OCR2AUB: Output Compare Register2 A Update Busy
-	uint8_t dataOCR2BUB			= 0b0,		// OCR2BUB: Output Compare Register2 B Update Busy
-	uint8_t dataTCR2AUB			= 0b0,		// TCR2AUB: Timer/Counter Control Register2 A Update Busy
-	uint8_t dataTCR2BUB			= 0b0,		// TCR2BUB: Timer/Counter Control Register2 B Update BUsy
-	uint8_t dataTSM				= 0b0,		// TSM: Timer/Counter Synchronization Mode
-	uint8_t dataPSRASY			= 0b0,		// PSRASY: Prescaler Reset Timer/Counter2
-	uint8_t dataPSRSYNC			= 0b0		// PSRSYNC:
-> class Timer2 {
+class Timer2 {
 public:
 	constexpr static uint8_t EnableInt_None			= 0;
 	constexpr static uint8_t EnableInt_TIMER2_OVF	= (1 << 0);
@@ -182,6 +164,20 @@ public:
 		constexpr uint8_t dataOCF2A	= 0b1;		// OCF2A: Timer/Counter2 Output Compare A Match Flag = Set One to Clear
 		constexpr uint8_t dataOCF2B	= 0b1;		// OCF2B: Timer/Counter2 Output Compare B Match Flag = Set One to Clear
 		constexpr uint8_t dataTOV2	= 0b1;		// TOV2: Timer/Counter2 Overflow Flag = Set One to Clear
+		constexpr uint8_t dataCOM2A = 0b00;		// COM2A: Compare Match Output A Mode
+		constexpr uint8_t dataCOM2B = 0b00;		// COM2B: Compare Match OUtput B Mode
+		constexpr uint8_t dataFOC2A = 0b0;		// FOC2A: Force Output Compare A
+		constexpr uint8_t dataFOC2B = 0b0;		// FOC2B: Force Output Compare B
+		constexpr uint8_t dataEXCLK = 0b0;		// EXCLK: Enable External Clock Input
+		constexpr uint8_t dataAS2 = 0b0;		// AS2: ASynchronous Timer/Counter2
+		constexpr uint8_t dataTCN2UB = 0b0;		// TCN2UB: Timer/Counter2 Update Busy
+		constexpr uint8_t dataOCR2AUB = 0b0;	// OCR2AUB: Output Compare Register2 A Update Busy
+		constexpr uint8_t dataOCR2BUB = 0b0;	// OCR2BUB: Output Compare Register2 B Update Busy
+		constexpr uint8_t dataTCR2AUB = 0b0;	// TCR2AUB: Timer/Counter Control Register2 A Update Busy
+		constexpr uint8_t dataTCR2BUB = 0b0;	// TCR2BUB: Timer/Counter Control Register2 B Update BUsy
+		constexpr uint8_t dataTSM = 0b0;		// TSM: Timer/Counter Synchronization Mode
+		constexpr uint8_t dataPSRASY = 0b0;		// PSRASY: Prescaler Reset Timer/Counter2
+		constexpr uint8_t dataPSRSYNC = 0b0;	// PSRSYNC:
 		TCCR2A = (dataCOM2A << COM2A0) | (dataCOM2B << COM2B0) | ((dataWGM2 & 0b11) << WGM20);
 		TCCR2B = (dataFOC2A << FOC2A) | (dataFOC2B << FOC2B) | ((dataWGM2 >> 2) << WGM22) | (dataCS2 << CS20);
 		TCNT2 = 0x00;

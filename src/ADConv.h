@@ -50,9 +50,10 @@ public:
 		Int_ANALOG_COMP		= 0x1,
 		Int_INT0			= 0x2,
 		Int_TIMER0_COMPA	= 0x3,
+		Int_TIMER0_OVF		= 0x4,
 		Int_TIMER1_COMPB	= 0x5,
 		Int_TIMER1_OVF		= 0x6,
-		Int_TIMER_CAPT		= 0x7,
+		Int_TIMER1_CAPT		= 0x7,
 	};
 private:
 	FIFOBuffEx buffs_[(buffSize > 0)? 1 : 0];

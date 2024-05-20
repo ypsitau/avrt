@@ -7,9 +7,9 @@ AVRT_IMPLEMENT_Serial0(serial)
 av::Port<av::D2, av::Out> portD2;
 av::Port<av::D3, av::Out> portD3;
 
-av::Timer0<> timer0;
-av::Timer1<> timer1;
-av::Timer2<> timer2;
+av::Timer0 timer0;
+av::Timer1 timer1;
+av::Timer2 timer2;
 
 ISR(TIMER1_OVF_vect)
 {
@@ -31,9 +31,9 @@ void setup()
 	do {
 		uint8_t flags = timer0.EnableInt_TIMER0_OVF;
 		//timer0.Start(timer0.Clock::Div64, timer0.Waveform::Normal, flags);
-		//timer0.Start(timer0.Clock::Div64, timer0.Waveform::PhaseCorrectPWM_UptoFF, flags);
+		timer0.Start(timer0.Clock::Div64, timer0.Waveform::PhaseCorrectPWM_UptoFF, flags);
 		//timer0.Start(timer0.Clock::Div64, timer0.Waveform::CTC, flags);
-		timer0.Start(timer0.Clock::Div64, timer0.Waveform::FastPWM_UptoFF, flags);
+		//timer0.Start(timer0.Clock::Div64, timer0.Waveform::FastPWM_UptoFF, flags);
 		//timer0.Start(timer0.Clock::Div64, timer0.Waveform::PhaseCorrectPWM_UptoOCR0A, flags);
 		//timer0.Start(timer0.Clock::Div64, timer0.Waveform::FastPWM_UptoOCR0A, flags);
 		//OCR0A = 0x20;
