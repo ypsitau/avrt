@@ -6,6 +6,7 @@ AVRT_IMPLEMENT_Serial0(serial)
 
 av::Port<av::D2, av::Out> portD2;
 av::Port<av::D3, av::Out> portD3;
+av::Port<av::D4, av::Out> portLED;
 
 av::Timer0 timer0;
 av::Timer1 timer1;
@@ -14,13 +15,16 @@ av::Timer2 timer2;
 ISR(TIMER1_OVF_vect)
 {
 	//serial.Printf("TIMER1_OVF\n");
-	portD2.DigitalToggle();
+	//portD2.DigitalToggle();
+	portD2.DigitalImpulse();
+	timer1.HandleIRQ_TIMER1_OVF();
 }
 
 ISR(TIMER2_OVF_vect)
 {
 	//serial.Printf("TIMER2_OVF\n");
 	portD3.DigitalToggle();
+	timer2.HandleIRQ_TIMER2_OVF();
 }
 
 void setup()
@@ -42,8 +46,8 @@ void setup()
 	do {
 		uint8_t flags = timer1.EnableInt_TIMER1_OVF;
 		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::Normal, flags);
-		timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseCorrectPWM_Upto00FF, flags);
-		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseCorrectPWM_Upto01FF, flags);
+		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseCorrectPWM_Upto00FF, flags);
+		timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseCorrectPWM_Upto01FF, flags);
 		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseCorrectPWM_Upto03FF, flags);
 		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::CTC, flags);
 		//timer1.Start(timer1.Clock::Div64, timer1.Waveform::FastPWM_Upto00FF, flags);
@@ -62,16 +66,18 @@ void setup()
 	do {
 		uint8_t flags = timer2.EnableInt_TIMER2_OVF;
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::Normal, flas);
-		timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoFF, flags);
-		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::CTC, flags);
+		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoFF, flags);
+		timer2.Start(timer2.Clock::Div64, timer2.Waveform::CTC, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoFF, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoOCR2A, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoOCR2A, flags);
-		//OCR2A = 0x20;
+		OCR2A = 0xff;
 	} while (0);
 	serial.Printf(F("test-Timer\n"));
 }
 
 void loop()
 {
+	portLED.DigitalToggle();
+	timer2.Delay(500);
 }

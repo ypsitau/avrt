@@ -36,7 +36,10 @@ public:
 		PhaseCorrectPWM_UptoOCR0A	= 5,
 		FastPWM_UptoOCR0A			= 7,
 	};
+private:
+	volatile uint32_t cntDelay_;
 public:
+	Timer0() : cntDelay_(0) {}
 	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const {
 		uint8_t dataCS0 = static_cast<uint8_t>(clock);		// CS0: Clock Select
 		uint8_t dataWGM0 = static_cast<uint8_t>(waveform);	// WGM0: Waveform Generation Mode
@@ -57,6 +60,31 @@ public:
 		OCR0B = 0x00;
 		TIMSK0 = (dataOCIE0B << OCIE0B) | (dataOCIE0A << OCIE0A) | (dataTOIE0 << TOIE0);
 		TIFR0 = (dataOCF0B << OCF0B) | (dataOCF0A << OCF0A) | (dataTOV0 << TOV0);
+	}
+	void Delay(uint32_t msec) {
+		Clock clock = static_cast<Clock>((TCCR0B >> CS00) & 0b111);
+		Waveform waveform = static_cast<Waveform>(((TCCR0A >> WGM00) & 0b11) + (((TCCR0B >> WGM02) & 0b1) << 2));
+		int prescale = (clock == Clock::Div1)? 0 : (clock == Clock::Div8)? 3 : (clock == Clock::Div64)? 6 :
+			(clock == Clock::Div256)? 8 : (clock == Clock::Div1024)? 10 : 0;
+		uint32_t freq = F_CPU >> prescale;
+		uint32_t dataOCR0A = static_cast<uint32_t>(OCR0A);
+		uint32_t dataOCR0ASafe = (dataOCR0A == 0)? 1 : dataOCR0A;
+		freq =
+			(waveform == Waveform::Normal)? freq :
+			(waveform == Waveform::PhaseCorrectPWM_UptoFF)? freq / (2 * 0xff) :				// 15.7.4
+			(waveform == Waveform::CTC)? freq / (1 + dataOCR0A) :							// 15.7.2 (corrected)
+			(waveform == Waveform::FastPWM_UptoFF)? freq / (1 + 0xff) :						// 15.7.3
+			(waveform == Waveform::PhaseCorrectPWM_UptoOCR0A)? freq / (2 * dataOCR0ASafe) :	// 15.7.4
+			(waveform == Waveform::FastPWM_UptoOCR0A)? freq / (1 + dataOCR0A) :				// 15.7.3
+			freq;
+		DelayCore((msec * freq + 999) / 1000);
+	}
+	void DelayCore(uint32_t cntExpire) {
+		cntDelay_ = 0;
+		while (cntDelay_ < cntExpire) ;
+	}
+	void HandleIRQ_TIMER0_OVF() {
+		cntDelay_++;
 	}
 };
 
@@ -97,7 +125,10 @@ public:
 		FastPWM_UptoICR1					= 13,
 		FastPWM_UptoOCR1A					= 14,
 	};
+private:
+	volatile uint32_t cntDelay_;
 public:
+	Timer1() : cntDelay_(0) {}
 	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const {
 		uint8_t dataCS1 = static_cast<uint8_t>(clock);		// CS1: Clock Select
 		uint8_t dataWGM1 = static_cast<uint8_t>(waveform);	// WGM1: Waveform Generation Mode
@@ -124,6 +155,42 @@ public:
 		ICR1H = 0x00, ICR1L = 0x00;
 		TIMSK1 = (dataICIE1 << ICIE1) | (dataOCIE1B << OCIE1B) | (dataOCIE1A << OCIE1A) | (dataTOIE1 << TOIE1);
 		TIFR1 = (dataICF1 << ICF1) | (dataOCF1B << OCF1B) | (dataOCF1A << OCF1A) | (dataTOV1 << TOV1);
+	}
+	void DelayCore(uint32_t cntExpire) {
+		cntDelay_ = 0;
+		while (cntDelay_ < cntExpire) ;
+	}
+	void Delay(uint32_t msec) {
+		Clock clock = static_cast<Clock>((TCCR1B >> CS10) & 0b111);
+		Waveform waveform = static_cast<Waveform>(((TCCR1A >> WGM10) & 0b11) + (((TCCR1B >> WGM12) & 0b1) << 2));
+		int prescale = (clock == Clock::Div1)? 0 : (clock == Clock::Div8)? 3 : (clock == Clock::Div64)? 6 :
+			(clock == Clock::Div256)? 8 : (clock == Clock::Div1024)? 10 : 0;
+		uint32_t freq = F_CPU >> prescale;
+		uint32_t dataICR1 = static_cast<uint32_t>(ICR1);
+		uint32_t dataOCR1A = static_cast<uint32_t>(OCR1A);
+		uint32_t dataICR1Safe = (dataICR1 == 0)? 1 : dataICR1;
+		uint32_t dataOCR1ASafe = (dataOCR1A == 0)? 1 : dataOCR1A;
+		freq =
+			(waveform == Waveform::Normal)? freq :
+			(waveform == Waveform::PhaseCorrectPWM_Upto00FF)? freq / (2 * 0xff) :					// 16.9.4
+			(waveform == Waveform::PhaseCorrectPWM_Upto01FF)? freq / (2 * 0x1ff) :					// 16.9.4
+			(waveform == Waveform::PhaseCorrectPWM_Upto03FF)? freq / (2 * 0x3ff) :					// 16.9.4
+			(waveform == Waveform::CTC)? freq / (1 + dataOCR1A) :									// 16.9.2 (corrected)
+			(waveform == Waveform::FastPWM_Upto00FF)? freq / (1 + 0xff) :							// 16.9.3
+			(waveform == Waveform::FastPWM_Upto01FF)? freq / (1 + 0x1ff) :							// 16.9.3
+			(waveform == Waveform::FastPWM_Upto03FF)? freq / (1 + 0x3ff) :							// 16.9.3
+			(waveform == Waveform::PhaseAndFreqCorrectPWM_UptoICR1)? freq / (2 * dataICR1Safe) :	// 16.9.5
+			(waveform == Waveform::PhaseAndFreqCorrectPWM_UptoOCR1A)? freq / (2 * dataOCR1ASafe) :	// 16.9.5
+			(waveform == Waveform::PhaseCorrectPWM_UptoICR1)? freq / (2 * dataICR1Safe) :			// 16.9.4
+			(waveform == Waveform::PhaseCorrectPWM_UptoOCR1A)? freq / (2 * dataOCR1ASafe) :			// 16.9.4
+			(waveform == Waveform::CTC_UptoICR1)? freq / (1 + dataICR1) :							// 16.9.2 (corrected)
+			(waveform == Waveform::FastPWM_UptoICR1)? freq / (1 + dataICR1) :						// 16.9.3
+			(waveform == Waveform::FastPWM_UptoOCR1A)? freq / (1 + dataOCR1A) :						// 16.9.3
+			freq;
+		DelayCore((msec * freq + 999) / 1000);
+	}
+	void HandleIRQ_TIMER1_OVF() {
+		cntDelay_++;
 	}
 };
 
@@ -154,7 +221,10 @@ public:
 		PhaseCorrectPWM_UptoOCR2A	= 5,
 		FastPWM_UptoOCR2A			= 7,
 	};
+private:
+	volatile uint32_t cntDelay_;
 public:
+	Timer2() : cntDelay_(0) {}
 	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const {
 		uint8_t dataCS2 = static_cast<uint8_t>(clock);		// CS2: Clock Select
 		uint8_t dataWGM2 = static_cast<uint8_t>(waveform);	// WGM2: Waveform Generation Mode
@@ -188,6 +258,32 @@ public:
 		ASSR = (dataEXCLK << EXCLK) | (dataAS2 << AS2) | (dataTCN2UB << TCN2UB) |
 			(dataOCR2AUB << OCR2AUB) | (dataOCR2BUB << OCR2BUB) | (dataTCR2AUB << TCR2AUB) | (dataTCR2BUB << TCR2BUB);
 		GTCCR = (dataTSM << TSM) | (dataPSRASY << PSRASY) | (dataPSRSYNC << PSRSYNC);	
+	}
+	void DelayCore(uint32_t cntExpire) {
+		cntDelay_ = 0;
+		while (cntDelay_ < cntExpire) ;
+	}
+	void Delay(uint32_t msec) {
+		Clock clock = static_cast<Clock>((TCCR2B >> CS20) & 0b111);
+		Waveform waveform = static_cast<Waveform>(((TCCR2A >> WGM20) & 0b11) + (((TCCR2B >> WGM22) & 0b1) << 2));
+		int prescale = (clock == Clock::Div1)? 0 : (clock == Clock::Div8)? 3 : (clock == Clock::Div32)? 5 :
+			(clock == Clock::Div64)? 6 : (clock == Clock::Div128)? 7 : (clock == Clock::Div256)? 8 :
+			(clock == Clock::Div1024)? 10 : 0;
+		uint32_t freq = F_CPU >> prescale;
+		uint32_t dataOCR2A = static_cast<uint32_t>(OCR2A);
+		uint32_t dataOCR2ASafe = (dataOCR2A == 0)? 1 : dataOCR2A;
+		freq =
+			(waveform == Waveform::Normal)? freq :
+			(waveform == Waveform::PhaseCorrectPWM_UptoFF)? freq / (2 * 0xff) :				// 18.7.4
+			(waveform == Waveform::CTC)? freq / (1 + dataOCR2A) :							// 18.7.2 (corrected)
+			(waveform == Waveform::FastPWM_UptoFF)? freq / (1 + 0xff) :						// 18.7.3
+			(waveform == Waveform::PhaseCorrectPWM_UptoOCR2A)? freq / (2 * dataOCR2ASafe) :	// 18.7.4
+			(waveform == Waveform::FastPWM_UptoOCR2A)? freq / (1 + dataOCR2A) :				// 18.7.3
+			freq;
+		DelayCore((msec * freq + 999) / 1000);
+	}
+	void HandleIRQ_TIMER2_OVF() {
+		cntDelay_++;
 	}
 };
 
