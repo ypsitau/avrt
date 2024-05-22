@@ -54,9 +54,8 @@ public:
 			break;
 		case TW_MT_DATA_NACK:			// 0x30: data transmitted, NACK received
 			break;
-		//case TW_MT_ARB_LOST:			// 0x38: arbitration lost in SLA+W or data
-		//	break;
 		// Master Receiver
+		//case TW_MT_ARB_LOST:			// 0x38: arbitration lost in SLA+W or data
 		case TW_MR_ARB_LOST:			// 0x38: arbitration lost in SLA+R or NACK
 			break;
 		case TW_MR_SLA_ACK:				// 0x40: SLA+R transmitted, ACK received
