@@ -76,15 +76,46 @@ void setup()
 		OCR2A = 0xff;
 	} while (0);
 	serial.Printf(F("test-Timer\n"));
-	alarm.StartMSec(1000);
+	alarm.StartMSec(300);
 }
 
 void loop()
 {
+	//serial.Printf(F("%u %d\n"), static_cast<uint16_t>(alarm.pTimer_->GetTickCur()) - alarm.tickStart_, alarm.ticksToAlarm_);
 	if (alarm.IsExpired()) {
 		portLED.DigitalToggle();
 		alarm.Reset();
 	}
 	//serial.Printf(F("hello\n"));
 	//timer2.DelayMSec(100);
+}
+
+void BoundaryTest()
+{
+	uint32_t tickStart = 0xffffff00L;
+	uint32_t tickCur = 0xffffff00L;
+	uint32_t ticksToAlarm = 0x180L;
+	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
+		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
+	tickCur = 0xffffff80L;
+	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
+		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
+	tickCur = 0xffffff81L;
+	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
+		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
+	tickCur = 0xffffffffL;
+	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
+		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
+	tickCur = 0x00000000L;
+	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
+		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
+	tickCur = 0x00000001L;
+	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
+		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
+	tickCur = 0x00000080L;
+	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
+		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
+	tickCur = 0x00000081L;
+	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
+		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
 }

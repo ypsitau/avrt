@@ -15,7 +15,7 @@ namespace avrt {
 class Timer {
 public:
 	class Alarm {
-	private:
+	public:
 		const Timer* pTimer_;
 		uint32_t tickStart_;
 		uint32_t ticksToAlarm_;
@@ -27,12 +27,16 @@ public:
 			pTimer_(alarm.pTimer_), tickStart_(alarm.tickStart_), ticksToAlarm_(alarm.ticksToAlarm_) {}
 		void Reset() { tickStart_ = pTimer_->GetTickCur(); }
 		Alarm& StartMSec(uint32_t msec) {
-			Reset();
 			ticksToAlarm_ = pTimer_->ConvMSecToTicks(msec);
+			Reset();
 			return *this;
 		}
 		bool IsExpired() const {
 			return pTimer_->GetTickCur() - tickStart_ > ticksToAlarm_;
+		}
+	public:
+		static bool Test(uint32_t tickCur, uint32_t tickStart, uint32_t ticksToAlarm) {
+			return tickCur - tickStart > ticksToAlarm;
 		}
 	};
 protected:
