@@ -26,8 +26,14 @@ public:
 		Alarm(const Alarm& alarm) :
 			pTimer_(alarm.pTimer_), tickStart_(alarm.tickStart_), ticksToAlarm_(alarm.ticksToAlarm_) {}
 		void Reset() { tickStart_ = pTimer_->GetTickCur(); }
-		void StartMSec(uint32_t msec) { Reset(); ticksToAlarm_ = pTimer_->ConvMSecToTicks(msec); }
-		bool IsExpired() const { return pTimer_->GetTickCur() - tickStart_ > ticksToAlarm_; }
+		Alarm& StartMSec(uint32_t msec) {
+			Reset();
+			ticksToAlarm_ = pTimer_->ConvMSecToTicks(msec);
+			return *this;
+		}
+		bool IsExpired() const {
+			return pTimer_->GetTickCur() - tickStart_ > ticksToAlarm_;
+		}
 	};
 protected:
 	volatile uint32_t tickCur_;
