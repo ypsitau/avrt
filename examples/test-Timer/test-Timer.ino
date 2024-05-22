@@ -81,10 +81,10 @@ void setup()
 
 void loop()
 {
-	//if (alarm.IsExpired()) {
-	//	alarm.Reset();
-	//}
+	if (alarm.IsExpired()) {
+		portLED.DigitalToggle();
+		alarm.Reset();
+	}
 	//serial.Printf(F("hello\n"));
-	portLED.DigitalToggle();
-	timer2.DelayMSec(100);
+	//timer2.DelayMSec(100);
 }
