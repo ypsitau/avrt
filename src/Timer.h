@@ -16,26 +16,34 @@ class Timer {
 public:
 	class Alarm {
 	private:
-		const Timer& timer_;
+		const Timer* pTimer_;
 		uint32_t tickStart_;
 		uint32_t ticksToAlarm_;
 	public:
+		Alarm(const Timer& timer) : pTimer_(&timer), tickStart_(0), ticksToAlarm_(0) {}
 		Alarm(const Timer& timer, uint32_t ticksToAlarm) :
-					timer_(timer), tickStart_(timer.GetTickCur()), ticksToAlarm_(ticksToAlarm) {}
+			pTimer_(&timer), tickStart_(timer.GetTickCur()), ticksToAlarm_(ticksToAlarm) {}
 		Alarm(const Alarm& alarm) :
-					timer_(alarm.timer_), tickStart_(alarm.tickStart_), ticksToAlarm_(alarm.ticksToAlarm_) {}
-		bool IsExpired() const { return timer_.GetTickCur() - tickStart_ > ticksToAlarm_; }
+			pTimer_(alarm.pTimer_), tickStart_(alarm.tickStart_), ticksToAlarm_(alarm.ticksToAlarm_) {}
+		void Reset() { tickStart_ = pTimer_->GetTickCur(); }
+		void StartMSec(uint32_t msec) { Reset(); ticksToAlarm_ = pTimer_->ConvMSecToTicks(msec); }
+		bool IsExpired() const { return pTimer_->GetTickCur() - tickStart_ > ticksToAlarm_; }
 	};
 protected:
 	volatile uint32_t tickCur_;
 public:
 	Timer() : tickCur_(0) {}
 	uint32_t GetTickCur() const { return tickCur_; }
-	void DelayTick(uint32_t ticks) {
+	uint32_t ConvMSecToTicks(uint32_t msec) const { return (msec * CalcFreqOVF() + 500) / 1000; }
+	void DelayTicks(uint32_t ticks) {
 		uint32_t tickStart = tickCur_;
 		while (tickCur_ - tickStart < ticks) ;
 	}
-	Alarm MakeAlarmTick(uint32_t ticksToAlarm) { return Alarm(*this, ticksToAlarm); }
+	void DelayMSec(uint32_t msec) {
+		DelayTicks(ConvMSecToTicks(msec));
+	}
+	Alarm AlarmTicks(uint32_t ticksToAlarm) { return Alarm(*this, ticksToAlarm); }
+	Alarm AlarmMSec(uint32_t msec) { return Alarm(*this, ConvMSecToTicks(msec)); }
 public:
 	virtual uint32_t CalcFreqOVF() const = 0;
 };
@@ -100,9 +108,6 @@ public:
 		OCR0B = 0x00;
 		TIMSK0 = (dataOCIE0B << OCIE0B) | (dataOCIE0A << OCIE0A) | (dataTOIE0 << TOIE0);
 		TIFR0 = (dataOCF0B << OCF0B) | (dataOCF0A << OCF0A) | (dataTOV0 << TOV0);
-	}
-	void Delay(uint32_t msec) {
-		DelayTick((msec * CalcFreqOVF() + 999) / 1000);
 	}
 	void HandleIRQ_TIMER0_COMPA() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER0_COMPA();
@@ -210,9 +215,6 @@ public:
 		ICR1H = 0x00, ICR1L = 0x00;
 		TIMSK1 = (dataICIE1 << ICIE1) | (dataOCIE1B << OCIE1B) | (dataOCIE1A << OCIE1A) | (dataTOIE1 << TOIE1);
 		TIFR1 = (dataICF1 << ICF1) | (dataOCF1B << OCF1B) | (dataOCF1A << OCF1A) | (dataTOV1 << TOV1);
-	}
-	void Delay(uint32_t msec) {
-		DelayTick((msec * CalcFreqOVF() + 999) / 1000);
 	}
 	void HaldleIRQ_TIMER1_CAPT() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER1_CAPT();
@@ -329,9 +331,6 @@ public:
 		ASSR = (dataEXCLK << EXCLK) | (dataAS2 << AS2) | (dataTCN2UB << TCN2UB) |
 			(dataOCR2AUB << OCR2AUB) | (dataOCR2BUB << OCR2BUB) | (dataTCR2AUB << TCR2AUB) | (dataTCR2BUB << TCR2BUB);
 		GTCCR = (dataTSM << TSM) | (dataPSRASY << PSRASY) | (dataPSRSYNC << PSRSYNC);	
-	}
-	void Delay(uint32_t msec) {
-		DelayTick((msec * CalcFreqOVF() + 999) / 1000);
 	}
 	void HandleIRQ_TIMER2_COMPA() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER2_COMPA();

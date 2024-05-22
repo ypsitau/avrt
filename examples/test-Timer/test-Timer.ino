@@ -12,6 +12,8 @@ av::Timer0 timer0;
 av::Timer1 timer1;
 av::Timer2 timer2;
 
+av::Timer::Alarm alarm(timer1);
+
 ISR(TIMER1_OVF_vect)
 {
 	//serial.Printf("TIMER1_OVF\n");
@@ -65,7 +67,7 @@ void setup()
 	//--------------------------------------------------------------------------
 	do {
 		uint8_t flags = timer2.EnableInt_TIMER2_OVF;
-		timer2.Start(timer2.Clock::Div1024, timer2.Waveform::Normal, flags);
+		timer2.Start(timer2.Clock::Div64, timer2.Waveform::Normal, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoFF, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::CTC, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoFF, flags);
@@ -74,10 +76,15 @@ void setup()
 		OCR2A = 0xff;
 	} while (0);
 	serial.Printf(F("test-Timer\n"));
+	alarm.StartMSec(1000);
 }
 
 void loop()
 {
+	//if (alarm.IsExpired()) {
+	//	alarm.Reset();
+	//}
+	//serial.Printf(F("hello\n"));
 	portLED.DigitalToggle();
-	timer2.Delay(100);
+	timer2.DelayMSec(100);
 }
