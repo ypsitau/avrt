@@ -10,9 +10,32 @@
 namespace avrt {
 
 //------------------------------------------------------------------------------
+// Alarm
+//------------------------------------------------------------------------------
+template<typename T_Timer> class Alarm {
+private:
+	const T_Timer& timer_;
+	uint32_t tickStart_;
+	uint32_t ticksToAlarm_;
+public:
+	Alarm(const T_Timer& timer, uint32_t ticksToAlarm) :
+				timer_(timer), tickStart_(timer.GetTickCur()), ticksToAlarm_(ticksToAlarm) {}
+	Alarm(const Alarm& alarm) :
+				timer_(alarm.timer_), tickStart_(alarm.tickStart_), ticksToAlarm_(alarm.ticksToAlarm_) {}
+	bool IsExpired() const { return timer_.GetTickCur() - tickStart_ > ticksToAlarm_; }
+};
+
+//------------------------------------------------------------------------------
 // Timer0
 //------------------------------------------------------------------------------
 class Timer0 {
+public:
+	class Handler {
+	public:
+		virtual void HandleIRQ_TIMER0_COMPA(void) {}
+		virtual void HandleIRQ_TIMER0_COMPB(void) {}
+		virtual void HandleIRQ_TIMER0_OVF(void) {}
+	};
 public:
 	constexpr static uint8_t EnableInt_None			= 0;
 	constexpr static uint8_t EnableInt_TIMER0_OVF	= (1 << 0);
@@ -37,9 +60,11 @@ public:
 		FastPWM_UptoOCR0A			= 7,
 	};
 private:
-	volatile uint32_t cntDelay_;
+	volatile uint32_t tickCur_;
+	Handler* pHandler_;
 public:
-	Timer0() : cntDelay_(0) {}
+	Timer0() : tickCur_(0), pHandler_(nullptr) {}
+	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
 	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const {
 		uint8_t dataCS0 = static_cast<uint8_t>(clock);		// CS0: Clock Select
 		uint8_t dataWGM0 = static_cast<uint8_t>(waveform);	// WGM0: Waveform Generation Mode
@@ -77,14 +102,22 @@ public:
 			(waveform == Waveform::PhaseCorrectPWM_UptoOCR0A)? freq / (2 * dataOCR0ASafe) :	// 15.7.4
 			(waveform == Waveform::FastPWM_UptoOCR0A)? freq / (1 + dataOCR0A) :				// 15.7.3
 			freq;
-		DelayCore((msec * freq + 999) / 1000);
+		DelayTick((msec * freq + 999) / 1000);
 	}
-	void DelayCore(uint32_t cntExpire) {
-		cntDelay_ = 0;
-		while (cntDelay_ < cntExpire) ;
+	uint32_t GetTickCur() const { return tickCur_; }
+	void DelayTick(uint32_t ticks) {
+		uint32_t tickStart = tickCur_;
+		while (tickCur_ - tickStart < ticks) ;
+	}
+	void HandleIRQ_TIMER0_COMPA() {
+		if (pHandler_) pHandler_->HandleIRQ_TIMER0_COMPA();
+	}
+	void HaldleIRQ_TIMER0_COMPB() {
+		if (pHandler_) pHandler_->HandleIRQ_TIMER0_COMPB();
 	}
 	void HandleIRQ_TIMER0_OVF() {
-		cntDelay_++;
+		tickCur_++;
+		if (pHandler_) pHandler_->HandleIRQ_TIMER0_OVF();
 	}
 };
 
@@ -92,6 +125,14 @@ public:
 // Timer1
 //------------------------------------------------------------------------------
 class Timer1 {
+public:
+	class Handler {
+	public:
+		virtual void HandleIRQ_TIMER1_CAPT(void) {}
+		virtual void HandleIRQ_TIMER1_COMPA(void) {}
+		virtual void HandleIRQ_TIMER1_COMPB(void) {}
+		virtual void HandleIRQ_TIMER1_OVF(void) {}
+	};
 public:
 	constexpr static uint8_t EnableInt_None			= 0;
 	constexpr static uint8_t EnableInt_TIMER1_OVF	= (1 << 0);
@@ -126,9 +167,11 @@ public:
 		FastPWM_UptoOCR1A					= 14,
 	};
 private:
-	volatile uint32_t cntDelay_;
+	volatile uint32_t tickCur_;
+	Handler* pHandler_;
 public:
-	Timer1() : cntDelay_(0) {}
+	Timer1() : tickCur_(0), pHandler_(nullptr) {}
+	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
 	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const {
 		uint8_t dataCS1 = static_cast<uint8_t>(clock);		// CS1: Clock Select
 		uint8_t dataWGM1 = static_cast<uint8_t>(waveform);	// WGM1: Waveform Generation Mode
@@ -156,9 +199,10 @@ public:
 		TIMSK1 = (dataICIE1 << ICIE1) | (dataOCIE1B << OCIE1B) | (dataOCIE1A << OCIE1A) | (dataTOIE1 << TOIE1);
 		TIFR1 = (dataICF1 << ICF1) | (dataOCF1B << OCF1B) | (dataOCF1A << OCF1A) | (dataTOV1 << TOV1);
 	}
-	void DelayCore(uint32_t cntExpire) {
-		cntDelay_ = 0;
-		while (cntDelay_ < cntExpire) ;
+	uint32_t GetTickCur() const { return tickCur_; }
+	void DelayTick(uint32_t ticks) {
+		uint32_t tickStart = tickCur_;
+		while (tickCur_ - tickStart < ticks) ;
 	}
 	void Delay(uint32_t msec) {
 		Clock clock = static_cast<Clock>((TCCR1B >> CS10) & 0b111);
@@ -187,10 +231,20 @@ public:
 			(waveform == Waveform::FastPWM_UptoICR1)? freq / (1 + dataICR1) :						// 16.9.3
 			(waveform == Waveform::FastPWM_UptoOCR1A)? freq / (1 + dataOCR1A) :						// 16.9.3
 			freq;
-		DelayCore((msec * freq + 999) / 1000);
+		DelayTick((msec * freq + 999) / 1000);
+	}
+	void HaldleIRQ_TIMER1_CAPT() {
+		if (pHandler_) pHandler_->HandleIRQ_TIMER1_CAPT();
+	}
+	void HandleIRQ_TIMER1_COMPA() {
+		if (pHandler_) pHandler_->HandleIRQ_TIMER1_COMPA();
+	}
+	void HaldleIRQ_TIMER1_COMPB() {
+		if (pHandler_) pHandler_->HandleIRQ_TIMER1_COMPB();
 	}
 	void HandleIRQ_TIMER1_OVF() {
-		cntDelay_++;
+		tickCur_++;
+		if (pHandler_) pHandler_->HandleIRQ_TIMER1_OVF();
 	}
 };
 
@@ -198,6 +252,13 @@ public:
 // Timer2
 //------------------------------------------------------------------------------
 class Timer2 {
+public:
+	class Handler {
+	public:
+		virtual void HandleIRQ_TIMER2_COMPA(void) {}
+		virtual void HandleIRQ_TIMER2_COMPB(void) {}
+		virtual void HandleIRQ_TIMER2_OVF(void) {}
+	};
 public:
 	constexpr static uint8_t EnableInt_None			= 0;
 	constexpr static uint8_t EnableInt_TIMER2_OVF	= (1 << 0);
@@ -222,9 +283,11 @@ public:
 		FastPWM_UptoOCR2A			= 7,
 	};
 private:
-	volatile uint32_t cntDelay_;
+	volatile uint32_t tickCur_;
+	Handler* pHandler_;
 public:
-	Timer2() : cntDelay_(0) {}
+	Timer2() : tickCur_(0), pHandler_(nullptr) {}
+	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
 	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const {
 		uint8_t dataCS2 = static_cast<uint8_t>(clock);		// CS2: Clock Select
 		uint8_t dataWGM2 = static_cast<uint8_t>(waveform);	// WGM2: Waveform Generation Mode
@@ -259,9 +322,10 @@ public:
 			(dataOCR2AUB << OCR2AUB) | (dataOCR2BUB << OCR2BUB) | (dataTCR2AUB << TCR2AUB) | (dataTCR2BUB << TCR2BUB);
 		GTCCR = (dataTSM << TSM) | (dataPSRASY << PSRASY) | (dataPSRSYNC << PSRSYNC);	
 	}
-	void DelayCore(uint32_t cntExpire) {
-		cntDelay_ = 0;
-		while (cntDelay_ < cntExpire) ;
+	uint32_t GetTickCur() const { return tickCur_; }
+	void DelayTick(uint32_t ticks) {
+		uint32_t tickStart = tickCur_;
+		while (tickCur_ - tickStart < ticks) ;
 	}
 	void Delay(uint32_t msec) {
 		Clock clock = static_cast<Clock>((TCCR2B >> CS20) & 0b111);
@@ -280,10 +344,17 @@ public:
 			(waveform == Waveform::PhaseCorrectPWM_UptoOCR2A)? freq / (2 * dataOCR2ASafe) :	// 18.7.4
 			(waveform == Waveform::FastPWM_UptoOCR2A)? freq / (1 + dataOCR2A) :				// 18.7.3
 			freq;
-		DelayCore((msec * freq + 999) / 1000);
+		DelayTick((msec * freq + 999) / 1000);
+	}
+	void HandleIRQ_TIMER2_COMPA() {
+		if (pHandler_) pHandler_->HandleIRQ_TIMER2_COMPA();
+	}
+	void HaldleIRQ_TIMER2_COMPB() {
+		if (pHandler_) pHandler_->HandleIRQ_TIMER2_COMPB();
 	}
 	void HandleIRQ_TIMER2_OVF() {
-		cntDelay_++;
+		tickCur_++;
+		if (pHandler_) pHandler_->HandleIRQ_TIMER2_OVF();
 	}
 };
 
