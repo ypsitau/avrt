@@ -22,9 +22,9 @@ public:
 	void Open(uint8_t address = 0x00, uint32_t freq = 100000);
 	void Close();
 	void SendData(uint8_t address, uint8_t data);
-	void SendBuff(uint8_t address, const uint8_t* buff, int len);
-	void HandleISR_TWI();
+	void SendBuff(uint8_t address, const uint8_t* buff, uint8_t len);
 	bool IsRunning() const { return runningFlag_; }
+	void HandleISR_TWI();
 private:
 	void CtrlStart();
 	void CtrlStop();

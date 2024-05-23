@@ -43,7 +43,7 @@ void TwoWire::SendData(uint8_t address, uint8_t data)
 	while (IsRunning()) ;
 }
 
-void TwoWire::SendBuff(uint8_t address, const uint8_t* buff, int len)
+void TwoWire::SendBuff(uint8_t address, const uint8_t* buff, uint8_t len)
 {
 	buffSend_.WriteData(address);
 	buffSend_.WriteBuff(buff, len);
@@ -69,7 +69,7 @@ void TwoWire::HandleISR_TWI()
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
 			serial.Printf(F("data:%02x\n"), data);
-			CtrlData(buffSend_.ReadData());
+			CtrlData(data);
 		} else {
 			CtrlStop(); 
 		}
@@ -82,7 +82,7 @@ void TwoWire::HandleISR_TWI()
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
 			serial.Printf(F("data:%02x\n"), data);
-			CtrlData(buffSend_.ReadData());
+			CtrlData(data);
 		} else {
 			serial.Printf(F("stop\n"));
 			CtrlStop();
