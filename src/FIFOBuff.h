@@ -41,6 +41,9 @@ public:
 		posRead_ = (posRead_ == sizeMinusOne)? 0 : posRead_ + 1;
 		return data;
 	}
+	void WriteBuff(const T_Elem* buff, T_Size len) {
+		for ( ; len > 0; len--, buff++) WriteData(*buff);
+	}
 };
 
 }

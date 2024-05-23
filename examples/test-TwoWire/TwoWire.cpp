@@ -40,11 +40,21 @@ void TwoWire::SendData(uint8_t address, uint8_t data)
 	buffSend_.WriteData(address);
 	buffSend_.WriteData(data);
 	CtrlStart();
+	while (IsRunning()) ;
+}
+
+void TwoWire::SendBuff(uint8_t address, const uint8_t* buff, int len)
+{
+	buffSend_.WriteData(address);
+	buffSend_.WriteBuff(buff, len);
+	CtrlStart();
+	while (IsRunning()) ;
 }
 
 void TwoWire::HandleISR_TWI()
 {
 	uint8_t stat = TW_STATUS;
+	//serial.Printf(F("stat:%02x\n"), stat);
 	if (stat == TW_START) {							// 0x08: 
 		serial.Printf(F("TW_START\n"));
 		uint8_t address = buffSend_.ReadData();
@@ -57,6 +67,8 @@ void TwoWire::HandleISR_TWI()
 	} else if (stat == TW_MT_SLA_ACK) {				// 0x18: SLA+W transmitted, ACK received
 		serial.Printf(F("TW_MT_SLA_ACK\n"));
 		if (buffSend_.HasData()) {
+			uint8_t data = buffSend_.ReadData();
+			serial.Printf(F("data:%02x\n"), data);
 			CtrlData(buffSend_.ReadData());
 		} else {
 			CtrlStop(); 
@@ -68,8 +80,11 @@ void TwoWire::HandleISR_TWI()
 	} else if (stat == TW_MT_DATA_ACK) {			// 0x28: data transmitted, ACK received
 		serial.Printf(F("TW_MT_DATA_ACK\n"));
 		if (buffSend_.HasData()) {
+			uint8_t data = buffSend_.ReadData();
+			serial.Printf(F("data:%02x\n"), data);
 			CtrlData(buffSend_.ReadData());
 		} else {
+			serial.Printf(F("stop\n"));
 			CtrlStop();
 		}
 	} else if (stat == TW_MT_DATA_NACK) {			// 0x30: data transmitted, NACK received
@@ -106,11 +121,13 @@ void TwoWire::HandleISR_TWI()
 
 void TwoWire::CtrlStart()
 {
+	runningFlag_ = true;
 	TWCR = TWCR & ~(0b1 << TWSTO) | ((0b1 << TWINT) | (0b1 << TWSTA) | (0b1 << TWEN));
 }
 
 void TwoWire::CtrlStop()
 {
+	runningFlag_ = false;
 	TWCR = TWCR & ~(0b1 << TWSTA) | ((0b1 << TWINT) | (0b1 << TWSTO) | (0b1 << TWEN));
 }
 

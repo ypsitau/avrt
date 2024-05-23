@@ -16,16 +16,20 @@ class TwoWire {
 private:
 	FIFOBuff<uint8_t, 8> buffSend_;
 	FIFOBuff<uint8_t, 8> buffRecv_;
+	volatile bool runningFlag_;
 public:
+	TwoWire() : runningFlag_(false) {}
 	void Open(uint8_t address = 0x00, uint32_t freq = 100000);
 	void Close();
 	void SendData(uint8_t address, uint8_t data);
+	void SendBuff(uint8_t address, const uint8_t* buff, int len);
 	void HandleISR_TWI();
+	bool IsRunning() const { return runningFlag_; }
 private:
-	static void CtrlStart();
-	static void CtrlStop();
-	static void CtrlDisconnect();
-	static void CtrlData(uint8_t data);
+	void CtrlStart();
+	void CtrlStop();
+	void CtrlDisconnect();
+	void CtrlData(uint8_t data);
 };
 
 }
