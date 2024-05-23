@@ -8,29 +8,19 @@ AVRT_IMPLEMENT_Serial0_NoRecv(serial)
 av::Timer1 timer1;
 ISR(TIMER1_OVF_vect) {timer1.HandleIRQ_TIMER1_OVF();}
 
-void SendCommand(av::TwoWire& twi, uint8_t cmd)
+void SendInstruction(av::TwoWire& twi, uint8_t code, uint8_t rsBit)
 {
-	uint32_t address = 0x27;
-	uint8_t cmdHi = cmd & 0xf0;
-	uint8_t cmdLo = cmd << 4;
-	uint8_t buff[4];
-	buff[0] = cmdHi | (0b1 << 3) | (0b1 << 2) | (0b0 << 1) | (0b0 << 0);
-	buff[1] = cmdHi | (0b1 << 3) | (0b0 << 2) | (0b0 << 1) | (0b0 << 0);
-	buff[2] = cmdLo | (0b1 << 3) | (0b1 << 2) | (0b0 << 1) | (0b0 << 0);
-	buff[3] = cmdLo | (0b1 << 3) | (0b0 << 2) | (0b0 << 1) | (0b0 << 0);
-	twi.SendBuff(address, buff, 4);
-}
-
-void SendData(av::TwoWire& twi, uint8_t data)
-{
-	uint32_t address = 0x27;
-	uint8_t dataHi = data & 0xf0, dataLo = data << 4;
-	uint8_t buff[4];
-	buff[0] = dataHi | (0b1 << 3) | (0b1 << 2) | (0b0 << 1) | (0b1 << 0);
-	buff[1] = dataHi | (0b1 << 3) | (0b0 << 2) | (0b0 << 1) | (0b1 << 0);
-	buff[2] = dataLo | (0b1 << 3) | (0b1 << 2) | (0b0 << 1) | (0b1 << 0);
-	buff[3] = dataLo | (0b1 << 3) | (0b0 << 2) | (0b0 << 1) | (0b1 << 0);
-	twi.SendBuff(address, buff, 4);
+	uint8_t address = 0x27;
+	uint8_t codeHi = code & 0xf0;
+	uint8_t codeLo = code << 4;
+	timer1.DelayMSec(1);
+	twi.SendData(address, codeHi | (0b1 << 3) | (0b1 << 2) | (0b0 << 1) | (rsBit << 0));
+	timer1.DelayMSec(1);
+	twi.SendData(address, codeHi | (0b1 << 3) | (0b0 << 2) | (0b0 << 1) | (rsBit << 0));
+	timer1.DelayMSec(1);
+	twi.SendData(address, codeLo | (0b1 << 3) | (0b1 << 2) | (0b0 << 1) | (rsBit << 0));
+	timer1.DelayMSec(1);
+	twi.SendData(address, codeLo | (0b1 << 3) | (0b0 << 2) | (0b0 << 1) | (rsBit << 0));
 }
 
 void setup()
@@ -38,11 +28,13 @@ void setup()
 	twi.Open();
 	serial.Open(serial.Speed::Bps57600);
 	serial.Printf("test-TwoWire\n");
-	SendCommand(twi, 0x01);
-	SendCommand(twi, 0x02);
-	SendData(twi, 'A');	
-	SendData(twi, 'B');	
-	SendData(twi, 'C');	
+	SendInstruction(twi, 0x01, 0b0);
+	SendInstruction(twi, 0x02, 0b0);
+	SendInstruction(twi, 0x06, 0b0);
+	SendInstruction(twi, 0x0c, 0b0);
+	SendInstruction(twi, 0x2c, 0b0);
+	const char buff[] = "Hello World";
+	for (const char* p = buff; *p; p++) SendInstruction(twi, *p, 0b1);
 }
 
 void loop()

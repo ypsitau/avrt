@@ -56,39 +56,39 @@ void TwoWire::HandleISR_TWI()
 	uint8_t stat = TW_STATUS;
 	//serial.Printf(F("stat:%02x\n"), stat);
 	if (stat == TW_START) {							// 0x08: 
-		serial.Printf(F("TW_START\n"));
+		//serial.Printf(F("TW_START\n"));
 		uint8_t address = buffSend_.ReadData();
 		CtrlData((address << 1) | (0b0 << 0));
 	} else if (stat == TW_REP_START) {				// 0x10: repeated start condition transmitted
-		serial.Printf(F("TW_REP_START\n"));
+		//serial.Printf(F("TW_REP_START\n"));
 		uint8_t address = buffSend_.ReadData();
 		CtrlData((address << 1) | (0b0 << 0));
 	// Master Transmitter
 	} else if (stat == TW_MT_SLA_ACK) {				// 0x18: SLA+W transmitted, ACK received
-		serial.Printf(F("TW_MT_SLA_ACK\n"));
+		//serial.Printf(F("TW_MT_SLA_ACK\n"));
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
-			serial.Printf(F("data:%02x\n"), data);
+			//serial.Printf(F("data:%02x\n"), data);
 			CtrlData(data);
 		} else {
 			CtrlStop(); 
 		}
 	} else if (stat == TW_MT_SLA_NACK) {			// 0x20: SLA+W transmitted, NACK received
-		serial.Printf(F("TW_MT_SLA_NACK\n"));
+		//serial.Printf(F("TW_MT_SLA_NACK\n"));
 		// not found
 		CtrlDisconnect();
 	} else if (stat == TW_MT_DATA_ACK) {			// 0x28: data transmitted, ACK received
-		serial.Printf(F("TW_MT_DATA_ACK\n"));
+		//serial.Printf(F("TW_MT_DATA_ACK\n"));
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
-			serial.Printf(F("data:%02x\n"), data);
+			//serial.Printf(F("data:%02x\n"), data);
 			CtrlData(data);
 		} else {
-			serial.Printf(F("stop\n"));
+			//serial.Printf(F("stop\n"));
 			CtrlStop();
 		}
 	} else if (stat == TW_MT_DATA_NACK) {			// 0x30: data transmitted, NACK received
-		serial.Printf(F("TW_MT_DATA_NACK\n"));
+		//serial.Printf(F("TW_MT_DATA_NACK\n"));
 		CtrlDisconnect();
 	// Master Receiver
 	//} else if (stat == TW_MT_ARB_LOST) {			// 0x38: arbitration lost in SLA+W or data
