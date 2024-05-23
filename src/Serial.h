@@ -15,6 +15,12 @@ ISR(USART_RX_vect) { variableName.HandleIRQ_USART_RX(); }
 #define AVRT_IMPLEMENT_Serial0_NoRecv(variableName) \
 avrt::Serial0<false> variableName;
 
+#define AVRT_DECLARE_Srial0(variableName) \
+extern avrt::Serial0<> variableName;
+
+#define AVRT_DECLARE_Srial0_NoRecv(variableName) \
+extern avrt::Serial0<false> variableName;
+
 namespace avrt {
 
 //------------------------------------------------------------------------------

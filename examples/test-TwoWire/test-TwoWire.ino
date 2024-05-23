@@ -9,8 +9,10 @@ void setup()
 {
 	twi.Open();
 	serial.Open(serial.Speed::Bps57600);
-	serial.Printf("hello\n");
-	
+	serial.Printf("test-TwoWire\n");
+
+	twi.SendData(0x27, 0x01);
+
 }
 
 void loop()
