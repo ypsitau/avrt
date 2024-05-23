@@ -33,13 +33,16 @@ void setup()
 	twi.Open();
 	serial.Open(serial.Speed::Bps57600);
 	serial.Printf("test-TwoWire\n");
-	SendCommand(twi, 0x01);
-	SendCommand(twi, 0x38);
-	SendCommand(twi, 0x0f);
-	SendCommand(twi, 0x06);
-	SendCommand(twi, 0x80);
-	SendData(twi, 'A');
-	SendData(twi, 'B');
+	uint8_t address = 0x27;
+	twi.SendData(address, 0x0f);
+	//twi.SendData(address, 0x01);
+	//SendCommand(twi, 0x01);
+	//SendCommand(twi, 0x38);
+	//SendCommand(twi, 0x0f);
+	//SendCommand(twi, 0x06);
+	//SendCommand(twi, 0x80);
+	//SendData(twi, 'A');
+	//SendData(twi, 'B');
 }
 
 void loop()
