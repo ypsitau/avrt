@@ -38,10 +38,10 @@ AVRT_IMPLEMENT_Timer1(timer1)
 AVRT_IMPLEMENT_TwoWire(twi, timer1)
 AVRT_IMPLEMENT_Serial0_NoRecv(serial)
 
-
 void setup()
 {
 	twi.Open();
+	timer1.Start(timer1.Clock::Div64, timer1.Waveform::PhaseCorrectPWM_Upto01FF, timer1.EnableInt_TIMER1_OVF);
 	serial.Open(serial.Speed::Bps57600);
 	serial.Printf("test-TwoWire\n");
 	av::LCD1602 lcd(twi);
@@ -50,7 +50,7 @@ void setup()
 	lcd.SendCommand(0x06);
 	lcd.SendCommand(0x0c);
 	lcd.SendCommand(0x2c);
-	const char buff[] = "Hello World";
+	const char buff[] = "Hello World2";
 	for (const char* p = buff; *p; p++) lcd.SendData(*p);
 }
 
