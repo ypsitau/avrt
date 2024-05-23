@@ -250,7 +250,7 @@ public:
 	void PutAlignedString(const FormatterFlags& formatterFlags, const char* str, int cntMax = -1);
 	void PutAlignedStringInFlash(const FormatterFlags& formatterFlags, const __FlashStringHelper* str, int cntMax = -1);
 public:
-	virtual void SendData(uint8_t) = 0;
+	virtual void SendData(uint8_t data) = 0;
 	virtual uint8_t RecvData() = 0;
 };
 

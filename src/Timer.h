@@ -7,6 +7,34 @@
 #include <avr/interrupt.h>
 #include "Util.h"
 
+#define AVRT_IMPLEMENT_Timer0(variableName) \
+avrt::Timer0 variableName; \
+ISR(TIMER0_COMPA_vect) { variableName.HandleIRQ_TIMER0_COMPA(); } \
+ISR(TIMER0_COMPB_vect) { variableName.HandleIRQ_TIMER0_COMPB(); } \
+ISR(TIMER0_OVF_vect) { variableName.HandleIRQ_TIMER0_OVF(); }
+
+#define AVRT_DECLARE_Timer0(variableName) \
+extern avrt::Timer0 variableName;
+
+#define AVRT_IMPLEMENT_Timer1(variableName) \
+avrt::Timer1 variableName; \
+ISR(TIMER1_CAPT_vect) { variableName.HandleIRQ_TIMER1_CAPT(); } \
+ISR(TIMER1_COMPA_vect) { variableName.HandleIRQ_TIMER1_COMPA(); } \
+ISR(TIMER1_COMPB_vect) { variableName.HandleIRQ_TIMER1_COMPB(); } \
+ISR(TIMER1_OVF_vect) { variableName.HandleIRQ_TIMER1_OVF(); }
+
+#define AVRT_DECLARE_Timer1(variableName) \
+extern avrt::Timer1 variableName;
+
+#define AVRT_IMPLEMENT_Timer2(variableName) \
+avrt::Timer2 variableName; \
+ISR(TIMER2_COMPA_vect) { variableName.HandleIRQ_TIMER2_COMPA(); } \
+ISR(TIMER2_COMPB_vect) { variableName.HandleIRQ_TIMER2_COMPB(); } \
+ISR(TIMER2_OVF_vect) { variableName.HandleIRQ_TIMER2_OVF(); }
+
+#define AVRT_DECLARE_Timer2(variableName) \
+extern avrt::Timer2 variableName;
+
 namespace avrt {
 
 //------------------------------------------------------------------------------
@@ -122,7 +150,7 @@ public:
 	void HandleIRQ_TIMER0_COMPA() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER0_COMPA();
 	}
-	void HaldleIRQ_TIMER0_COMPB() {
+	void HandleIRQ_TIMER0_COMPB() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER0_COMPB();
 	}
 	void HandleIRQ_TIMER0_OVF() {
@@ -226,13 +254,13 @@ public:
 		TIMSK1 = (dataICIE1 << ICIE1) | (dataOCIE1B << OCIE1B) | (dataOCIE1A << OCIE1A) | (dataTOIE1 << TOIE1);
 		TIFR1 = (dataICF1 << ICF1) | (dataOCF1B << OCF1B) | (dataOCF1A << OCF1A) | (dataTOV1 << TOV1);
 	}
-	void HaldleIRQ_TIMER1_CAPT() {
+	void HandleIRQ_TIMER1_CAPT() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER1_CAPT();
 	}
 	void HandleIRQ_TIMER1_COMPA() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER1_COMPA();
 	}
-	void HaldleIRQ_TIMER1_COMPB() {
+	void HandleIRQ_TIMER1_COMPB() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER1_COMPB();
 	}
 	void HandleIRQ_TIMER1_OVF() {
@@ -345,7 +373,7 @@ public:
 	void HandleIRQ_TIMER2_COMPA() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER2_COMPA();
 	}
-	void HaldleIRQ_TIMER2_COMPB() {
+	void HandleIRQ_TIMER2_COMPB() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER2_COMPB();
 	}
 	void HandleIRQ_TIMER2_OVF() {
