@@ -11,21 +11,26 @@ ISR(TIMER1_OVF_vect) {timer1.HandleIRQ_TIMER1_OVF();}
 void SendCommand(av::TwoWire& twi, uint8_t cmd)
 {
 	uint32_t address = 0x27;
-	uint8_t buff[3];
-	buff[0] = 0xa0;
-	buff[1] = 0x00;
-	buff[2] = cmd;
-	twi.SendBuff(address, buff, 3);
+	uint8_t cmdHi = cmd & 0xf0;
+	uint8_t cmdLo = cmd << 4;
+	uint8_t buff[4];
+	buff[0] = cmdHi | (0b1 << 3) | (0b1 << 2) | (0b0 << 1) | (0b0 << 0);
+	buff[1] = cmdHi | (0b1 << 3) | (0b0 << 2) | (0b0 << 1) | (0b0 << 0);
+	buff[2] = cmdLo | (0b1 << 3) | (0b1 << 2) | (0b0 << 1) | (0b0 << 0);
+	buff[3] = cmdLo | (0b1 << 3) | (0b0 << 2) | (0b0 << 1) | (0b0 << 0);
+	twi.SendBuff(address, buff, 4);
 }
 
 void SendData(av::TwoWire& twi, uint8_t data)
 {
 	uint32_t address = 0x27;
-	uint8_t buff[3];
-	buff[0] = 0xa0;
-	buff[1] = 0x80;
-	buff[2] = data;
-	twi.SendBuff(address, buff, 3);
+	uint8_t dataHi = data & 0xf0, dataLo = data << 4;
+	uint8_t buff[4];
+	buff[0] = dataHi | (0b1 << 3) | (0b1 << 2) | (0b0 << 1) | (0b1 << 0);
+	buff[1] = dataHi | (0b1 << 3) | (0b0 << 2) | (0b0 << 1) | (0b1 << 0);
+	buff[2] = dataLo | (0b1 << 3) | (0b1 << 2) | (0b0 << 1) | (0b1 << 0);
+	buff[3] = dataLo | (0b1 << 3) | (0b0 << 2) | (0b0 << 1) | (0b1 << 0);
+	twi.SendBuff(address, buff, 4);
 }
 
 void setup()
@@ -33,16 +38,11 @@ void setup()
 	twi.Open();
 	serial.Open(serial.Speed::Bps57600);
 	serial.Printf("test-TwoWire\n");
-	uint8_t address = 0x27;
-	twi.SendData(address, 0x0f);
-	//twi.SendData(address, 0x01);
-	//SendCommand(twi, 0x01);
-	//SendCommand(twi, 0x38);
-	//SendCommand(twi, 0x0f);
-	//SendCommand(twi, 0x06);
-	//SendCommand(twi, 0x80);
-	//SendData(twi, 'A');
-	//SendData(twi, 'B');
+	SendCommand(twi, 0x01);
+	SendCommand(twi, 0x02);
+	SendData(twi, 'A');	
+	SendData(twi, 'B');	
+	SendData(twi, 'C');	
 }
 
 void loop()
