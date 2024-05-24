@@ -16,9 +16,10 @@ bool LCD1602IIC::Open()
 		return true;
 	}
 	return false;
-#endif
+#else
 	sla_ = 0x27;
 	return true;
+#endif
 }
 
 void LCD1602IIC::SendGeneric(uint8_t code, uint8_t rsBit)

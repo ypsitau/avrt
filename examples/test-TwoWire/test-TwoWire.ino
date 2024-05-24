@@ -21,7 +21,7 @@ void setup()
 	lcd.EntryModeSet(true, false);
 	lcd.DisplayOnOffControl(true, false, false);
 	lcd.SendCommand(0x2c);
-	lcd.Printf(F("ABCDEFG"));
+	lcd.Printf(F("ABCDEFG1"));
 }
 
 void loop()
