@@ -1,6 +1,6 @@
-//------------------------------------------------------------------------------
+//==============================================================================
 // Timer.h
-//------------------------------------------------------------------------------
+//==============================================================================
 #ifndef AVRT_TIMER_H
 #define AVRT_TIMER_H
 #include <avr/io.h>
@@ -52,10 +52,12 @@ public:
 		Alarm(const Alarm& alarm) : pTimer_(alarm.pTimer_), tickStart_(alarm.tickStart_), ticksToAlarm_(alarm.ticksToAlarm_) {}
 		bool IsValid() const { return ticksToAlarm_ != -1; }
 		Timer& GetTimer() { return *pTimer_; }
-		void SetTimeOutTicks(uint32_t ticks) { ticksToAlarm_ = ticks; }
-		void SetTimeOut(uint32_t msec) { ticksToAlarm_ = pTimer_->ConvMSecToTicks(msec); }
+		void SetTimeoutTicks(uint32_t ticks) { ticksToAlarm_ = ticks; }
+		void SetTimeout(uint32_t msec) { ticksToAlarm_ = pTimer_->ConvMSecToTicks(msec); }
 		void Start() { tickStart_ = pTimer_->GetTickCur(); }
-		bool IsExpired() const { return pTimer_->GetTickCur() - tickStart_ > ticksToAlarm_; }
+		bool IsExpired() const {
+			return IsValid()? pTimer_->GetTickCur() - tickStart_ > ticksToAlarm_ : false;
+		}
 	};
 protected:
 	volatile uint32_t tickCur_;

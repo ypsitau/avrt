@@ -12,6 +12,7 @@ AVRT_IMPLEMENT_Serial0_NoRecv(serial)
 void setup()
 {
 	twi.Open();
+	twi.SetTimeout(1000);
 	timer.Start(timer.Clock::Div64, timer.Waveform::PhaseCorrectPWM_Upto01FF, timer.EnableInt_TIMER1_OVF);
 	serial.Open(serial.Speed::Bps57600);
 	serial.Printf("test-TwoWire\n");

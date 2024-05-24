@@ -1,3 +1,6 @@
+//==============================================================================
+// TwoWire.h
+//==============================================================================
 #include <avrt.h>
 #include <util/twi.h>
 
@@ -24,7 +27,7 @@ public:
 	TwoWire(Timer& timer) : alarm_(timer), stat_(Stat::Idle), lenExpected_(0), len_(0) {}
 	Timer& GetTimer() { return alarm_.GetTimer(); }
 	void Open(uint8_t address = 0x00, uint32_t freq = 100000);
-	void SetTimeout(uint32_t msec) { alarm_.SetTimeOut(msec); }
+	void SetTimeout(uint32_t msec) { alarm_.SetTimeout(msec); }
 	void Close();
 	bool StartSequence(bool stopFlag);
 	bool Stop() { CtrlStop(); }

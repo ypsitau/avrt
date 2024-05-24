@@ -1,3 +1,6 @@
+//==============================================================================
+// TwoWire.cpp
+//==============================================================================
 #include "TwoWire.h"
 
 AVRT_DECLARE_Srial0_NoRecv(serial)
@@ -39,7 +42,8 @@ bool TwoWire::StartSequence(bool stopFlag)
 {
 	stat_ = Stat::Running;
 	CtrlStart();
-	while (stat_ == Stat::Running) ;
+	alarm_.Start();
+	while (stat_ == Stat::Running) if (alarm_.IsExpired()) return false;
 	if (stopFlag || stat_ == Stat::Error) CtrlStop();
 	bool rtn = (stat_ == Stat::Success);
 	stat_ = Stat::Idle;
