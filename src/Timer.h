@@ -71,15 +71,19 @@ protected:
 	volatile uint32_t tickCur_;
 public:
 	Timer() : tickCur_(0) {}
-	uint32_t GetTickCur() const { return tickCur_; }
+	uint32_t GetTickCur() const {
+		uint8_t savedSREG = SREG;
+		cli();
+		uint32_t tickCur = tickCur_;
+		SREG = savedSREG;
+		return tickCur;
+	}
 	uint32_t ConvMSecToTicks(uint32_t msec) const { return (msec * CalcFreqOVF() + 500) / 1000; }
 	void DelayTicks(uint32_t ticks) {
-		uint32_t tickStart = tickCur_;
-		while (tickCur_ - tickStart < ticks) ;
+		uint32_t tickStart = GetTickCur();
+		while (GetTickCur() - tickStart < ticks) ;
 	}
-	void DelayMSec(uint32_t msec) {
-		DelayTicks(ConvMSecToTicks(msec));
-	}
+	void DelayMSec(uint32_t msec) { DelayTicks(ConvMSecToTicks(msec)); }
 	Alarm AlarmTicks(uint32_t ticksToAlarm) { return Alarm(*this, ticksToAlarm); }
 	Alarm AlarmMSec(uint32_t msec) { return Alarm(*this, ConvMSecToTicks(msec)); }
 public:
