@@ -76,31 +76,15 @@ void setup()
 		OCR2A = 0xff;
 	} while (0);
 	serial.Printf(F("test-Timer\n"));
-	alarm.SetTimeout(1000);
-	alarm.Start();
+	alarm.Start(100);
 }
-
-uint32_t tickPrev;
 
 void loop()
 {
-	//portLED.DigitalToggle();
-	//serial.Printf(F("%u %d\n"), static_cast<uint16_t>(alarm.pTimer_->GetTickCur()) - alarm.tickStart_, alarm.ticksToAlarm_);
 	if (alarm.IsExpired()) {
 		portLED.DigitalToggle();
 		alarm.Start();
 	}
-	//serial.Printf(F("hello\n"));
-	//timer2.DelayMSec(100);
-	//uint32_t tickCur = timer2.GetTickCur();
-	//serial.Printf(F("%8ld %ld\n"), tickCur, tickCur - tickPrev);
-	//tickPrev = tickCur;
-	//portLED.DigitalToggle();
-	////timer2.DelayMSec(1000);
-	//while (timer2.GetTickCur() - tickPrev < 1000) ;
-	////while (timer2.GetTickCur() - tickPrev < 1000) ;
-	//serial.Printf(F("%8ld %ld\n"), tickCur, timer2.GetTickCur() - tickPrev);
-	//timer2.DelayTicks(1000);
 }
 
 #if 0

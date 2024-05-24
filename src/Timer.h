@@ -55,6 +55,7 @@ public:
 		void SetTimeoutTicks(uint32_t ticks) { ticksToAlarm_ = ticks; }
 		void SetTimeout(uint32_t msec) { ticksToAlarm_ = pTimer_->ConvMSecToTicks(msec); }
 		void Start() { tickStart_ = pTimer_->GetTickCur(); }
+		void Start(uint32_t msec) { SetTimeout(msec); Start(); }
 		bool IsExpired() const {
 			return IsValid()? pTimer_->GetTickCur() - tickStart_ > ticksToAlarm_ : false;
 		}
