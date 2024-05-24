@@ -64,11 +64,8 @@ protected:
 public:
 	Timer() : tickCur_(0) {}
 	uint32_t GetTickCur() const {
-		uint8_t savedSREG = SREG;
-		cli();
-		uint32_t tickCur = tickCur_;
-		SREG = savedSREG;
-		return tickCur;
+		InterruptDisabledSection section;
+		return tickCur_;
 	}
 	uint32_t ConvMSecToTicks(uint32_t msec) const { return (msec * CalcFreqOVF() + 500) / 1000; }
 	void DelayTicks(uint32_t ticks) {

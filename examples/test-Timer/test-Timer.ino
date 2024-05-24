@@ -76,7 +76,7 @@ void setup()
 		OCR2A = 0xff;
 	} while (0);
 	serial.Printf(F("test-Timer\n"));
-	alarm.SetTimeout(100);
+	alarm.SetTimeout(1000);
 	alarm.Start();
 }
 

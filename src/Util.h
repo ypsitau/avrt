@@ -4,6 +4,7 @@
 #ifndef AVRT_UTIL_H
 #define AVRT_UTIL_H
 #include <avr/pgmspace.h>
+#include <avr/interrupt.h>
 
 class __FlashStringHelper;
 #ifndef F
@@ -62,6 +63,17 @@ constexpr uint8_t A5			= 19;
 constexpr uint8_t A6			= 20;
 
 constexpr uint8_t PinToADCMux(uint8_t pin) { return pin - A0; }
+
+//------------------------------------------------------------------------------
+// InterruptDisabledSection
+//------------------------------------------------------------------------------
+class InterruptDisabledSection {
+private:
+	uint8_t savedSREG_;
+public:
+	InterruptDisabledSection() { savedSREG_ = SREG; cli(); }
+	~InterruptDisabledSection() { SREG = savedSREG_; }
+};
 
 //------------------------------------------------------------------------------
 // StringPtr
