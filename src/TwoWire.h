@@ -20,8 +20,9 @@ private:
 	volatile Stat stat_;
 	uint8_t lenExpected_;
 	uint8_t len_;
+	Timer::Alarm alarm_;
 public:
-	TwoWire(Timer& timer) : timer_(timer), stat_(Stat::Idle), lenExpected_(0), len_(0) {}
+	TwoWire(Timer& timer) : timer_(timer), stat_(Stat::Idle), lenExpected_(0), len_(0), alarm_(timer) {}
 	Timer& GetTimer() { return timer_; }
 	void Open(uint8_t address = 0x00, uint32_t freq = 100000);
 	void Close();

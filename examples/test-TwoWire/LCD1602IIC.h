@@ -5,8 +5,10 @@ namespace avrt {
 class LCD1602IIC : public Stream {
 private:
 	TwoWire& twi_;
+	uint8_t sla_;
 public:
-	LCD1602IIC(TwoWire& twi) : twi_(twi) {}
+	LCD1602IIC(TwoWire& twi) : twi_(twi), sla_(0x00) {}
+	bool Open();
 	void SendGeneric(uint8_t code, uint8_t rsBit);
 	void SendCommand(uint8_t code) { SendGeneric(code, 0b0); }
 public:

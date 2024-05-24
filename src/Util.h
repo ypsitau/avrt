@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 #ifndef AVRT_UTIL_H
 #define AVRT_UTIL_H
+#include <avr/pgmspace.h>
 
 class __FlashStringHelper;
 #ifndef F
