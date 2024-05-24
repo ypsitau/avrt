@@ -11,25 +11,44 @@ namespace avrt {
 // TwoWire
 //------------------------------------------------------------------------------
 class TwoWire {
+public:
+	enum class Stat { Idle, Running, Success, Error, };
 private:
 	Timer& timer_;
 	FIFOBuff<uint8_t, 8> buffSend_;
 	FIFOBuff<uint8_t, 8> buffRecv_;
-	volatile bool runningFlag_;
+	volatile Stat stat_;
+	uint8_t lenExpected_;
+	uint8_t len_;
 public:
-	TwoWire(Timer& timer) : timer_(timer), runningFlag_(false) {}
+	TwoWire(Timer& timer) : timer_(timer), stat_(Stat::Idle), lenExpected_(0), len_(0) {}
 	Timer& GetTimer() { return timer_; }
 	void Open(uint8_t address = 0x00, uint32_t freq = 100000);
 	void Close();
-	void SendData(uint8_t address, uint8_t data);
-	void SendBuff(uint8_t address, const uint8_t* buff, uint8_t len);
-	bool IsRunning() const { return runningFlag_; }
+	bool StartSequence(bool stopFlag);
+	bool Stop() { CtrlStop(); }
+	bool Transmit(uint8_t sla);
+	bool Transmit(uint8_t sla, uint8_t data);
+	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2);
+	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3);
+	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);
+	bool Transmit(uint8_t sla, const uint8_t* buff, uint8_t len);
+	bool TransmitCont(uint8_t sla);
+	bool TransmitCont(uint8_t sla, uint8_t data);
+	bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2);
+	bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3);
+	bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);
+	bool TransmitCont(uint8_t sla, const uint8_t* buff, uint8_t len);
+	bool Receive(uint8_t sla, uint8_t* buff, uint8_t len);
+	bool ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len);
 	void HandleISR_TWI();
 private:
-	void CtrlStart();
-	void CtrlStop();
-	void CtrlDisconnect();
-	void CtrlData(uint8_t data);
+	static void CtrlStart();
+	static void CtrlStop();
+	static void CtrlDisconnect();
+	static void CtrlSend();
+	static void CtrlRecvAck();
+	static void CtrlRecvNak();
 };
 
 }

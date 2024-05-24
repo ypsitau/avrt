@@ -44,6 +44,9 @@ public:
 	void WriteBuff(const T_Elem* buff, T_Size len) {
 		for ( ; len > 0; len--, buff++) WriteData(*buff);
 	}
+	void ReadBuff(T_Elem* buff, T_Size len) {
+		for ( ; len > 0; len--, buff++) *buff = ReadData();
+	}
 };
 
 }
