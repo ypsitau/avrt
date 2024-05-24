@@ -40,10 +40,12 @@ void TwoWire::Close()
 
 bool TwoWire::StartSequence(bool stopFlag)
 {
+	//serial.Printf(F("StartSequence\n"));
 	stat_ = Stat::Running;
 	CtrlStart();
 	alarm_.Start();
-	while (stat_ == Stat::Running) if (alarm_.IsExpired()) return false;
+	//while (stat_ == Stat::Running) if (alarm_.IsExpired()) return false;
+	while (stat_ == Stat::Running) ;
 	if (stopFlag || stat_ == Stat::Error) CtrlStop();
 	bool rtn = (stat_ == Stat::Success);
 	stat_ = Stat::Idle;

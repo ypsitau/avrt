@@ -7,14 +7,18 @@ namespace avrt {
 
 bool LCD1602IIC::Open()
 {
+#if 0
 	if (twi_.Transmit(0x27)) {
 		sla_ = 0x27;
 		return true;
 	} else if (twi_.Transmit(0x3f)) {
-		sla_ = 0x27;
+		sla_ = 0x3f;
 		return true;
 	}
 	return false;
+#endif
+	sla_ = 0x27;
+	return true;
 }
 
 void LCD1602IIC::SendGeneric(uint8_t code, uint8_t rsBit)
