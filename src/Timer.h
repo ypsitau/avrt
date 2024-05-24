@@ -44,28 +44,18 @@ class Timer {
 public:
 	class Alarm {
 	public:
-		const Timer* pTimer_;
+		Timer* pTimer_;
 		uint32_t tickStart_;
 		uint32_t ticksToAlarm_;
 	public:
-		Alarm(const Timer& timer) : pTimer_(&timer), tickStart_(0), ticksToAlarm_(0) {}
-		Alarm(const Timer& timer, uint32_t ticksToAlarm) :
-			pTimer_(&timer), tickStart_(timer.GetTickCur()), ticksToAlarm_(ticksToAlarm) {}
-		Alarm(const Alarm& alarm) :
-			pTimer_(alarm.pTimer_), tickStart_(alarm.tickStart_), ticksToAlarm_(alarm.ticksToAlarm_) {}
-		void Reset() { tickStart_ = pTimer_->GetTickCur(); }
-		Alarm& StartMSec(uint32_t msec) {
-			ticksToAlarm_ = pTimer_->ConvMSecToTicks(msec);
-			Reset();
-			return *this;
-		}
-		bool IsExpired() const {
-			return pTimer_->GetTickCur() - tickStart_ > ticksToAlarm_;
-		}
-	public:
-		static bool Test(uint32_t tickCur, uint32_t tickStart, uint32_t ticksToAlarm) {
-			return tickCur - tickStart > ticksToAlarm;
-		}
+		Alarm(Timer& timer) : pTimer_(&timer), tickStart_(0), ticksToAlarm_(-1) {}
+		Alarm(const Alarm& alarm) : pTimer_(alarm.pTimer_), tickStart_(alarm.tickStart_), ticksToAlarm_(alarm.ticksToAlarm_) {}
+		bool IsValid() const { return ticksToAlarm_ != -1; }
+		Timer& GetTimer() { return *pTimer_; }
+		void SetTimeOutTicks(uint32_t ticks) { ticksToAlarm_ = ticks; }
+		void SetTimeOut(uint32_t msec) { ticksToAlarm_ = pTimer_->ConvMSecToTicks(msec); }
+		void Start() { tickStart_ = pTimer_->GetTickCur(); }
+		bool IsExpired() const { return pTimer_->GetTickCur() - tickStart_ > ticksToAlarm_; }
 	};
 protected:
 	volatile uint32_t tickCur_;
@@ -84,9 +74,8 @@ public:
 		while (GetTickCur() - tickStart < ticks) ;
 	}
 	void DelayMSec(uint32_t msec) { DelayTicks(ConvMSecToTicks(msec)); }
-	void DelayUSec(uint32_t usec);
-	Alarm AlarmTicks(uint32_t ticksToAlarm) { return Alarm(*this, ticksToAlarm); }
-	Alarm AlarmMSec(uint32_t msec) { return Alarm(*this, ConvMSecToTicks(msec)); }
+	static void DelayClocks(uint32_t clocks);
+	static void DelayUSec(uint32_t usec);
 public:
 	virtual uint32_t CalcFreqOVF() const = 0;
 };

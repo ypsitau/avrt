@@ -14,17 +14,17 @@ class TwoWire {
 public:
 	enum class Stat { Idle, Running, Success, Error, };
 private:
-	Timer& timer_;
+	Timer::Alarm alarm_;
 	FIFOBuff<uint8_t, 8> buffSend_;
 	FIFOBuff<uint8_t, 8> buffRecv_;
 	volatile Stat stat_;
 	uint8_t lenExpected_;
 	uint8_t len_;
-	Timer::Alarm alarm_;
 public:
-	TwoWire(Timer& timer) : timer_(timer), stat_(Stat::Idle), lenExpected_(0), len_(0), alarm_(timer) {}
-	Timer& GetTimer() { return timer_; }
+	TwoWire(Timer& timer) : alarm_(timer), stat_(Stat::Idle), lenExpected_(0), len_(0) {}
+	Timer& GetTimer() { return alarm_.GetTimer(); }
 	void Open(uint8_t address = 0x00, uint32_t freq = 100000);
+	void SetTimeout(uint32_t msec) { alarm_.SetTimeOut(msec); }
 	void Close();
 	bool StartSequence(bool stopFlag);
 	bool Stop() { CtrlStop(); }

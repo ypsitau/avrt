@@ -76,7 +76,8 @@ void setup()
 		OCR2A = 0xff;
 	} while (0);
 	serial.Printf(F("test-Timer\n"));
-	alarm.StartMSec(1000);
+	alarm.SetTimeOut(100);
+	alarm.Start();
 }
 
 uint32_t tickPrev;
@@ -87,7 +88,7 @@ void loop()
 	//serial.Printf(F("%u %d\n"), static_cast<uint16_t>(alarm.pTimer_->GetTickCur()) - alarm.tickStart_, alarm.ticksToAlarm_);
 	if (alarm.IsExpired()) {
 		portLED.DigitalToggle();
-		alarm.Reset();
+		alarm.Start();
 	}
 	//serial.Printf(F("hello\n"));
 	//timer2.DelayMSec(100);
@@ -102,6 +103,7 @@ void loop()
 	//timer2.DelayTicks(1000);
 }
 
+#if 0
 void BoundaryTest()
 {
 	uint32_t tickStart = 0xffffff00L;
@@ -131,3 +133,4 @@ void BoundaryTest()
 	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
 		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
 }
+#endif
