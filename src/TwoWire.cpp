@@ -44,8 +44,9 @@ bool TwoWire::StartSequence(bool stopFlag)
 	stat_ = Stat::Running;
 	CtrlStart();
 	alarm_.Start();
-	//while (stat_ == Stat::Running) if (alarm_.IsExpired()) return false;
-	while (stat_ == Stat::Running) ;
+	while (stat_ == Stat::Running) {
+		//if (alarm_.IsExpired()) return false;
+	}
 	if (stopFlag || stat_ == Stat::Error) CtrlStop();
 	bool rtn = (stat_ == Stat::Success);
 	stat_ = Stat::Idle;
@@ -180,7 +181,8 @@ void TwoWire::HandleISR_TWI()
 	} else if (statHW == TW_MT_SLA_ACK) {			// 0x18: SLA+W transmitted, ACK received
 		//serial.Printf(F("TW_MT_SLA_ACK\n"));
 		if (buffSend_.HasData()) {
-			TWDR = buffSend_.ReadData();
+			uint8_t data = buffSend_.ReadData();
+			TWDR = data;
 			//serial.Printf(F("data:%02x\n"), data);
 			CtrlSend();
 		} else {

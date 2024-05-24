@@ -16,12 +16,16 @@ void setup()
 	serial.Printf("test-TwoWire\n");
 	twi.Open();
 	//twi.SetTimeout(1000);
+	//serial.Printf(F("%d\n"), twi.Transmit(0x27, 0x00));
 	lcd.Open();
 	lcd.Clear();
 	lcd.EntryModeSet(true, false);
 	lcd.DisplayOnOffControl(true, false, false);
+	lcd.Printf(F("ABCDEFG2"));
+#if 0
 	lcd.SendCommand(0x2c);
 	lcd.Printf(F("ABCDEFG1"));
+#endif
 }
 
 void loop()
