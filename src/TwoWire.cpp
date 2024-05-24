@@ -1,6 +1,6 @@
 #include "TwoWire.h"
 
-AVRT_DECLARE_Srial0_NoRecv(serial)
+//AVRT_DECLARE_Srial0_NoRecv(serial)
 
 namespace avrt {
 
