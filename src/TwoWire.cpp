@@ -263,7 +263,7 @@ void TwoWire::CtrlStart()
 {
 	uint8_t data = TWCR;
 	data &= ~(0b1 << TWSTO);
-	data |= (0b1 << TWSTA) | (0b1 << TWINT) | (0b1 << TWEN);
+	data |= (0b1 << TWSTA) | (0b1 << TWINT);
 	TWCR = data;
 	//serial.Printf(F("CtrlStart\n"));
 }
@@ -272,7 +272,7 @@ void TwoWire::CtrlStop()
 {
 	uint8_t data = TWCR;
 	data &= ~(0b1 << TWSTA);
-	data |= (0b1 << TWSTO) | (0b1 << TWINT) | (0b1 << TWEN);
+	data |= (0b1 << TWSTO) | (0b1 << TWINT);
 	TWCR = data;
 	//serial.Printf(F("CtrlStop\n"));
 }
@@ -289,7 +289,7 @@ void TwoWire::CtrlSend()
 {
 	uint8_t data = TWCR;
 	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO));
-	data |= (0b1 << TWINT) | (0b1 << TWEN);
+	data |= (0b1 << TWINT);
 	TWCR = data;
 	//serial.Printf(F("CtrlSend\n"));
 }
@@ -298,7 +298,7 @@ void TwoWire::CtrlRecvAck()
 {
 	uint8_t data = TWCR;
 	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO));
-	data |= (0b1 << TWINT) | (0b1 << TWEN) | (0b1 << TWIE);
+	data |= (0b1 << TWINT) | (0b1 << TWEA);
 	TWCR = data;
 	//serial.Printf(F("CtrlRecvAck\n"));
 }
@@ -306,8 +306,8 @@ void TwoWire::CtrlRecvAck()
 void TwoWire::CtrlRecvNak()
 {
 	uint8_t data = TWCR;
-	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWIE));
-	data |= (0b1 << TWINT) | (0b1 << TWEN);
+	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEA));
+	data |= (0b1 << TWINT);
 	TWCR = data;
 	//serial.Printf(F("CtrlRecvNak\n"));
 }
