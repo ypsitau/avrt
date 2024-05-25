@@ -9,6 +9,8 @@ AVRT_IMPLEMENT_Serial0_NoRecv(serial)
 
 av::LCD1602IIC lcd(twi);
 
+av::Timer::Alarm alarm(timer);
+
 void setup()
 {
 	timer.Start(timer.Clock::Div64, timer.Waveform::PhaseCorrectPWM_Upto01FF, timer.EnableInt_TIMER1_OVF);
@@ -21,22 +23,25 @@ void setup()
 	lcd.Clear();
 	lcd.EntryModeSet(true, false);
 	lcd.DisplayOnOffControl(true, false, false);
-	lcd.Printf(F("ABCDEFG1"));
+	lcd.FunctionSet(true, true);
+	alarm.Start(1000);
 #if 0
-	lcd.SendCommand(0x2c);
 	lcd.Printf(F("ABCDEFG1"));
 #endif
 }
 
+int cnt = 0;
+
 void loop()
 {
-#if 0
-	lcd.Clear();
-	lcd.Printf(F("ABCDEFG"));
-	lcd.Printf(F("abcdefg"));
-	timer.DelayMSec(500);
-	lcd.Clear();
-	lcd.Printf(F("Hello"));
-	timer.DelayMSec(500);
-#endif
+	if (alarm.IsExpired()) {
+		lcd.SetPosition(0, 0);
+		lcd.Printf(F("Hello:%d"), cnt);
+		cnt++;
+		alarm.Start();
+	}
+	//timer.DelayMSec(2000);
+	//lcd.SetPosition(0, 0);
+	//lcd.Printf(F("World"));
+	//timer.DelayMSec(2000);
 }

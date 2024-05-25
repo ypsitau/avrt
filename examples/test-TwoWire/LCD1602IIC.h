@@ -25,9 +25,12 @@ public:
 		SendCommand(0x08 | (static_cast<uint8_t>(displayFlag) << 2) | (static_cast<uint8_t>(cursorFlag) << 1) | (static_cast<uint8_t>(blinkFlag) << 0));
 	}
 	void CursorOrDisplayShift() { SendCommand(0x10); }
-	void FunctionSet() { SendCommand(0x20); }
+	void FunctionSet(bool twoLineFlag, bool largeFontFlag) {
+		SendCommand(0x20 | (static_cast<uint8_t>(twoLineFlag) << 3) | (static_cast<uint8_t>(largeFontFlag)));
+	}
 	void SetCGRAMAddress() { SendCommand(0x40); }
 	void SetDDRAMAddress() { SendCommand(0x80); }
+	void SetPosition(size_t x, size_t y) { SendCommand(0x80 + x + y * 0x40); }
 	//void ReadBusyFlagAndAddressCounter() { SendCommand(0x01); }
 public:
 	virtual void SendData(uint8_t data) override { SendGeneric(data, 0b1); }
