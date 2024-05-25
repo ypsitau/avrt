@@ -67,9 +67,9 @@ public:
 	};
 protected:
 	volatile uint32_t tickCur_;
-	Alarm* pAlarmTop_;
+	Alarm alarmForDelay_;
 public:
-	Timer() : tickCur_(0), pAlarmTop_(nullptr) {}
+	Timer() : tickCur_(0), alarmForDelay_(*this) {}
 	uint32_t GetTickCur() const { return tickCur_; }
 	uint32_t ConvMSecToTicks(uint32_t msec) const { return (msec * CalcFreqOVF() + 500) / 1000; }
 	void DelayTicks(uint32_t ticks);

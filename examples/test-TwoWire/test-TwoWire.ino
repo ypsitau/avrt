@@ -24,6 +24,7 @@ void setup()
 	lcd.EntryModeSet(true, false);
 	lcd.DisplayOnOffControl(true, false, false);
 	lcd.FunctionSet(true, true);
+	lcd.Printf(F("hoge"));
 	alarm.Start(1000);
 }
 
