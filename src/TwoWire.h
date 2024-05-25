@@ -31,7 +31,6 @@ public:
 	void SetTimeout(uint32_t msec) { alarm_.SetTimeout(msec); }
 	void Close();
 	bool StartSequence(bool stopFlag);
-	bool Stop() { CtrlStop(); }
 	bool Transmit(uint8_t sla);
 	bool Transmit(uint8_t sla, uint8_t data);
 	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2);
@@ -48,12 +47,13 @@ public:
 	bool ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len);
 	void HandleISR_TWI();
 private:
-	static void CtrlStart();
-	static void CtrlStop();
-	static void CtrlDisconnect();
-	static void CtrlSend();
-	static void CtrlRecvAck();
-	static void CtrlRecvNak();
+	static void SetTWCR_Start();
+	static void SetTWCR_Stop();
+	static void SetTWCR_StopAndStart();
+	static void SetTWCR_Send();
+	static void SetTWCR_ReleaseBus();
+	static void SetTWCR_NotifyACK();
+	static void SetTWCR_NotifyNACK();
 	static const __FlashStringHelper* StatusToString(uint8_t statHW);
 };
 

@@ -45,7 +45,7 @@ bool TwoWire::StartSequence(bool stopFlag)
 	alarm_.Start();
 	bool rtn = false;
 	stat_ = Stat::Running;
-	CtrlStart();
+	SetTWCR_Start();
 	for (;;) {
 		Stat stat = stat_;
 		if (stat == Stat::Success) {
@@ -180,60 +180,60 @@ void TwoWire::HandleISR_TWI()
 		uint8_t data = buffSend_.ReadData();
 		TWDR = data;
 		//serial.Printf(F("TWDR=0x%02x\n"), data);
-		CtrlSend();
+		SetTWCR_Send();
 	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
 		uint8_t data = buffSend_.ReadData();
 		TWDR = data;
 		//serial.Printf(F("TWDR=0x%02x\n"), data);
-		CtrlSend();
-	// Master Transmitter
+		SetTWCR_Send();
+	// Table 22-2 Status codes for Master Transmitter Mode
 	} else if (statHW == TW_MT_SLA_ACK) {			// 0x18: SLA+W transmitted, ACK received
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
 			TWDR = data;
 			//serial.Printf(F("TWDR=0x%02x\n"), data);
-			CtrlSend();
+			SetTWCR_Send();
 		} else {
-			if (stopFlag_) CtrlStop();
+			if (stopFlag_) SetTWCR_Stop();
 			stat_ = Stat::Success; 
 		}
 	} else if (statHW == TW_MT_SLA_NACK) {			// 0x20: SLA+W transmitted, NACK received
-		if (stopFlag_) CtrlStop();
+		if (stopFlag_) SetTWCR_Stop();
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MT_DATA_ACK) {			// 0x28: data transmitted, ACK received
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
 			TWDR = data;
 			//serial.Printf(F("TWDR=0x%02x\n"), data);
-			CtrlSend();
+			SetTWCR_Send();
 		} else {
-			if (stopFlag_) CtrlStop();
+			if (stopFlag_) SetTWCR_Stop();
 			stat_ = Stat::Success; 
 		}
 	} else if (statHW == TW_MT_DATA_NACK) {			// 0x30: data transmitted, NACK received
-		if (stopFlag_) CtrlStop();
+		if (stopFlag_) SetTWCR_Stop();
 		stat_ = Stat::Error;
-	// Master Receiver
+	// Table 22-3. Status codes for Master Receiver Mode
 	//} else if (statHW == TW_MT_ARB_LOST) {		// 0x38: arbitration lost in SLA+W or data
 	} else if (statHW == TW_MR_ARB_LOST) {			// 0x38: arbitration lost in SLA+R or NACK
-		if (stopFlag_) CtrlStop();
+		if (stopFlag_) SetTWCR_Stop();
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MR_SLA_ACK) {			// 0x40: SLA+R transmitted, ACK received
 		// nothing to do
 	} else if (statHW == TW_MR_SLA_NACK) {			// 0x48: SLA+R transmitted, NACK received
-		if (stopFlag_) CtrlStop();
+		if (stopFlag_) SetTWCR_Stop();
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MR_DATA_ACK) {			// 0x50: data received, ACK returned
 		uint8_t data = TWDR;
 		if (len_ < lenExpected_) {
 			buffRecv_.WriteData(data);
 			len_++;
-			CtrlRecvAck();
+			SetTWCR_NotifyACK();
 		} else{
-			CtrlRecvNak();
+			SetTWCR_NotifyNACK();
 		}
 	} else if (statHW == TW_MR_DATA_NACK) {			// 0x58: data received, NACK returned
-		CtrlRecvNak();
+		SetTWCR_NotifyNACK();
 	// Slave Transmitter
 	} else if (statHW == TW_ST_SLA_ACK) {			// 0xA8: SLA+R received, ACK returned
 	} else if (statHW == TW_ST_ARB_LOST_SLA_ACK) {	// 0xB0: arbitration lost in SLA+RW, SLA+R received, ACK returned
@@ -261,57 +261,49 @@ void TwoWire::HandleISR_TWI()
 	}
 }
 
-void TwoWire::CtrlStart()
+void TwoWire::SetTWCR_Start()
 {
-	uint8_t data = TWCR;
-	data &= ~(0b1 << TWSTO);
-	data |= (0b1 << TWSTA) | (0b1 << TWINT);
-	TWCR = data;
-	//serial.Printf(F("CtrlStart\n"));
+	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
+	TWCR = data | (0b1 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWINT);
+	//serial.Printf(F("SetTWCR_Start\n"));
 }
 
-void TwoWire::CtrlStop()
+void TwoWire::SetTWCR_Stop()
 {
-	uint8_t data = TWCR;
-	data &= ~(0b1 << TWSTA);
-	data |= (0b1 << TWSTO) | (0b1 << TWINT);
-	TWCR = data;
-	//serial.Printf(F("CtrlStop\n"));
+	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
+	TWCR = data | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT);
+	//serial.Printf(F("SetTWCR_Stop\n"));
 }
 
-void TwoWire::CtrlDisconnect()
+void TwoWire::SetTWCR_StopAndStart()
 {
-	uint8_t data = TWCR;
-	data &= ~(0b1 << TWEN);
-	TWCR = data;
-	//serial.Printf(F("CtrlDisconnect\n"));
+	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
+	TWCR = data | (0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT);
+	//serial.Printf(F("SetTWCR_Stop\n"));
 }
 
-void TwoWire::CtrlSend()
+void TwoWire::SetTWCR_Send()
 {
-	uint8_t data = TWCR;
-	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO));
-	data |= (0b1 << TWINT);
-	TWCR = data;
-	//serial.Printf(F("CtrlSend\n"));
+	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
+	TWCR = data | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWINT);
 }
 
-void TwoWire::CtrlRecvAck()
+void TwoWire::SetTWCR_ReleaseBus()
 {
-	uint8_t data = TWCR;
-	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO));
-	data |= (0b1 << TWINT) | (0b1 << TWEA);
-	TWCR = data;
-	//serial.Printf(F("CtrlRecvAck\n"));
+	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
+	TWCR = data | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWINT);
 }
 
-void TwoWire::CtrlRecvNak()
+void TwoWire::SetTWCR_NotifyACK()
 {
-	uint8_t data = TWCR;
-	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEA));
-	data |= (0b1 << TWINT);
-	TWCR = data;
-	//serial.Printf(F("CtrlRecvNak\n"));
+	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT) | (0b1 << TWEA));
+	TWCR = data | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWINT) | (0b1 << TWEA);
+}
+
+void TwoWire::SetTWCR_NotifyNACK()
+{
+	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT) | (0b1 << TWEA));
+	TWCR = data | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWINT) | (0b0 << TWEA);
 }
 
 const __FlashStringHelper* TwoWire::StatusToString(uint8_t statHW)
