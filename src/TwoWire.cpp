@@ -176,7 +176,7 @@ bool TwoWire::ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len)
 void TwoWire::HandleISR_TWI()
 {
 	uint8_t statHW = TW_STATUS;
-	//serial.Printf(F("Hardware Status: %S\n"), StatusToString(statHW));
+	serial.Printf(F("Hardware Status: %S\n"), StatusToString(statHW));
 	if (statHW == TW_START) {						// 0x08: start condition transmitted
 		uint8_t data = buffSend_.ReadData();
 		TWDR = data;

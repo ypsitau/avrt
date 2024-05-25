@@ -25,9 +25,6 @@ void setup()
 	lcd.DisplayOnOffControl(true, false, false);
 	lcd.FunctionSet(true, true);
 	alarm.Start(1000);
-#if 0
-	lcd.Printf(F("ABCDEFG1"));
-#endif
 }
 
 int cnt = 0;

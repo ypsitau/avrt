@@ -76,7 +76,7 @@ void setup()
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoOCR2A, flags);
 		OCR2A = 0xff;
 	} while (0);
-	serial.Printf(F("test-Timer\n"));
+	serial.Printf(F("#### test-Timer ####\n"));
 	alarm1.Start(300);
 	alarm2.Start(500);
 	alarm3.Start(1000);
