@@ -42,8 +42,7 @@ bool TwoWire::StartSequence(bool stopFlag)
 {
 	//serial.Printf(F("StartSequence\n"));
 	stopFlag_ = stopFlag;
-	//alarm_.Start();
-	//while (stat_ == Stat::Running) if (alarm_.IsExpired()) return false;
+	alarm_.Start();
 	bool rtn = false;
 	stat_ = Stat::Running;
 	CtrlStart();
@@ -52,7 +51,7 @@ bool TwoWire::StartSequence(bool stopFlag)
 		if (stat == Stat::Success) {
 			rtn = true;
 			break;
-		} else if (stat != Stat::Running) {
+		} else if (stat != Stat::Running || alarm_.IsExpired()) {
 			break;
 		}
 	}

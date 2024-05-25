@@ -34,7 +34,7 @@ void loop()
 {
 	if (alarm.IsExpired()) {
 		lcd.SetPosition(0, 0);
-		lcd.Printf(F("Hello:%d"), cnt);
+		lcd.Printf(F("Count:%d"), cnt);
 		cnt++;
 		alarm.Start();
 	}
