@@ -175,7 +175,7 @@ bool TwoWire::ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len)
 void TwoWire::HandleISR_TWI()
 {
 	uint8_t statHW = TW_STATUS;
-	serial.Printf(F("Hardware Status: %S\n"), StatusToString(statHW));
+	//serial.Printf(F("Hardware Status: %S\n"), StatusToString(statHW));
 	if (statHW == TW_START) {						// 0x08: start condition transmitted
 		uint8_t data = buffSend_.ReadData();
 		TWDR = data;
@@ -198,6 +198,7 @@ void TwoWire::HandleISR_TWI()
 			stat_ = Stat::Success; 
 		}
 	} else if (statHW == TW_MT_SLA_NACK) {			// 0x20: SLA+W transmitted, NACK received
+		if (stopFlag_) CtrlStop();
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MT_DATA_ACK) {			// 0x28: data transmitted, ACK received
 		if (buffSend_.HasData()) {
@@ -210,6 +211,7 @@ void TwoWire::HandleISR_TWI()
 			stat_ = Stat::Success; 
 		}
 	} else if (statHW == TW_MT_DATA_NACK) {			// 0x30: data transmitted, NACK received
+		if (stopFlag_) CtrlStop();
 		stat_ = Stat::Error;
 	// Master Receiver
 	//} else if (statHW == TW_MT_ARB_LOST) {		// 0x38: arbitration lost in SLA+W or data

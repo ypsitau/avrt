@@ -9,7 +9,7 @@ namespace avrt {
 
 bool LCD1602IIC::Open()
 {
-#if 0
+#if 1
 	if (twi_.Transmit(0x27)) {
 		sla_ = 0x27;
 		return true;

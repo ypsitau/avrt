@@ -25,19 +25,19 @@ void setup()
 	lcd.DisplayOnOffControl(true, false, false);
 	lcd.FunctionSet(true, true);
 	lcd.Printf(F("hoge"));
-	alarm.Start(1000);
+	//alarm.Start(1000);
 }
 
 int cnt = 0;
 
 void loop()
 {
-	if (alarm.IsExpired()) {
-		lcd.SetPosition(0, 0);
-		lcd.Printf(F("Count:%d"), cnt);
-		cnt++;
-		alarm.Start();
-	}
+	//if (alarm.IsExpired()) {
+	//	lcd.SetPosition(0, 0);
+	//	lcd.Printf(F("Count:%d"), cnt);
+	//	cnt++;
+	//	alarm.Start();
+	//}
 	//timer.DelayMSec(2000);
 	//lcd.SetPosition(0, 0);
 	//lcd.Printf(F("World"));
