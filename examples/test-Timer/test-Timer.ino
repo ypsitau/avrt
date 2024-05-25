@@ -84,7 +84,7 @@ void setup()
 
 void loop()
 {
-#if 0
+#if 1
 	if (alarm1.IsExpired()) {
 		portLED1.DigitalToggle();
 		alarm1.Start();
@@ -97,9 +97,10 @@ void loop()
 		portLED3.DigitalToggle();
 		alarm3.Start();
 	}
-#endif
+#else
 	portLED1.DigitalHigh();
 	timer1.DelayMSec(500);
 	portLED1.DigitalLow();
 	timer1.DelayMSec(500);
+#endif
 }
