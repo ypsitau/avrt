@@ -6,13 +6,17 @@ AVRT_IMPLEMENT_Serial0(serial)
 
 av::Port<av::D2, av::Out> portD2;
 av::Port<av::D3, av::Out> portD3;
-av::Port<av::D4, av::Out> portLED;
+av::Port<av::D4, av::Out> portLED1;
+av::Port<av::D5, av::Out> portLED2;
+av::Port<av::D6, av::Out> portLED3;
 
 av::Timer0 timer0;
 av::Timer1 timer1;
 av::Timer2 timer2;
 
-av::Timer::Alarm alarm(timer1);
+av::Timer::Alarm alarm1(timer1);
+av::Timer::Alarm alarm2(timer1);
+av::Timer::Alarm alarm3(timer1);
 
 ISR(TIMER1_OVF_vect)
 {
@@ -76,14 +80,24 @@ void setup()
 		OCR2A = 0xff;
 	} while (0);
 	serial.Printf(F("test-Timer\n"));
-	alarm.Start(100);
+	alarm1.Start(1000);
+	alarm2.Start(2000);
+	alarm3.Start(3000);
 }
 
 void loop()
 {
-	if (alarm.IsExpired()) {
-		portLED.DigitalToggle();
-		alarm.Start();
+	if (alarm1.IsExpired()) {
+		portLED1.DigitalToggle();
+		alarm1.Start();
+	}
+	if (alarm2.IsExpired()) {
+		portLED2.DigitalToggle();
+		alarm2.Start();
+	}
+	if (alarm3.IsExpired()) {
+		portLED3.DigitalToggle();
+		alarm3.Start();
 	}
 }
 

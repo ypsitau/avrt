@@ -47,33 +47,36 @@ public:
 		Timer* pTimer_;
 		uint32_t tickStart_;
 		uint32_t ticksToAlarm_;
+		Alarm* pAlarmNext_;
+		volatile bool expiredFlag_;
 	public:
-		Alarm(Timer& timer) : pTimer_(&timer), tickStart_(0), ticksToAlarm_(-1) {}
-		Alarm(const Alarm& alarm) : pTimer_(alarm.pTimer_), tickStart_(alarm.tickStart_), ticksToAlarm_(alarm.ticksToAlarm_) {}
-		bool IsValid() const { return ticksToAlarm_ != -1; }
+		Alarm(Timer& timer) : pTimer_(&timer), tickStart_(0), ticksToAlarm_(-1), pAlarmNext_(nullptr), expiredFlag_(false) {}
+		Alarm(const Alarm& alarm) : pTimer_(alarm.pTimer_), tickStart_(alarm.tickStart_),
+			ticksToAlarm_(alarm.ticksToAlarm_), expiredFlag_(alarm.expiredFlag_) {}
+		void SetAlarmNext(Alarm* pAlarmNext) { pAlarmNext_ = pAlarmNext; }
+		Alarm* GetAlarmNext() { return pAlarmNext_; }
 		Timer& GetTimer() { return *pTimer_; }
 		void SetTimeoutTicks(uint32_t ticks) { ticksToAlarm_ = ticks; }
-		void SetTimeout(uint32_t msec) { ticksToAlarm_ = pTimer_->ConvMSecToTicks(msec); }
-		void Start() { tickStart_ = pTimer_->GetTickCur(); }
+		void SetTimeout(uint32_t msec) { SetTimeoutTicks(pTimer_->ConvMSecToTicks(msec)); }
+		void Start();
+		void StartTicks(uint32_t ticks) { SetTimeoutTicks(ticks); Start(); }
 		void Start(uint32_t msec) { SetTimeout(msec); Start(); }
-		bool IsExpired() const {
-			return IsValid()? pTimer_->GetTickCur() - tickStart_ > ticksToAlarm_ : false;
-		}
+		void Cancel();
+		bool IsExpired() const { return expiredFlag_; }
+		bool UpdateExpired(uint32_t tickCur);
 	};
 protected:
 	volatile uint32_t tickCur_;
+	Alarm* pAlarmTop_;
 public:
-	Timer() : tickCur_(0) {}
-	uint32_t GetTickCur() const {
-		InterruptDisabledSection section;
-		return tickCur_;
-	}
+	Timer() : tickCur_(0), pAlarmTop_(nullptr) {}
+	uint32_t GetTickCur() const { return tickCur_; }
 	uint32_t ConvMSecToTicks(uint32_t msec) const { return (msec * CalcFreqOVF() + 500) / 1000; }
-	void DelayTicks(uint32_t ticks) {
-		uint32_t tickStart = GetTickCur();
-		while (GetTickCur() - tickStart < ticks) ;
-	}
+	void DelayTicks(uint32_t ticks);
 	void DelayMSec(uint32_t msec) { DelayTicks(ConvMSecToTicks(msec)); }
+	void AddAlarm(Alarm* pAlarm);
+	Alarm* RemoveAlarm(Alarm* pAlarm);
+	void AdvanceTickCur();
 	static void DelayClocks(uint32_t clocks);
 	static void DelayUSec(uint32_t usec);
 public:
@@ -128,7 +131,7 @@ public:
 		if (pHandler_) pHandler_->HandleIRQ_TIMER0_COMPB();
 	}
 	void HandleIRQ_TIMER0_OVF() {
-		tickCur_++;
+		AdvanceTickCur();
 		if (pHandler_) pHandler_->HandleIRQ_TIMER0_OVF();
 	}
 public:
@@ -196,7 +199,7 @@ public:
 		if (pHandler_) pHandler_->HandleIRQ_TIMER1_COMPB();
 	}
 	void HandleIRQ_TIMER1_OVF() {
-		tickCur_++;
+		AdvanceTickCur();
 		if (pHandler_) pHandler_->HandleIRQ_TIMER1_OVF();
 	}
 	uint32_t CalcFreqOVF() const override;
@@ -249,7 +252,7 @@ public:
 		if (pHandler_) pHandler_->HandleIRQ_TIMER2_COMPB();
 	}
 	void HandleIRQ_TIMER2_OVF() {
-		tickCur_++;
+		AdvanceTickCur();
 		if (pHandler_) pHandler_->HandleIRQ_TIMER2_OVF();
 	}
 public:
