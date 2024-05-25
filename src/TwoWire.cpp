@@ -42,7 +42,7 @@ bool TwoWire::StartSequence(bool stopFlag)
 {
 	//serial.Printf(F("StartSequence\n"));
 	stopFlag_ = stopFlag;
-	alarm_.Start();
+	//alarm_.Start();
 	//while (stat_ == Stat::Running) if (alarm_.IsExpired()) return false;
 	bool rtn = false;
 	stat_ = Stat::Running;
@@ -68,7 +68,7 @@ bool TwoWire::Transmit(uint8_t sla)
 
 bool TwoWire::Transmit(uint8_t sla, uint8_t data)
 {
-	serial.Printf(F("Transmit(%02x)\n"), data);
+	//serial.Printf(F("Transmit(%02x)\n"), data);
 	buffSend_.WriteData((sla << 1) | (0b0 << 0));
 	buffSend_.WriteData(data);
 	return StartSequence(true);
@@ -176,23 +176,23 @@ bool TwoWire::ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len)
 void TwoWire::HandleISR_TWI()
 {
 	uint8_t statHW = TW_STATUS;
-	serial.Printf(F("statHW:%S\n"), StatusToString(statHW));
+	//serial.Printf(F("Hardware Status: %S\n"), StatusToString(statHW));
 	if (statHW == TW_START) {						// 0x08: start condition transmitted
 		uint8_t data = buffSend_.ReadData();
 		TWDR = data;
-		serial.Printf(F("TWDR=0x%02x\n"), data);
+		//serial.Printf(F("TWDR=0x%02x\n"), data);
 		CtrlSend();
 	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
 		uint8_t data = buffSend_.ReadData();
 		TWDR = data;
-		serial.Printf(F("TWDR=0x%02x\n"), data);
+		//serial.Printf(F("TWDR=0x%02x\n"), data);
 		CtrlSend();
 	// Master Transmitter
 	} else if (statHW == TW_MT_SLA_ACK) {			// 0x18: SLA+W transmitted, ACK received
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
 			TWDR = data;
-			serial.Printf(F("TWDR=0x%02x\n"), data);
+			//serial.Printf(F("TWDR=0x%02x\n"), data);
 			CtrlSend();
 		} else {
 			if (stopFlag_) CtrlStop();
@@ -204,7 +204,7 @@ void TwoWire::HandleISR_TWI()
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
 			TWDR = data;
-			serial.Printf(F("TWDR=0x%02x\n"), data);
+			//serial.Printf(F("TWDR=0x%02x\n"), data);
 			CtrlSend();
 		} else {
 			if (stopFlag_) CtrlStop();
@@ -264,7 +264,7 @@ void TwoWire::CtrlStart()
 	data &= ~(0b1 << TWSTO);
 	data |= (0b1 << TWSTA) | (0b1 << TWINT) | (0b1 << TWEN);
 	TWCR = data;
-	serial.Printf(F("CtrlStart\n"));
+	//serial.Printf(F("CtrlStart\n"));
 }
 
 void TwoWire::CtrlStop()
@@ -273,7 +273,7 @@ void TwoWire::CtrlStop()
 	data &= ~(0b1 << TWSTA);
 	data |= (0b1 << TWSTO) | (0b1 << TWINT) | (0b1 << TWEN);
 	TWCR = data;
-	serial.Printf(F("CtrlStop\n"));
+	//serial.Printf(F("CtrlStop\n"));
 }
 
 void TwoWire::CtrlDisconnect()
@@ -281,7 +281,7 @@ void TwoWire::CtrlDisconnect()
 	uint8_t data = TWCR;
 	data &= ~(0b1 << TWEN);
 	TWCR = data;
-	serial.Printf(F("CtrlDisconnect\n"));
+	//serial.Printf(F("CtrlDisconnect\n"));
 }
 
 void TwoWire::CtrlSend()
@@ -290,7 +290,7 @@ void TwoWire::CtrlSend()
 	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO));
 	data |= (0b1 << TWINT) | (0b1 << TWEN);
 	TWCR = data;
-	serial.Printf(F("CtrlSend\n"));
+	//serial.Printf(F("CtrlSend\n"));
 }
 
 void TwoWire::CtrlRecvAck()
@@ -299,7 +299,7 @@ void TwoWire::CtrlRecvAck()
 	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO));
 	data |= (0b1 << TWINT) | (0b1 << TWEN) | (0b1 << TWIE);
 	TWCR = data;
-	serial.Printf(F("CtrlRecvAck\n"));
+	//serial.Printf(F("CtrlRecvAck\n"));
 }
 
 void TwoWire::CtrlRecvNak()
@@ -308,7 +308,7 @@ void TwoWire::CtrlRecvNak()
 	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWIE));
 	data |= (0b1 << TWINT) | (0b1 << TWEN);
 	TWCR = data;
-	serial.Printf(F("CtrlRecvNak\n"));
+	//serial.Printf(F("CtrlRecvNak\n"));
 }
 
 const __FlashStringHelper* TwoWire::StatusToString(uint8_t statHW)

@@ -13,7 +13,7 @@ void setup()
 {
 	timer.Start(timer.Clock::Div64, timer.Waveform::PhaseCorrectPWM_Upto01FF, timer.EnableInt_TIMER1_OVF);
 	serial.Open(serial.Speed::Bps57600);
-	serial.Printf("test-TwoWire\n");
+	serial.Printf(F("#### test-TwoWire ####\n"));
 	twi.Open();
 	//twi.SetTimeout(1000);
 	//serial.Printf(F("%d\n"), twi.Transmit(0x27));
