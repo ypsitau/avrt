@@ -216,10 +216,12 @@ void TwoWire::HandleISR_TWI()
 	// Master Receiver
 	//} else if (statHW == TW_MT_ARB_LOST) {		// 0x38: arbitration lost in SLA+W or data
 	} else if (statHW == TW_MR_ARB_LOST) {			// 0x38: arbitration lost in SLA+R or NACK
+		if (stopFlag_) CtrlStop();
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MR_SLA_ACK) {			// 0x40: SLA+R transmitted, ACK received
 		// nothing to do
 	} else if (statHW == TW_MR_SLA_NACK) {			// 0x48: SLA+R transmitted, NACK received
+		if (stopFlag_) CtrlStop();
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MR_DATA_ACK) {			// 0x50: data received, ACK returned
 		uint8_t data = TWDR;
