@@ -3,6 +3,8 @@
 //==============================================================================
 #include "LCD1602IIC.h"
 
+AVRT_DECLARE_Srial0_NoRecv(serial)
+
 namespace avrt {
 
 bool LCD1602IIC::Open()
@@ -24,6 +26,7 @@ bool LCD1602IIC::Open()
 
 void LCD1602IIC::SendGeneric(uint8_t code, uint8_t rsBit)
 {
+	serial.Printf(F("SendGeneric(0x02x)\n"), code);
 	Timer& timer = twi_.GetTimer();
 	uint8_t codeHi = code & 0xf0;
 	uint8_t codeLo = code << 4;

@@ -41,13 +41,21 @@ void TwoWire::Close()
 bool TwoWire::StartSequence(bool stopFlag)
 {
 	//serial.Printf(F("StartSequence\n"));
-	stat_ = Stat::Running;
-	CtrlStart();
+	stopFlag_ = stopFlag;
 	alarm_.Start();
 	//while (stat_ == Stat::Running) if (alarm_.IsExpired()) return false;
-	while (stat_ == Stat::Running) ;
-	bool rtn = (stat_ == Stat::Success);
-	if (stopFlag || stat_ == Stat::Error) CtrlStop();
+	bool rtn = false;
+	stat_ = Stat::Running;
+	CtrlStart();
+	for (;;) {
+		Stat stat = stat_;
+		if (stat == Stat::Success) {
+			rtn = true;
+			break;
+		} else if (stat != Stat::Running) {
+			break;
+		}
+	}
 	stat_ = Stat::Idle;
 	return rtn;
 }
@@ -60,6 +68,7 @@ bool TwoWire::Transmit(uint8_t sla)
 
 bool TwoWire::Transmit(uint8_t sla, uint8_t data)
 {
+	serial.Printf(F("Transmit(%02x)\n"), data);
 	buffSend_.WriteData((sla << 1) | (0b0 << 0));
 	buffSend_.WriteData(data);
 	return StartSequence(true);
@@ -167,45 +176,41 @@ bool TwoWire::ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len)
 void TwoWire::HandleISR_TWI()
 {
 	uint8_t statHW = TW_STATUS;
-	serial.Printf(F("statHW:%02x\n"), statHW);
+	serial.Printf(F("statHW:%S\n"), StatusToString(statHW));
 	if (statHW == TW_START) {						// 0x08: start condition transmitted
-		//serial.Printf(F("TW_START\n"));
 		uint8_t data = buffSend_.ReadData();
 		TWDR = data;
-		serial.Printf(F("data:%02x\n"), data);
+		serial.Printf(F("TWDR=0x%02x\n"), data);
 		CtrlSend();
 	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
-		//serial.Printf(F("TW_REP_START\n"));
 		uint8_t data = buffSend_.ReadData();
 		TWDR = data;
+		serial.Printf(F("TWDR=0x%02x\n"), data);
 		CtrlSend();
 	// Master Transmitter
 	} else if (statHW == TW_MT_SLA_ACK) {			// 0x18: SLA+W transmitted, ACK received
-		//serial.Printf(F("TW_MT_SLA_ACK\n"));
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
 			TWDR = data;
-			serial.Printf(F("data:%02x\n"), data);
+			serial.Printf(F("TWDR=0x%02x\n"), data);
 			CtrlSend();
 		} else {
+			if (stopFlag_) CtrlStop();
 			stat_ = Stat::Success; 
 		}
 	} else if (statHW == TW_MT_SLA_NACK) {			// 0x20: SLA+W transmitted, NACK received
-		//serial.Printf(F("TW_MT_SLA_NACK\n"));
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MT_DATA_ACK) {			// 0x28: data transmitted, ACK received
-		//serial.Printf(F("TW_MT_DATA_ACK\n"));
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
 			TWDR = data;
-			serial.Printf(F("data:%02x\n"), data);
+			serial.Printf(F("TWDR=0x%02x\n"), data);
 			CtrlSend();
 		} else {
-			//serial.Printf(F("stop\n"));
+			if (stopFlag_) CtrlStop();
 			stat_ = Stat::Success; 
 		}
 	} else if (statHW == TW_MT_DATA_NACK) {			// 0x30: data transmitted, NACK received
-		//serial.Printf(F("TW_MT_DATA_NACK\n"));
 		stat_ = Stat::Error;
 	// Master Receiver
 	//} else if (statHW == TW_MT_ARB_LOST) {		// 0x38: arbitration lost in SLA+W or data
@@ -255,32 +260,88 @@ void TwoWire::HandleISR_TWI()
 
 void TwoWire::CtrlStart()
 {
-	TWCR = TWCR & ~(0b1 << TWSTO) | ((0b1 << TWINT) | (0b1 << TWSTA) | (0b1 << TWEN));
+	uint8_t data = TWCR;
+	data &= ~(0b1 << TWSTO);
+	data |= (0b1 << TWSTA) | (0b1 << TWINT) | (0b1 << TWEN);
+	TWCR = data;
+	serial.Printf(F("CtrlStart\n"));
 }
 
 void TwoWire::CtrlStop()
 {
-	TWCR = TWCR & ~(0b1 << TWSTA) | ((0b1 << TWINT) | (0b1 << TWSTO) | (0b1 << TWEN));
+	uint8_t data = TWCR;
+	data &= ~(0b1 << TWSTA);
+	data |= (0b1 << TWSTO) | (0b1 << TWINT) | (0b1 << TWEN);
+	TWCR = data;
+	serial.Printf(F("CtrlStop\n"));
 }
 
 void TwoWire::CtrlDisconnect()
 {
-	TWCR = TWCR & ~(0b1 << TWEN);
+	uint8_t data = TWCR;
+	data &= ~(0b1 << TWEN);
+	TWCR = data;
+	serial.Printf(F("CtrlDisconnect\n"));
 }
 
 void TwoWire::CtrlSend()
 {
-	TWCR = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO)) | ((0b1 << TWINT) | (0b1 << TWEN)); 
+	uint8_t data = TWCR;
+	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO));
+	data |= (0b1 << TWINT) | (0b1 << TWEN);
+	TWCR = data;
+	serial.Printf(F("CtrlSend\n"));
 }
 
 void TwoWire::CtrlRecvAck()
 {
-	TWCR = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO)) | ((0b1 << TWINT) | (0b1 << TWEN) | (0b1 << TWIE)); 
+	uint8_t data = TWCR;
+	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO));
+	data |= (0b1 << TWINT) | (0b1 << TWEN) | (0b1 << TWIE);
+	TWCR = data;
+	serial.Printf(F("CtrlRecvAck\n"));
 }
 
 void TwoWire::CtrlRecvNak()
 {
-	TWCR = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWIE)) | ((0b1 << TWINT) | (0b1 << TWEN)); 
+	uint8_t data = TWCR;
+	data &= ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWIE));
+	data |= (0b1 << TWINT) | (0b1 << TWEN);
+	TWCR = data;
+	serial.Printf(F("CtrlRecvNak\n"));
+}
+
+const __FlashStringHelper* TwoWire::StatusToString(uint8_t statHW)
+{
+	return
+		(statHW == TW_START)? F("START") :
+		(statHW == TW_REP_START)? F("REP_START") :
+		(statHW == TW_MT_SLA_ACK)? F("MT_SLA_ACK") :
+		(statHW == TW_MT_SLA_NACK)? F("MT_SLA_NACK") :
+		(statHW == TW_MT_DATA_ACK)? F("MT_DATA_ACK") :
+		(statHW == TW_MT_DATA_NACK)? F("MT_DATA_NACK") :
+		(statHW == TW_MT_ARB_LOST)? F("MT_ARB_LOST") :
+		(statHW == TW_MR_ARB_LOST)? F("MR_ARB_LOST") :
+		(statHW == TW_MR_SLA_ACK)? F("MR_SLA_ACK") :
+		(statHW == TW_MR_SLA_NACK)? F("MR_SLA_NACK") :
+		(statHW == TW_MR_DATA_ACK)? F("MR_DATA_ACK") :
+		(statHW == TW_MR_DATA_NACK)? F("MR_DATA_NACK") :
+		(statHW == TW_ST_SLA_ACK)? F("ST_SLA_ACK") :
+		(statHW == TW_ST_ARB_LOST_SLA_ACK)? F("ST_ARB_LOST_SLA_ACK") :
+		(statHW == TW_ST_DATA_ACK)? F("ST_DATA_ACK") :
+		(statHW == TW_ST_DATA_NACK)? F("ST_DATA_NACK") :
+		(statHW == TW_ST_LAST_DATA)? F("ST_LAST_DATA") :
+		(statHW == TW_SR_SLA_ACK)? F("SR_SLA_ACK") :
+		(statHW == TW_SR_ARB_LOST_SLA_ACK)? F("SR_ARB_LOST_SLA_ACK") :
+		(statHW == TW_SR_GCALL_ACK)? F("SR_GCALL_ACK") :
+		(statHW == TW_SR_ARB_LOST_GCALL_ACK)? F("SR_ARB_LOST_GCALL_ACK") :
+		(statHW == TW_SR_DATA_ACK)? F("SR_DATA_ACK") :
+		(statHW == TW_SR_DATA_NACK)? F("SR_DATA_NACK") :
+		(statHW == TW_SR_GCALL_DATA_ACK)? F("SR_GCALL_DATA_ACK") :
+		(statHW == TW_SR_GCALL_DATA_NACK)? F("SR_GCALL_DATA_NACK") :
+		(statHW == TW_SR_STOP)? F("SR_STOP") :
+		(statHW == TW_NO_INFO)? F("NO_INFO") :
+		(statHW == TW_BUS_ERROR)? F("BUS_ERROR") : F("unkonwn");
 }
 
 }
