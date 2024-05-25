@@ -20,15 +20,12 @@ av::Timer::Alarm alarm3(timer1);
 
 ISR(TIMER1_OVF_vect)
 {
-	//serial.Printf("TIMER1_OVF\n");
-	//portD2.DigitalToggle();
 	portD2.DigitalImpulse();
 	timer1.HandleIRQ_TIMER1_OVF();
 }
 
 ISR(TIMER2_OVF_vect)
 {
-	//serial.Printf("TIMER2_OVF\n");
 	portD3.DigitalToggle();
 	timer2.HandleIRQ_TIMER2_OVF();
 }
@@ -100,35 +97,3 @@ void loop()
 		alarm3.Start();
 	}
 }
-
-#if 0
-void BoundaryTest()
-{
-	uint32_t tickStart = 0xffffff00L;
-	uint32_t tickCur = 0xffffff00L;
-	uint32_t ticksToAlarm = 0x180L;
-	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
-		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
-	tickCur = 0xffffff80L;
-	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
-		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
-	tickCur = 0xffffff81L;
-	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
-		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
-	tickCur = 0xffffffffL;
-	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
-		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
-	tickCur = 0x00000000L;
-	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
-		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
-	tickCur = 0x00000001L;
-	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
-		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
-	tickCur = 0x00000080L;
-	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
-		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
-	tickCur = 0x00000081L;
-	serial.Printf(F("Cur:%08lx Start:%08lx Alarm:%08lx rtn=%d\n"),
-		tickCur, tickStart, ticksToAlarm, av::Timer::Alarm::Test(tickCur, tickStart, ticksToAlarm));
-}
-#endif
