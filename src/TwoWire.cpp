@@ -176,7 +176,8 @@ void TwoWire::HandleISR_TWI()
 		CtrlSend();
 	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
 		//serial.Printf(F("TW_REP_START\n"));
-		TWDR = buffSend_.ReadData();
+		uint8_t data = buffSend_.ReadData();
+		TWDR = data;
 		CtrlSend();
 	// Master Transmitter
 	} else if (statHW == TW_MT_SLA_ACK) {			// 0x18: SLA+W transmitted, ACK received
