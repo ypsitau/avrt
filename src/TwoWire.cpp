@@ -44,9 +44,8 @@ bool TwoWire::StartSequence(bool stopFlag)
 	stat_ = Stat::Running;
 	CtrlStart();
 	alarm_.Start();
-	while (stat_ == Stat::Running) {
-		//if (alarm_.IsExpired()) return false;
-	}
+	//while (stat_ == Stat::Running) if (alarm_.IsExpired()) return false;
+	while (stat_ == Stat::Running) ;
 	bool rtn = (stat_ == Stat::Success);
 	if (stopFlag || stat_ == Stat::Error) CtrlStop();
 	stat_ = Stat::Idle;
@@ -168,10 +167,12 @@ bool TwoWire::ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len)
 void TwoWire::HandleISR_TWI()
 {
 	uint8_t statHW = TW_STATUS;
-	//serial.Printf(F("statHW:%02x\n"), statHW);
-	if (statHW == TW_START) {						// 0x08: 
+	serial.Printf(F("statHW:%02x\n"), statHW);
+	if (statHW == TW_START) {						// 0x08: start condition transmitted
 		//serial.Printf(F("TW_START\n"));
-		TWDR = buffSend_.ReadData();
+		uint8_t data = buffSend_.ReadData();
+		TWDR = data;
+		serial.Printf(F("data:%02x\n"), data);
 		CtrlSend();
 	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
 		//serial.Printf(F("TW_REP_START\n"));
@@ -181,7 +182,9 @@ void TwoWire::HandleISR_TWI()
 	} else if (statHW == TW_MT_SLA_ACK) {			// 0x18: SLA+W transmitted, ACK received
 		//serial.Printf(F("TW_MT_SLA_ACK\n"));
 		if (buffSend_.HasData()) {
-			TWDR = buffSend_.ReadData();
+			uint8_t data = buffSend_.ReadData();
+			TWDR = data;
+			serial.Printf(F("data:%02x\n"), data);
 			CtrlSend();
 		} else {
 			stat_ = Stat::Success; 
@@ -192,8 +195,9 @@ void TwoWire::HandleISR_TWI()
 	} else if (statHW == TW_MT_DATA_ACK) {			// 0x28: data transmitted, ACK received
 		//serial.Printf(F("TW_MT_DATA_ACK\n"));
 		if (buffSend_.HasData()) {
-			TWDR = buffSend_.ReadData();
-			//serial.Printf(F("data:%02x\n"), data);
+			uint8_t data = buffSend_.ReadData();
+			TWDR = data;
+			serial.Printf(F("data:%02x\n"), data);
 			CtrlSend();
 		} else {
 			//serial.Printf(F("stop\n"));
