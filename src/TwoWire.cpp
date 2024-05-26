@@ -62,21 +62,21 @@ bool TwoWire::StartSequence(bool stopFlag)
 
 bool TwoWire::Transmit(uint8_t sla)
 {
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	return StartSequence(true);
 }
 
 bool TwoWire::Transmit(uint8_t sla, uint8_t data)
 {
 	//serial.Printf(F("Transmit(%02x)\n"), data);
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	buffSend_.WriteData(data);
 	return StartSequence(true);
 }
 
 bool TwoWire::Transmit(uint8_t sla, uint8_t data1, uint8_t data2)
 {
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	buffSend_.WriteData(data1);
 	buffSend_.WriteData(data2);
 	return StartSequence(true);
@@ -84,7 +84,7 @@ bool TwoWire::Transmit(uint8_t sla, uint8_t data1, uint8_t data2)
 
 bool TwoWire::Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3)
 {
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	buffSend_.WriteData(data1);
 	buffSend_.WriteData(data2);
 	buffSend_.WriteData(data3);
@@ -93,7 +93,7 @@ bool TwoWire::Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3)
 
 bool TwoWire::Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4)
 {
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	buffSend_.WriteData(data1);
 	buffSend_.WriteData(data2);
 	buffSend_.WriteData(data3);
@@ -103,27 +103,27 @@ bool TwoWire::Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3,
 
 bool TwoWire::Transmit(uint8_t sla, const uint8_t* buff, uint8_t len)
 {
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	buffSend_.WriteBuff(buff, len);
 	return StartSequence(true);
 }
 
 bool TwoWire::TransmitCont(uint8_t sla)
 {
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	return StartSequence(false);
 }
 
 bool TwoWire::TransmitCont(uint8_t sla, uint8_t data)
 {
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	buffSend_.WriteData(data);
 	return StartSequence(false);
 }
 
 bool TwoWire::TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2)
 {
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	buffSend_.WriteData(data1);
 	buffSend_.WriteData(data2);
 	return StartSequence(false);
@@ -131,7 +131,7 @@ bool TwoWire::TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2)
 
 bool TwoWire::TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3)
 {
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	buffSend_.WriteData(data1);
 	buffSend_.WriteData(data2);
 	buffSend_.WriteData(data3);
@@ -140,7 +140,7 @@ bool TwoWire::TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t da
 
 bool TwoWire::TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4)
 {
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	buffSend_.WriteData(data1);
 	buffSend_.WriteData(data2);
 	buffSend_.WriteData(data3);
@@ -150,7 +150,7 @@ bool TwoWire::TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t da
 
 bool TwoWire::TransmitCont(uint8_t sla, const uint8_t* buff, uint8_t len)
 {
-	buffSend_.WriteData((sla << 1) | (0b0 << 0));
+	slaRW_ = sla << 1;
 	buffSend_.WriteBuff(buff, len);
 	return StartSequence(false);
 }
@@ -178,12 +178,10 @@ void TwoWire::HandleISR_TWI()
 	uint8_t statHW = TW_STATUS;
 	serial.Printf(F("Hardware Status: %S\n"), StatusToString(statHW));
 	if (statHW == TW_START) {						// 0x08: start condition transmitted
-		uint8_t data = buffSend_.ReadData();
-		TWDR = data;
+		TWDR = slaRW_;
 		SetTWCR_Transmit();
 	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
-		uint8_t data = buffSend_.ReadData();
-		TWDR = data;
+		TWDR = slaRW_;
 		SetTWCR_Transmit();
 	// Table 22-2 Status codes for Master Transmitter Mode
 	} else if (statHW == TW_MT_SLA_ACK) {			// 0x18: SLA+W transmitted, ACK received
@@ -281,7 +279,7 @@ void TwoWire::SetTWCR_StopAndStart()
 
 void TwoWire::SetTWCR_Transmit()
 {
-	serial.Printf(F("SetTWCR_Transmit\n"));
+	serial.Printf(F("SetTWCR_Transmit(0x%02x)\n"), TWDR);
 	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
 	TWCR = data | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWINT);
 }

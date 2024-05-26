@@ -69,7 +69,7 @@ constexpr uint8_t PinToADCMux(uint8_t pin) { return pin - A0; }
 //------------------------------------------------------------------------------
 class InterruptDisabledSection {
 private:
-	volatile uint8_t savedSREG_;
+	uint8_t savedSREG_;
 public:
 	InterruptDisabledSection() { savedSREG_ = SREG; cli(); }
 	~InterruptDisabledSection() { SREG = savedSREG_; }
