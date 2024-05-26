@@ -14,9 +14,9 @@ av::Timer0 timer0;
 av::Timer1 timer1;
 av::Timer2 timer2;
 
-av::Timer::Alarm alarm1(timer2);
-//av::Timer::Alarm alarm2(timer1);
-//av::Timer::Alarm alarm3(timer1);
+av::Timer::Alarm alarm1(timer1);
+av::Timer::Alarm alarm2(timer1);
+av::Timer::Alarm alarm3(timer1);
 
 ISR(TIMER1_OVF_vect)
 {
@@ -78,28 +78,22 @@ void setup()
 	} while (0);
 	serial.Printf(F("#### test-Timer ####\n"));
 	alarm1.Start(1000);
-	//alarm2.Start(500);
-	//alarm3.Start(100);
+	alarm2.Start(500);
+	alarm3.Start(100);
 }
 
 void loop()
 {
-#if 0
 	if (alarm1.IsExpired()) {
 		portLED1.DigitalToggle();
 		alarm1.Start();
 	}
-	//if (alarm2.IsExpired()) {
-	//	portLED2.DigitalToggle();
-	//	alarm2.Start();
-	//}
-	//if (alarm3.IsExpired()) {
-	//	portLED3.DigitalToggle();
-	//	alarm3.Start();
-	//}
-#else
-	portD2.DigitalToggle();
-	portLED1.DigitalToggle();
-	timer2.DelayMSec(5);
-#endif
+	if (alarm2.IsExpired()) {
+		portLED2.DigitalToggle();
+		alarm2.Start();
+	}
+	if (alarm3.IsExpired()) {
+		portLED3.DigitalToggle();
+		alarm3.Start();
+	}
 }
