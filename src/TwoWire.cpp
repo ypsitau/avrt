@@ -16,7 +16,7 @@ void TwoWire::Open(uint8_t address, uint32_t freq)
 	uint8_t dataTWBR = static_cast<uint8_t>(((F_CPU / freq) - 16) / 2);
 											// TWBR: TWI Bit Rate Register
 	constexpr uint8_t dataTWINT = 0b1;		// TWINT: TWI Interrupt Flag = set one to clear
-	constexpr uint8_t dataTWEA = 0b1;		// TWEA: TWI Enable Acknowledge Bit = true .. connect to the bus
+	constexpr uint8_t dataTWEA = 0b0;		// TWEA: TWI Enable Acknowledge Bit
 	constexpr uint8_t dataTWIE = 0b1;		// TWIE: TWI Interrupt Enable = true
 	constexpr uint8_t dataTWEN = 0b1;		// TWEN: TWI Enable Bit = true
 	constexpr uint8_t dataTWPS = 0b00;		// TWPS: TWI Prescaler Bits = Div1
@@ -35,7 +35,7 @@ void TwoWire::Open(uint8_t address, uint32_t freq)
 
 void TwoWire::Close()
 {
-	TWCR &= ~(0b1 << TWEA);					// TWEA: TWI Enable Acknowledge Bit = false .. disconnect from the bus
+	TWCR &= ~(0b1 << TWEN);					// TWEN: TWI Enable Bit = false
 }
 
 bool TwoWire::StartSequence(bool stopFlag)
