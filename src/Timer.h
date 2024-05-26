@@ -52,7 +52,7 @@ public:
 	public:
 		Alarm(Timer& timer) : pTimer_(&timer), tickStart_(0), ticksToAlarm_(-1), pAlarmNext_(nullptr), expiredFlag_(false) {}
 		Alarm(const Alarm& alarm) : pTimer_(alarm.pTimer_), tickStart_(alarm.tickStart_),
-			ticksToAlarm_(alarm.ticksToAlarm_), expiredFlag_(alarm.expiredFlag_) {}
+			ticksToAlarm_(alarm.ticksToAlarm_), pAlarmNext_(alarm.pAlarmNext_), expiredFlag_(alarm.expiredFlag_) {}
 		void SetAlarmNext(Alarm* pAlarmNext) { pAlarmNext_ = pAlarmNext; }
 		Alarm* GetAlarmNext() { return pAlarmNext_; }
 		Timer& GetTimer() { return *pTimer_; }

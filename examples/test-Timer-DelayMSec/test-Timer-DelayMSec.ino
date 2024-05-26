@@ -8,20 +8,21 @@ AVRT_IMPLEMENT_Serial0(serial)
 av::Port<av::D2, av::Out> portD2;
 av::Port<av::D4, av::Out> portLED;
 
-av::Timer::Alarm alarm(timer);
-
 void setup()
 {
 	av::Ports::Init();
 	serial.Open(serial.Speed::Bps57600);
 	timer.Start(timer.Clock::Div64, timer.Waveform::Normal, timer.EnableInt_TIMER2_OVF);
-	alarm.Start(1000);
+	av::Timer::Alarm alarm(timer);
+	for (;;) {
+		portLED.DigitalToggle();
+		do {
+			alarm.Start(300);
+			while (!alarm.IsExpired()) ;
+		} while (0);
+	}
 }
 
 void loop()
 {
-	if (alarm.IsExpired()) {
-		portLED.DigitalToggle();
-		alarm.Start();
-	}
 }
