@@ -88,6 +88,7 @@ void Timer::Alarm::Start()
 
 void Timer::Alarm::Cancel()
 {
+	InterruptDisabledSection section;
 	pTimer_->RemoveAlarm(this);
 }
 
