@@ -45,9 +45,9 @@ public:
 	class Alarm {
 	public:
 		Timer* pTimer_;
-		uint32_t tickStart_;
-		uint32_t ticksToAlarm_;
-		Alarm* pAlarmNext_;
+		volatile uint32_t tickStart_;
+		volatile uint32_t ticksToAlarm_;
+		volatile Alarm* pAlarmNext_;
 		volatile bool expiredFlag_;
 	public:
 		Alarm(Timer& timer) : pTimer_(&timer), tickStart_(0), ticksToAlarm_(-1), pAlarmNext_(nullptr), expiredFlag_(false) {}

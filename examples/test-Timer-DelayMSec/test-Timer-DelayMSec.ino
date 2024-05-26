@@ -13,10 +13,10 @@ void setup()
 	av::Ports::Init();
 	serial.Open(serial.Speed::Bps57600);
 	timer.Start(timer.Clock::Div64, timer.Waveform::Normal, timer.EnableInt_TIMER2_OVF);
-	av::Timer::Alarm alarm(timer);
 	for (;;) {
 		portLED.DigitalToggle();
 		do {
+			av::Timer::Alarm alarm(timer);
 			alarm.Start(300);
 			while (!alarm.IsExpired()) ;
 		} while (0);
