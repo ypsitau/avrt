@@ -79,7 +79,7 @@ void setup()
 	serial.Printf(F("#### test-Timer ####\n"));
 	alarm1.Start(300);
 	alarm2.Start(500);
-	alarm3.Start(1000);
+	alarm3.Start(100);
 }
 
 void loop()

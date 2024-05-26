@@ -62,20 +62,22 @@ public:
 		void StartTicks(uint32_t ticks) { SetTimeoutTicks(ticks); Start(); }
 		void Start(uint32_t msec) { SetTimeout(msec); Start(); }
 		void Cancel();
+		void SetExpired() { expiredFlag_ = true; }
 		bool IsExpired() const { return expiredFlag_; }
-		bool UpdateExpired(uint32_t tickCur);
+		bool Check(uint32_t tickCur) { return tickCur - tickStart_ > ticksToAlarm_; }
 	};
 protected:
 	volatile uint32_t tickCur_;
 	Alarm alarmForDelay_;
+	Alarm *pAlarmTop_;
 public:
-	Timer() : tickCur_(0), alarmForDelay_(*this) {}
+	Timer() : tickCur_(0), alarmForDelay_(*this), pAlarmTop_(nullptr) {}
 	uint32_t GetTickCur() const { return tickCur_; }
 	uint32_t ConvMSecToTicks(uint32_t msec) const { return (msec * CalcFreqOVF() + 500) / 1000; }
 	void DelayTicks(uint32_t ticks);
 	void DelayMSec(uint32_t msec) { DelayTicks(ConvMSecToTicks(msec)); }
 	void AddAlarm(Alarm* pAlarm);
-	Alarm* RemoveAlarm(Alarm* pAlarm);
+	void RemoveAlarm(Alarm* pAlarm);
 	void AdvanceTickCur();
 	static void DelayClocks(uint32_t clocks);
 	static void DelayUSec(uint32_t usec);

@@ -10,25 +10,23 @@ namespace avrt {
 //------------------------------------------------------------------------------
 void Timer::AddAlarm(Alarm* pAlarm)
 {
-	pAlarm->SetAlarmNext(alarmForDelay_.GetAlarmNext());
-	alarmForDelay_.SetAlarmNext(pAlarm);
+	pAlarm->SetAlarmNext(pAlarmTop_);
+	pAlarmTop_ = pAlarm;
 }
 
-Timer::Alarm* Timer::RemoveAlarm(Alarm* pAlarm)
+void Timer::RemoveAlarm(Alarm* pAlarm)
 {
-	Alarm* pAlarmNext = pAlarm->GetAlarmNext();
-	pAlarm->SetAlarmNext(nullptr);
-	if (alarmForDelay_.GetAlarmNext() == pAlarm) {
-		alarmForDelay_.SetAlarmNext(pAlarmNext);
-		return pAlarmNext;
-	}
-	for (Alarm* pAlarmIter = alarmForDelay_.GetAlarmNext(); pAlarmIter; pAlarmIter = pAlarmIter->GetAlarmNext()) {
-		if (pAlarmIter->GetAlarmNext() == pAlarm) {
-			pAlarmIter->SetAlarmNext(pAlarmNext);
-			break;
+	if (pAlarmTop_ == pAlarm) {
+		pAlarmTop_ = pAlarm->GetAlarmNext();
+	} else {
+		for (Alarm* pAlarmIter = pAlarmTop_; pAlarmIter; pAlarmIter = pAlarmIter->GetAlarmNext()) {
+			if (pAlarmIter->GetAlarmNext() == pAlarm) {
+				pAlarmIter->SetAlarmNext(pAlarm->GetAlarmNext());
+				break;
+			}
 		}
 	}
-	return pAlarmNext;
+	pAlarm->SetAlarmNext(nullptr);
 }
 
 void Timer::AdvanceTickCur()
@@ -36,18 +34,19 @@ void Timer::AdvanceTickCur()
 	// This function is supposed to be called in the interrupt context.
 	tickCur_++;
 	uint32_t tickCur = tickCur_;
-	alarmForDelay_.UpdateExpired(tickCur);
-	for (Alarm* pAlarmIter = alarmForDelay_.GetAlarmNext(); pAlarmIter; ) {
-		if (pAlarmIter->UpdateExpired(tickCur)) {
-			pAlarmIter = RemoveAlarm(pAlarmIter);
-		} else {
-			pAlarmIter = pAlarmIter->GetAlarmNext();
+	for (Alarm* pAlarmIter = pAlarmTop_; pAlarmIter; ) {
+		Alarm* pAlarmNext = pAlarmIter->GetAlarmNext();
+		if (pAlarmIter->Check(tickCur)) {
+			RemoveAlarm(pAlarmIter);
+			pAlarmIter->SetExpired();
 		}
+		pAlarmIter = pAlarmNext;
 	}
 }
 
 void Timer::DelayTicks(uint32_t ticks)
 {
+	AddAlarm(&alarmForDelay_);
 	alarmForDelay_.StartTicks(ticks);
 	while (!alarmForDelay_.IsExpired()) ;
 }
@@ -75,13 +74,6 @@ void Timer::Alarm::Start()
 void Timer::Alarm::Cancel()
 {
 	pTimer_->RemoveAlarm(this);
-}
-
-bool Timer::Alarm::UpdateExpired(uint32_t tickCur)
-{
-	bool expiredFlag = (tickCur - tickStart_ > ticksToAlarm_);
-	expiredFlag_ = expiredFlag;
-	return expiredFlag;
 }
 
 //------------------------------------------------------------------------------
