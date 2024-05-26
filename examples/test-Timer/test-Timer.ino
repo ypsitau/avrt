@@ -70,8 +70,8 @@ void setup()
 		uint8_t flags = timer2.EnableInt_TIMER2_OVF;
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::Normal, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoFF, flags);
-		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::CTC, flags);
-		timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoFF, flags);
+		timer2.Start(timer2.Clock::Div64, timer2.Waveform::CTC, flags);
+		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoFF, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoOCR2A, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoOCR2A, flags);
 		OCR2A = 0xff;
@@ -100,14 +100,6 @@ void loop()
 #else
 	portD2.DigitalToggle();
 	portLED1.DigitalToggle();
-	//do {
-	//	av::Timer::Alarm alarm(timer2);
-	//	timer2.AddAlarm(&alarm);
-	//	alarm.StartTicks(1000);
-	//	while (alarm.IsExpired()) ;
-	//} while (0);
-	timer2.DelayMSec(500);
-	//portLED1.DigitalLow();
-	//timer2.DelayMSec(500);
+	timer2.DelayMSec(5);
 #endif
 }
