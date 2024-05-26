@@ -209,8 +209,7 @@ void TwoWire::HandleISR_TWI()
 		if (stopFlag_) SetTWCR_Stop();
 		stat_ = Stat::Error;
 	// Table 22-3. Status codes for Master Receiver Mode
-	//} else if (statHW == TW_MT_ARB_LOST) {		// 0x38: arbitration lost in SLA+W or data
-	} else if (statHW == TW_MR_ARB_LOST) {			// 0x38: arbitration lost in SLA+R or NACK
+	} else if (statHW == TW_MR_ARB_LOST) {			// 0x38: arbitration lost in SLA+R or NACK, TW_MT_ARB_LOST
 		if (stopFlag_) SetTWCR_Stop();
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MR_SLA_ACK) {			// 0x40: SLA+R transmitted, ACK received
