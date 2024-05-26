@@ -49,6 +49,10 @@ void Timer::DelayTicks(uint32_t ticks)
 	AddAlarm(&alarmForDelay_);
 	alarmForDelay_.StartTicks(ticks);
 	while (!alarmForDelay_.IsExpired()) ;
+	//Alarm alarm(*this);
+	//AddAlarm(&alarm);
+	//alarm.StartTicks(ticks);
+	//while (alarm.IsExpired()) ;
 }
 
 void Timer::DelayClocks(uint32_t clocks)

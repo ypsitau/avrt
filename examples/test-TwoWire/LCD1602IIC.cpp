@@ -38,6 +38,7 @@ void LCD1602IIC::SendGeneric(uint8_t code, uint8_t rsBit)
 	twi_.Transmit(sla_, codeLo | (0b1 << 3) | (0b1 << 2) | (0b0 << 1) | (rsBit << 0));
 	timer.DelayMSec(1);
 	twi_.Transmit(sla_, codeLo | (0b1 << 3) | (0b0 << 2) | (0b0 << 1) | (rsBit << 0));
+	//timer.DelayMSec(3);
 }
 
 }
