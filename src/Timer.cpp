@@ -46,22 +46,28 @@ void Timer::AdvanceTickCur()
 
 void Timer::DelayTicks(uint32_t ticks)
 {
-	AddAlarm(&alarmForDelay_);
 	alarmForDelay_.StartTicks(ticks);
 	while (!alarmForDelay_.IsExpired()) ;
 	//Alarm alarm(*this);
-	//AddAlarm(&alarm);
 	//alarm.StartTicks(ticks);
 	//while (alarm.IsExpired()) ;
 }
 
 void Timer::DelayClocks(uint32_t clocks)
 {
+	// The instruction calls of call and rtn takes 7 clocks
+	// The following code takes 30 clocks (= 3 + 7 * 3 + 6)
+	uint32_t i = clocks >> 4;
+	// The foollowing code takes 16 clocks per loop
+	for ( ; i; i--) __asm__ volatile("nop\n" "nop\n" "nop\n" "nop\n" "nop\n");
 }
 
 void Timer::DelayUSec(uint32_t usec)
 {
-
+	constexpr int clocksMisc = 100;
+	uint32_t clocks = usec * 1000000 / F_CPU;
+	if (clocks > clocksMisc) clocks -= clocksMisc;
+	DelayClocks(clocks);
 }
 
 //------------------------------------------------------------------------------

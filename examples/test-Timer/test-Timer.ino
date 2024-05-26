@@ -14,13 +14,13 @@ av::Timer0 timer0;
 av::Timer1 timer1;
 av::Timer2 timer2;
 
-av::Timer::Alarm alarm1(timer1);
-av::Timer::Alarm alarm2(timer1);
-av::Timer::Alarm alarm3(timer1);
+av::Timer::Alarm alarm1(timer2);
+//av::Timer::Alarm alarm2(timer1);
+//av::Timer::Alarm alarm3(timer1);
 
 ISR(TIMER1_OVF_vect)
 {
-	portD2.DigitalImpulse();
+	//portD2.DigitalImpulse();
 	timer1.HandleIRQ_TIMER1_OVF();
 }
 
@@ -68,39 +68,46 @@ void setup()
 	//--------------------------------------------------------------------------
 	do {
 		uint8_t flags = timer2.EnableInt_TIMER2_OVF;
-		timer2.Start(timer2.Clock::Div64, timer2.Waveform::Normal, flags);
+		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::Normal, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoFF, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::CTC, flags);
-		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoFF, flags);
+		timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoFF, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::PhaseCorrectPWM_UptoOCR2A, flags);
 		//timer2.Start(timer2.Clock::Div64, timer2.Waveform::FastPWM_UptoOCR2A, flags);
 		OCR2A = 0xff;
 	} while (0);
 	serial.Printf(F("#### test-Timer ####\n"));
-	alarm1.Start(300);
-	alarm2.Start(500);
-	alarm3.Start(100);
+	alarm1.Start(1000);
+	//alarm2.Start(500);
+	//alarm3.Start(100);
 }
 
 void loop()
 {
-#if 1
+#if 0
 	if (alarm1.IsExpired()) {
 		portLED1.DigitalToggle();
 		alarm1.Start();
 	}
-	if (alarm2.IsExpired()) {
-		portLED2.DigitalToggle();
-		alarm2.Start();
-	}
-	if (alarm3.IsExpired()) {
-		portLED3.DigitalToggle();
-		alarm3.Start();
-	}
+	//if (alarm2.IsExpired()) {
+	//	portLED2.DigitalToggle();
+	//	alarm2.Start();
+	//}
+	//if (alarm3.IsExpired()) {
+	//	portLED3.DigitalToggle();
+	//	alarm3.Start();
+	//}
 #else
-	portLED1.DigitalHigh();
-	timer1.DelayMSec(500);
-	portLED1.DigitalLow();
-	timer1.DelayMSec(500);
+	portD2.DigitalToggle();
+	portLED1.DigitalToggle();
+	//do {
+	//	av::Timer::Alarm alarm(timer2);
+	//	timer2.AddAlarm(&alarm);
+	//	alarm.StartTicks(1000);
+	//	while (alarm.IsExpired()) ;
+	//} while (0);
+	timer2.DelayMSec(500);
+	//portLED1.DigitalLow();
+	//timer2.DelayMSec(500);
 #endif
 }
