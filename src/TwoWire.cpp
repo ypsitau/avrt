@@ -51,7 +51,8 @@ bool TwoWire::StartSequence(bool stopFlag)
 		if (stat == Stat::Success) {
 			rtn = true;
 			break;
-		} else if (stat != Stat::Running || alarm_.IsExpired()) {
+		//} else if (stat != Stat::Running || alarm_.IsExpired()) {
+		} else if (stat != Stat::Running) {
 			break;
 		}
 	}
@@ -175,24 +176,21 @@ bool TwoWire::ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len)
 void TwoWire::HandleISR_TWI()
 {
 	uint8_t statHW = TW_STATUS;
-	//serial.Printf(F("Hardware Status: %S\n"), StatusToString(statHW));
+	serial.Printf(F("Hardware Status: %S\n"), StatusToString(statHW));
 	if (statHW == TW_START) {						// 0x08: start condition transmitted
 		uint8_t data = buffSend_.ReadData();
 		TWDR = data;
-		//serial.Printf(F("TWDR=0x%02x\n"), data);
-		SetTWCR_Send();
+		SetTWCR_Transmit();
 	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
 		uint8_t data = buffSend_.ReadData();
 		TWDR = data;
-		//serial.Printf(F("TWDR=0x%02x\n"), data);
-		SetTWCR_Send();
+		SetTWCR_Transmit();
 	// Table 22-2 Status codes for Master Transmitter Mode
 	} else if (statHW == TW_MT_SLA_ACK) {			// 0x18: SLA+W transmitted, ACK received
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
 			TWDR = data;
-			//serial.Printf(F("TWDR=0x%02x\n"), data);
-			SetTWCR_Send();
+			SetTWCR_Transmit();
 		} else {
 			if (stopFlag_) SetTWCR_Stop();
 			stat_ = Stat::Success; 
@@ -204,8 +202,7 @@ void TwoWire::HandleISR_TWI()
 		if (buffSend_.HasData()) {
 			uint8_t data = buffSend_.ReadData();
 			TWDR = data;
-			//serial.Printf(F("TWDR=0x%02x\n"), data);
-			SetTWCR_Send();
+			SetTWCR_Transmit();
 		} else {
 			if (stopFlag_) SetTWCR_Stop();
 			stat_ = Stat::Success; 
@@ -282,7 +279,7 @@ void TwoWire::SetTWCR_StopAndStart()
 	//serial.Printf(F("SetTWCR_Stop\n"));
 }
 
-void TwoWire::SetTWCR_Send()
+void TwoWire::SetTWCR_Transmit()
 {
 	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
 	TWCR = data | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWINT);

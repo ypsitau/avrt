@@ -50,7 +50,7 @@ private:
 	static void SetTWCR_Start();
 	static void SetTWCR_Stop();
 	static void SetTWCR_StopAndStart();
-	static void SetTWCR_Send();
+	static void SetTWCR_Transmit();
 	static void SetTWCR_ReleaseBus();
 	static void SetTWCR_NotifyACK();
 	static void SetTWCR_NotifyNACK();
