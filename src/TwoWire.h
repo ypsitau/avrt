@@ -23,7 +23,7 @@ private:
 	volatile Stat stat_;
 	uint8_t lenExpected_;
 	uint8_t len_;
-	bool stopFlag_;
+	volatile bool stopFlag_;
 public:
 	TwoWire(Timer& timer) : alarm_(timer), stat_(Stat::Idle), lenExpected_(0), len_(0), stopFlag_(false) {}
 	Timer& GetTimer() { return alarm_.GetTimer(); }
