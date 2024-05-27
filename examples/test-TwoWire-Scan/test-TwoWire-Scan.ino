@@ -14,6 +14,7 @@ void setup()
 	for (uint8_t sla = 0x01; sla < 0x7f; sla++) {
 		bool foundFlag = twi.Transmit(sla);
 		serial.Printf(F("SLA:%02x .. %S\n"), sla, foundFlag? F("found") : F("no"));
+		timer.DelayMSec(100);
 	}
 }
 

@@ -25,8 +25,8 @@ void TwoWire::Open(uint8_t address, uint32_t freq)
 	constexpr uint8_t dataTWAM = 0b0000000;	// TWAM: TWI Address Mask
 	constexpr uint8_t dataTWGCE = 0b0;		// TWGCE: TWI General Call Recognition Enable Bit
 	TWBR = dataTWBR << TWBR0;
-	TWCR = (dataTWINT << TWINT) | (dataTWEA << TWEA) | (dataTWSTA < TWSTA) | (dataTWSTO << TWSTO) |
-		(dataTWEN << TWEN) | (dataTWIE << TWIE);
+	//TWCR = (dataTWINT << TWINT) | (dataTWEA << TWEA) | (dataTWSTA < TWSTA) | (dataTWSTO << TWSTO) |
+	//	(dataTWEN << TWEN) | (dataTWIE << TWIE);
 	TWSR = (dataTWPS << TWPS0);
 	TWDR = 0x00;
 	TWAR = (dataTWA << TWA0) | (dataTWGCE << TWGCE);
@@ -45,6 +45,7 @@ bool TwoWire::StartSequence(bool stopFlag)
 	alarm_.Start();
 	bool rtn = false;
 	stat_ = Stat::Running;
+	//while (!(TWCR & (1 << TWINT))) ;
 	SetTWCR_Start();
 	for (;;) {
 		Stat stat = stat_;
@@ -258,29 +259,35 @@ void TwoWire::HandleISR_TWI()
 void TwoWire::SetTWCR_Start()
 {
 	serial.Printf(F("SetTWCR_Start\n"));
-	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
-	TWCR = data | (0b1 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWINT);
+	//TWCR = (dataTWINT << TWINT) | (dataTWEA << TWEA) | (dataTWSTA < TWSTA) | (dataTWSTO << TWSTO) |
+	//	(dataTWEN << TWEN) | (dataTWIE << TWIE);
+	TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b1 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
+	//uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
+	//TWCR = data | (0b1 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWINT);
 }
 
 void TwoWire::SetTWCR_Stop()
 {
 	serial.Printf(F("SetTWCR_Stop\n"));
-	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
-	TWCR = data | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT);
+	//uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
+	//TWCR = data | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT);
+	TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
 }
 
 void TwoWire::SetTWCR_StopAndStart()
 {
 	serial.Printf(F("SetTWCR_StopAndStart\n"));
-	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
-	TWCR = data | (0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT);
+	//uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
+	//TWCR = data | (0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT);
+	TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
 }
 
 void TwoWire::SetTWCR_Transmit()
 {
 	serial.Printf(F("SetTWCR_Transmit(0x%02x)\n"), TWDR);
-	uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
-	TWCR = data | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWINT);
+	//uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
+	//TWCR = data | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWINT);
+	TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
 }
 
 void TwoWire::SetTWCR_ReleaseBus()
