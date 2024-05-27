@@ -40,13 +40,13 @@ void TwoWire::Close()
 
 bool TwoWire::Transmit(uint8_t sla)
 {
-	return Sequencer_MT(*this, sla).Start();
+	return SequencerMT(*this, sla).Start();
 }
 
 bool TwoWire::Transmit(uint8_t sla, uint8_t data)
 {
 	GetBuffSend().WriteData(data);
-	return Sequencer_MT(*this, sla).Start();
+	return SequencerMT(*this, sla).Start();
 }
 
 #if 0
@@ -214,10 +214,10 @@ bool TwoWire::Sequencer::Start()
 }
 
 //------------------------------------------------------------------------------
-// TwoWire::Sequencer_MT
+// TwoWire::SequencerMT
 // Table 22-2 Status codes for Master Transmitter Mode
 //------------------------------------------------------------------------------
-bool TwoWire::Sequencer_MT::Process(uint8_t statHW)
+bool TwoWire::SequencerMT::Process(uint8_t statHW)
 {
 	constexpr bool reqInt = false;
 	if (statHW == TW_START ||						// START(0x08): start condition transmitted
@@ -245,10 +245,10 @@ bool TwoWire::Sequencer_MT::Process(uint8_t statHW)
 }
 
 //------------------------------------------------------------------------------
-// TwoWire::Sequencer_MR
+// TwoWire::SequencerMR
 // Table 22-3. Status codes for Master Receiver Mode
 //------------------------------------------------------------------------------
-bool TwoWire::Sequencer_MR::Process(uint8_t statHW)
+bool TwoWire::SequencerMR::Process(uint8_t statHW)
 {
 	constexpr bool reqInt = false;
 	if (statHW == TW_START ||						// START(0x08): start condition transmitted
@@ -277,9 +277,9 @@ bool TwoWire::Sequencer_MR::Process(uint8_t statHW)
 }
 
 //------------------------------------------------------------------------------
-// TwoWire::Sequencer_ST
+// TwoWire::SequencerST
 //------------------------------------------------------------------------------
-bool TwoWire::Sequencer_ST::Process(uint8_t statHW)
+bool TwoWire::SequencerST::Process(uint8_t statHW)
 {
 	// Slave Transmitter
 	if (statHW == TW_ST_SLA_ACK) {					// 0xA8: SLA+R received, ACK returned
@@ -293,9 +293,9 @@ bool TwoWire::Sequencer_ST::Process(uint8_t statHW)
 }
 
 //------------------------------------------------------------------------------
-// TwoWire::Sequencer_SR
+// TwoWire::SequencerSR
 //------------------------------------------------------------------------------
-bool TwoWire::Sequencer_SR::Process(uint8_t statHW)
+bool TwoWire::SequencerSR::Process(uint8_t statHW)
 {
 	// Slave Receiver
 	if (statHW == TW_SR_SLA_ACK) {					// 0x60: SLA+W received, ACK returned
