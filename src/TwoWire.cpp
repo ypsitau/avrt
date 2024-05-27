@@ -220,14 +220,14 @@ bool TwoWire::Sequencer::Start()
 bool TwoWire::Sequencer_MT::Process(uint8_t statHW)
 {
 	constexpr bool reqInt = false;
-	if (statHW == TW_START || statHW == TW_REP_START) {
-													// START(0x08): start condition transmitted
-													// REP_START(0x10): repeated start condition transmitted
+	if (statHW == TW_START ||						// START(0x08): start condition transmitted
+		statHW == TW_REP_START) {					// REP_START(0x10): repeated start condition transmitted
 		TWDR = sla_ << 1;
 		SetTWCR_Transmit<reqInt>();
-	} else if (statHW == TW_MT_SLA_ACK || statHW == TW_MT_DATA_ACK) {
-													// MT_SLA_ACK(0x18): SLA+W transmitted, ACK received
-													// MT_DATA_ACK(0x28): datatransmitted, ACK received
+	} else if (statHW == TW_MT_ARB_LOST) {			// TW_MT_ARB_LOST(0x38): arbitration lost in SLA+W or NACK
+		stat_ = Stat::Error;
+	} else if (statHW == TW_MT_SLA_ACK ||			// MT_SLA_ACK(0x18): SLA+W transmitted, ACK received
+			statHW == TW_MT_DATA_ACK) {				// MT_DATA_ACK(0x28): datatransmitted, ACK received
 		Buffer& buffSend = twi_.GetBuffSend();
 		if (buffSend.HasData()) {
 			uint8_t data = buffSend.ReadData();
@@ -250,14 +250,29 @@ bool TwoWire::Sequencer_MT::Process(uint8_t statHW)
 //------------------------------------------------------------------------------
 bool TwoWire::Sequencer_MR::Process(uint8_t statHW)
 {
-	if (statHW == TW_START) {						// 0x08: start condition transmitted
-	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
-	} else if (statHW == TW_MR_ARB_LOST) {			// 0x38: arbitration lost in SLA+R or NACK, TW_MT_ARB_LOST
-	} else if (statHW == TW_MR_SLA_ACK) {			// 0x40: SLA+R transmitted, ACK received
-	} else if (statHW == TW_MR_SLA_NACK) {			// 0x48: SLA+R transmitted, NACK received
-	} else if (statHW == TW_MR_DATA_ACK) {			// 0x50: data received, ACK returned
-	} else if (statHW == TW_MR_DATA_NACK) {			// 0x58: data received, NACK returned
+	constexpr bool reqInt = false;
+	if (statHW == TW_START ||						// START(0x08): start condition transmitted
+		statHW == TW_REP_START) {					// REP_START(0x10): repeated start condition transmitted
+		TWDR = (sla_ << 1) | 0b1;
+		SetTWCR_Transmit<reqInt>();
+	} else if (statHW == TW_MR_ARB_LOST) {			// MR_ARB_LOST(0x38): arbitration lost in SLA+R or NACK
+		stat_ = Stat::Error;
+	} else if (statHW == TW_MT_SLA_ACK ||			// MR_SLA_ACK(0x40): SLA+W transmitted, ACK received
+			statHW == TW_MT_DATA_ACK) {				// MR_DATA_ACK(0x48): datatransmitted, ACK received
+		Buffer& buffSend = twi_.GetBuffSend();
+		if (buffSend.HasData()) {
+			uint8_t data = buffSend.ReadData();
+			TWDR = data;
+			SetTWCR_Transmit<reqInt>();
+		} else {
+			stat_ = Stat::Success;
+		}
+	} else if (statHW == TW_MR_SLA_NACK) {			// MR_SLA_NACK(0x50): SLA+W transmitted, NACK received
+		stat_ = Stat::Error;
+	} else if (statHW == TW_MR_DATA_NACK) {			// MR_DATA_NACK(0x58): data transmitted, NACK received
+		stat_ = Stat::Error;
 	}
+	return stat_ == Stat::Running;
 	return false;
 }
 
