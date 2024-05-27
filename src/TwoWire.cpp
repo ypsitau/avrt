@@ -257,20 +257,28 @@ bool TwoWire::SequencerMR::Process(uint8_t statHW)
 		SetTWCR_Transmit<reqInt>();
 	} else if (statHW == TW_MR_ARB_LOST) {			// MR_ARB_LOST(0x38): arbitration lost in SLA+R or NACK
 		stat_ = Stat::Error;
-	} else if (statHW == TW_MT_SLA_ACK ||			// MR_SLA_ACK(0x40): SLA+W transmitted, ACK received
-			statHW == TW_MT_DATA_ACK) {				// MR_DATA_ACK(0x48): datatransmitted, ACK received
-		Buffer& buff = twi_.GetBuffer();
-		if (buff.HasData()) {
-			uint8_t data = buff.ReadData();
-			TWDR = data;
-			SetTWCR_Transmit<reqInt>();
+	} else if (statHW == TW_MR_SLA_ACK) {			// MR_SLA_ACK(0x40): SLA+W transmitted, ACK received
+		if (lenRest_ <= 1) {
+			SetTWCR_ReplyNACK<reqInt>();
 		} else {
-			stat_ = Stat::Success;
+			SetTWCR_ReplyACK<reqInt>();
 		}
-	} else if (statHW == TW_MR_SLA_NACK) {			// MR_SLA_NACK(0x50): SLA+W transmitted, NACK received
+	} else if (statHW == TW_MR_DATA_ACK) {			// MR_DATA_ACK(0x50): datatransmitted, ACK received
+		if (lenRest_ > 0) {
+			lenRest_--;
+			Buffer& buff = twi_.GetBuffer();
+			uint8_t data = TWDR;
+			buff.WriteData(data);
+			if (lenRest_ <= 1) {
+				SetTWCR_ReplyNACK<reqInt>();
+			} else {
+				SetTWCR_ReplyACK<reqInt>();
+			}
+		}
+	} else if (statHW == TW_MR_SLA_NACK) {			// MR_SLA_NACK(0x48): SLA+W transmitted, NACK received
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MR_DATA_NACK) {			// MR_DATA_NACK(0x58): data transmitted, NACK received
-		stat_ = Stat::Error;
+		stat_ = Stat::Success;
 	}
 	return stat_ == Stat::Running;
 	return false;

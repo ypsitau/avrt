@@ -37,8 +37,9 @@ public:
 	class SequencerMR : public Sequencer {
 	private:
 		uint8_t sla_;
+		uint8_t lenRest_;
 	public:
-		SequencerMR(TwoWire& twi, uint8_t sla) : Sequencer(twi), sla_(sla) {}
+		SequencerMR(TwoWire& twi, uint8_t sla, uint8_t len) : Sequencer(twi), sla_(sla), lenRest_(len) {}
 		virtual bool Process(uint8_t statHW);
 	};
 	class SequencerST : public Sequencer {
