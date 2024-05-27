@@ -308,7 +308,9 @@ const __FlashStringHelper* TwoWire::StatusToString(uint8_t statHW)
 //------------------------------------------------------------------------------
 bool TwoWire::Sequencer::Start()
 {
+	constexpr bool reqInt = false;
 	stat_ = Stat::Running;
+	SetTWCR_Start<reqInt>();
 	while (Process()) ;
 	return stat_ == Stat::Success;
 }
@@ -321,6 +323,7 @@ bool TwoWire::Sequencer_Transmit::Process()
 {
 	constexpr bool reqInt = false;
 	uint8_t statHW = TW_STATUS;
+	//serial.Printf(F("statHW = %S\n"), StatusToString(statHW));
 	if (statHW == TW_START) {						// 0x08: start condition transmitted
 		TWDR = sla_ << 1;
 		SetTWCR_Transmit<reqInt>();
