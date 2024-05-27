@@ -38,31 +38,6 @@ void TwoWire::Close()
 	TWCR &= ~(0b1 << TWEN);					// TWEN: TWI Enable Bit = false
 }
 
-#if 0
-bool TwoWire::StartSequence(bool stopFlag)
-{
-	//serial.Printf(F("StartSequence\n"));
-	stopFlag_ = stopFlag;
-	alarm_.Start();
-	bool rtn = false;
-	stat_ = Stat::Running;
-	//SetTWCR_Start();
-	for (;;) {
-		Stat stat = stat_;
-		if (stat == Stat::Success) {
-			rtn = true;
-			break;
-		//} else if (stat != Stat::Running || alarm_.IsExpired()) {
-		} else if (stat != Stat::Running) {
-			break;
-		}
-	}
-	if (stopFlag) while (TWCR & (1 << TWSTO)) ;
-	stat_ = Stat::Idle;
-	return rtn;
-}
-#endif
-
 bool TwoWire::Transmit(uint8_t sla)
 {
 	return Sequencer_Transmit(*this, sla).Start();
