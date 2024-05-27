@@ -312,6 +312,7 @@ bool TwoWire::Sequencer::Start()
 	stat_ = Stat::Running;
 	SetTWCR_Start<reqInt>();
 	while (Process()) ;
+	SetTWCR_Stop<reqInt>();
 	return stat_ == Stat::Success;
 }
 
@@ -337,11 +338,9 @@ bool TwoWire::Sequencer_Transmit::Process()
 			TWDR = data;
 			SetTWCR_Transmit<reqInt>();
 		} else {
-			SetTWCR_Stop<reqInt>();
 			stat_ = Stat::Success;
 		}
 	} else if (statHW == TW_MT_SLA_NACK) {			// 0x20: SLA+W transmitted, NACK received
-		SetTWCR_Stop<reqInt>();
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MT_DATA_ACK) {			// 0x28: data transmitted, ACK received
 		Buffer& buffSend = twi_.GetBuffSend();
@@ -350,11 +349,9 @@ bool TwoWire::Sequencer_Transmit::Process()
 			TWDR = data;
 			SetTWCR_Transmit<reqInt>();
 		} else {
-			SetTWCR_Stop<reqInt>();
 			stat_ = Stat::Success;
 		}
 	} else if (statHW == TW_MT_DATA_NACK) {			// 0x30: data transmitted, NACK received
-		SetTWCR_Stop<reqInt>();
 		stat_ = Stat::Error;
 	}
 	return stat_ == Stat::Running;
