@@ -45,7 +45,7 @@ bool TwoWire::Transmit(uint8_t sla)
 
 bool TwoWire::Transmit(uint8_t sla, uint8_t data)
 {
-	GetBuffSend().WriteData(data);
+	GetBuffer().WriteData(data);
 	return SequencerMT(*this, sla).Start();
 }
 
@@ -228,9 +228,9 @@ bool TwoWire::SequencerMT::Process(uint8_t statHW)
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MT_SLA_ACK ||			// MT_SLA_ACK(0x18): SLA+W transmitted, ACK received
 			statHW == TW_MT_DATA_ACK) {				// MT_DATA_ACK(0x28): datatransmitted, ACK received
-		Buffer& buffSend = twi_.GetBuffSend();
-		if (buffSend.HasData()) {
-			uint8_t data = buffSend.ReadData();
+		Buffer& buff = twi_.GetBuffer();
+		if (buff.HasData()) {
+			uint8_t data = buff.ReadData();
 			TWDR = data;
 			SetTWCR_Transmit<reqInt>();
 		} else {
@@ -259,9 +259,9 @@ bool TwoWire::SequencerMR::Process(uint8_t statHW)
 		stat_ = Stat::Error;
 	} else if (statHW == TW_MT_SLA_ACK ||			// MR_SLA_ACK(0x40): SLA+W transmitted, ACK received
 			statHW == TW_MT_DATA_ACK) {				// MR_DATA_ACK(0x48): datatransmitted, ACK received
-		Buffer& buffSend = twi_.GetBuffSend();
-		if (buffSend.HasData()) {
-			uint8_t data = buffSend.ReadData();
+		Buffer& buff = twi_.GetBuffer();
+		if (buff.HasData()) {
+			uint8_t data = buff.ReadData();
 			TWDR = data;
 			SetTWCR_Transmit<reqInt>();
 		} else {

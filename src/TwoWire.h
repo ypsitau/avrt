@@ -53,8 +53,7 @@ public:
 	};
 private:
 	Timer::Alarm alarm_;
-	Buffer buffSend_;
-	Buffer buffRecv_;
+	Buffer buffer_;
 	volatile Stat stat_;
 	uint8_t lenExpected_;
 	uint8_t len_;
@@ -62,8 +61,7 @@ private:
 	volatile bool stopFlag_;
 public:
 	TwoWire(Timer& timer) : alarm_(timer), stat_(Stat::Idle), lenExpected_(0), len_(0), slaRW_(0x00), stopFlag_(false) {}
-	Buffer& GetBuffSend() { return buffSend_; }
-	Buffer& GetBuffRecv() { return buffRecv_; }
+	Buffer& GetBuffer() { return buffer_; }
 	Timer& GetTimer() { return alarm_.GetTimer(); }
 	void Open(uint8_t address = 0x00, uint32_t freq = 100000);
 	void SetTimeout(uint32_t msec) { alarm_.SetTimeout(msec); }
