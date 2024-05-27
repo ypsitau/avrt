@@ -152,97 +152,6 @@ bool TwoWire::ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len)
 
 void TwoWire::HandleISR_TWI()
 {
-#if 0
-	uint8_t statHW = TW_STATUS;
-	if (cnt < 20) {
-		serial.Printf(F("HandleISR_TWI(statHW=%S)\n"), StatusToString(statHW));
-		cnt++;
-	}
-	if (statHW == TW_START) {						// 0x08: start condition transmitted
-		TWDR = slaRW_;
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
-	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
-		TWDR = slaRW_;
-		//SetTWCR_ReplyACK();
-		SetTWCR_Transmit();
-	// Table 22-2 Status codes for Master Transmitter Mode
-	} else if (statHW == TW_MT_SLA_ACK) {			// 0x18: SLA+W transmitted, ACK received
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
-		stat_ = Stat::Success;
-		//if (buffSend_.HasData()) {
-		//	uint8_t data = buffSend_.ReadData();
-		//	TWDR = data;
-		//	SetTWCR_Transmit();
-		//} else {
-		//	if (stopFlag_) SetTWCR_Stop();
-		//	stat_ = Stat::Success; 
-		//}
-	} else if (statHW == TW_MT_SLA_NACK) {			// 0x20: SLA+W transmitted, NACK received
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
-		stat_ = Stat::Error;
-		//if (stopFlag_) SetTWCR_Stop();
-		//stat_ = Stat::Error;
-	} else if (statHW == TW_MT_DATA_ACK) {			// 0x28: data transmitted, ACK received
-		//if (buffSend_.HasData()) {
-		//	uint8_t data = buffSend_.ReadData();
-		//	TWDR = data;
-		//	SetTWCR_Transmit();
-		//} else {
-		//	if (stopFlag_) SetTWCR_Stop();
-		//	stat_ = Stat::Success; 
-		//}
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (0b0 << TWIE);
-		stat_ = Stat::Success;
-	} else if (statHW == TW_MT_DATA_NACK) {			// 0x30: data transmitted, NACK received
-		//if (stopFlag_) SetTWCR_Stop();
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (0b0 << TWIE);
-		stat_ = Stat::Error;
-	// Table 22-3. Status codes for Master Receiver Mode
-	} else if (statHW == TW_MR_ARB_LOST) {			// 0x38: arbitration lost in SLA+R or NACK, TW_MT_ARB_LOST
-		if (stopFlag_) SetTWCR_Stop();
-		stat_ = Stat::Error;
-	} else if (statHW == TW_MR_SLA_ACK) {			// 0x40: SLA+R transmitted, ACK received
-		// nothing to do
-	} else if (statHW == TW_MR_SLA_NACK) {			// 0x48: SLA+R transmitted, NACK received
-		if (stopFlag_) SetTWCR_Stop();
-		stat_ = Stat::Error;
-	} else if (statHW == TW_MR_DATA_ACK) {			// 0x50: data received, ACK returned
-		uint8_t data = TWDR;
-		if (len_ < lenExpected_) {
-			buffRecv_.WriteData(data);
-			len_++;
-			SetTWCR_ReplyACK();
-		} else{
-			SetTWCR_ReplyNACK();
-		}
-	} else if (statHW == TW_MR_DATA_NACK) {			// 0x58: data received, NACK returned
-		SetTWCR_ReplyNACK();
-	// Slave Transmitter
-	} else if (statHW == TW_ST_SLA_ACK) {			// 0xA8: SLA+R received, ACK returned
-	} else if (statHW == TW_ST_ARB_LOST_SLA_ACK) {	// 0xB0: arbitration lost in SLA+RW, SLA+R received, ACK returned
-	} else if (statHW == TW_ST_DATA_ACK) {			// 0xB8: data transmitted, ACK received
-	} else if (statHW == TW_ST_DATA_NACK) {			// 0xC0: data transmitted, NACK received
-		stat_ = Stat::Error;
-	} else if (statHW == TW_ST_LAST_DATA) {			// 0xC8: last data byte transmitted, ACK received
-	// Slave Receiver
-	} else if (statHW == TW_SR_SLA_ACK) {			// 0x60: SLA+W received, ACK returned
-	} else if (statHW == TW_SR_ARB_LOST_SLA_ACK) {	// 0x68: arbitration lost in SLA+RW, SLA+W received, ACK returned
-	} else if (statHW == TW_SR_GCALL_ACK) {			// 0x70: general call received, ACK returned
-	} else if (statHW == TW_SR_ARB_LOST_GCALL_ACK) {// 0x78: arbitration lost in SLA+RW, general call received, ACK returned
-	} else if (statHW == TW_SR_DATA_ACK) {			// 0x80: data received, ACK returned
-	} else if (statHW == TW_SR_DATA_NACK) {			// 0x88:data received, NACK returned
-		stat_ = Stat::Error;
-	} else if (statHW == TW_SR_GCALL_DATA_ACK) {	// 0x90: general call data received, ACK returned
-	} else if (statHW == TW_SR_GCALL_DATA_NACK) {	// 0x98: general call data received, NACK returned
-		stat_ = Stat::Error;
-	} else if (statHW == TW_SR_STOP) {				// 0xA0: stop or repeated start condition received while selected
-	// Misc
-	} else if (statHW == TW_NO_INFO) {				// 0xF8: no state information available
-		stat_ = Stat::Error;
-	} else if (statHW == TW_BUS_ERROR) {			// 0x00: illegal start or stop condition
-		stat_ = Stat::Error;
-	}
-#endif
 }
 
 const __FlashStringHelper* TwoWire::StatusToString(uint8_t statHW)
@@ -288,10 +197,19 @@ bool TwoWire::Sequencer::Start()
 	SetTWCR_Start<reqInt>();
 	for (;;) {
 		WaitForTWINTSet();
-		if (!Process()) break;
+		uint8_t statHW = TW_STATUS;
+		//serial.Printf(F("statHW = %S\n"), StatusToString(statHW));
+		// Misc
+		if (statHW == TW_NO_INFO) {						// 0xF8: no state information available
+			stat_ = Stat::Error;
+		} else if (statHW == TW_BUS_ERROR) {			// 0x00: illegal start or stop condition
+			stat_ = Stat::Error;
+		} else if (!Process(statHW)) {
+			SetTWCR_Stop<reqInt>();
+			WaitForTWSTOCleared();
+			break;
+		}
 	}
-	SetTWCR_Stop<reqInt>();
-	WaitForTWSTOCleared();
 	return stat_ == Stat::Success;
 }
 
@@ -299,18 +217,17 @@ bool TwoWire::Sequencer::Start()
 // TwoWire::Sequencer_MT
 // Table 22-2 Status codes for Master Transmitter Mode
 //------------------------------------------------------------------------------
-bool TwoWire::Sequencer_MT::Process()
+bool TwoWire::Sequencer_MT::Process(uint8_t statHW)
 {
 	constexpr bool reqInt = false;
-	uint8_t statHW = TW_STATUS;
-	//serial.Printf(F("statHW = %S\n"), StatusToString(statHW));
-	if (statHW == TW_START) {						// 0x08: start condition transmitted
+	if (statHW == TW_START || statHW == TW_REP_START) {
+													// START(0x08): start condition transmitted
+													// REP_START(0x10): repeated start condition transmitted
 		TWDR = sla_ << 1;
 		SetTWCR_Transmit<reqInt>();
-	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
-		TWDR = sla_ << 1;
-		SetTWCR_Transmit<reqInt>();
-	} else if (statHW == TW_MT_SLA_ACK) {			// 0x18: SLA+W transmitted, ACK received
+	} else if (statHW == TW_MT_SLA_ACK || statHW == TW_MT_DATA_ACK) {
+													// MT_SLA_ACK(0x18): SLA+W transmitted, ACK received
+													// MT_DATA_ACK(0x28): datatransmitted, ACK received
 		Buffer& buffSend = twi_.GetBuffSend();
 		if (buffSend.HasData()) {
 			uint8_t data = buffSend.ReadData();
@@ -319,18 +236,9 @@ bool TwoWire::Sequencer_MT::Process()
 		} else {
 			stat_ = Stat::Success;
 		}
-	} else if (statHW == TW_MT_SLA_NACK) {			// 0x20: SLA+W transmitted, NACK received
+	} else if (statHW == TW_MT_SLA_NACK) {			// MT_SLA_NACK(0x20): SLA+W transmitted, NACK received
 		stat_ = Stat::Error;
-	} else if (statHW == TW_MT_DATA_ACK) {			// 0x28: data transmitted, ACK received
-		Buffer& buffSend = twi_.GetBuffSend();
-		if (buffSend.HasData()) {
-			uint8_t data = buffSend.ReadData();
-			TWDR = data;
-			SetTWCR_Transmit<reqInt>();
-		} else {
-			stat_ = Stat::Success;
-		}
-	} else if (statHW == TW_MT_DATA_NACK) {			// 0x30: data transmitted, NACK received
+	} else if (statHW == TW_MT_DATA_NACK) {			// MT_DATA_NACK(0x30): data transmitted, NACK received
 		stat_ = Stat::Error;
 	}
 	return stat_ == Stat::Running;
@@ -338,25 +246,55 @@ bool TwoWire::Sequencer_MT::Process()
 
 //------------------------------------------------------------------------------
 // TwoWire::Sequencer_MR
+// Table 22-3. Status codes for Master Receiver Mode
 //------------------------------------------------------------------------------
-bool TwoWire::Sequencer_MR::Process()
+bool TwoWire::Sequencer_MR::Process(uint8_t statHW)
 {
+	if (statHW == TW_START) {						// 0x08: start condition transmitted
+	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
+	} else if (statHW == TW_MR_ARB_LOST) {			// 0x38: arbitration lost in SLA+R or NACK, TW_MT_ARB_LOST
+	} else if (statHW == TW_MR_SLA_ACK) {			// 0x40: SLA+R transmitted, ACK received
+	} else if (statHW == TW_MR_SLA_NACK) {			// 0x48: SLA+R transmitted, NACK received
+	} else if (statHW == TW_MR_DATA_ACK) {			// 0x50: data received, ACK returned
+	} else if (statHW == TW_MR_DATA_NACK) {			// 0x58: data received, NACK returned
+	}
 	return false;
 }
 
 //------------------------------------------------------------------------------
 // TwoWire::Sequencer_ST
 //------------------------------------------------------------------------------
-bool TwoWire::Sequencer_ST::Process()
+bool TwoWire::Sequencer_ST::Process(uint8_t statHW)
 {
+	// Slave Transmitter
+	if (statHW == TW_ST_SLA_ACK) {					// 0xA8: SLA+R received, ACK returned
+	} else if (statHW == TW_ST_ARB_LOST_SLA_ACK) {	// 0xB0: arbitration lost in SLA+RW, SLA+R received, ACK returned
+	} else if (statHW == TW_ST_DATA_ACK) {			// 0xB8: data transmitted, ACK received
+	} else if (statHW == TW_ST_DATA_NACK) {			// 0xC0: data transmitted, NACK received
+		stat_ = Stat::Error;
+	} else if (statHW == TW_ST_LAST_DATA) {			// 0xC8: last data byte transmitted, ACK received
+	}
 	return false;
 }
 
 //------------------------------------------------------------------------------
 // TwoWire::Sequencer_SR
 //------------------------------------------------------------------------------
-bool TwoWire::Sequencer_SR::Process()
+bool TwoWire::Sequencer_SR::Process(uint8_t statHW)
 {
+	// Slave Receiver
+	if (statHW == TW_SR_SLA_ACK) {					// 0x60: SLA+W received, ACK returned
+	} else if (statHW == TW_SR_ARB_LOST_SLA_ACK) {	// 0x68: arbitration lost in SLA+RW, SLA+W received, ACK returned
+	} else if (statHW == TW_SR_GCALL_ACK) {			// 0x70: general call received, ACK returned
+	} else if (statHW == TW_SR_ARB_LOST_GCALL_ACK) {// 0x78: arbitration lost in SLA+RW, general call received, ACK returned
+	} else if (statHW == TW_SR_DATA_ACK) {			// 0x80: data received, ACK returned
+	} else if (statHW == TW_SR_DATA_NACK) {			// 0x88:data received, NACK returned
+		stat_ = Stat::Error;
+	} else if (statHW == TW_SR_GCALL_DATA_ACK) {	// 0x90: general call data received, ACK returned
+	} else if (statHW == TW_SR_GCALL_DATA_NACK) {	// 0x98: general call data received, NACK returned
+		stat_ = Stat::Error;
+	} else if (statHW == TW_SR_STOP) {				// 0xA0: stop or repeated start condition received while selected
+	}
 	return false;
 }
 

@@ -25,31 +25,31 @@ public:
 	public:
 		Sequencer(TwoWire& twi) : twi_(twi), stat_(Stat::Idle) {}
 		bool Start();
-		virtual bool Process() = 0;
+		virtual bool Process(uint8_t statHW) = 0;
 	};
 	class Sequencer_MT : public Sequencer {
 	private:
 		uint8_t sla_;
 	public:
 		Sequencer_MT(TwoWire& twi, uint8_t sla) : Sequencer(twi), sla_(sla) {}
-		virtual bool Process();
+		virtual bool Process(uint8_t statHW);
 	};
 	class Sequencer_MR : public Sequencer {
 	private:
 		uint8_t sla_;
 	public:
 		Sequencer_MR(TwoWire& twi, uint8_t sla) : Sequencer(twi), sla_(sla) {}
-		virtual bool Process();
+		virtual bool Process(uint8_t statHW);
 	};
 	class Sequencer_ST : public Sequencer {
 	public:
 		Sequencer_ST(TwoWire& twi) : Sequencer(twi) {}
-		virtual bool Process();
+		virtual bool Process(uint8_t statHW);
 	};
 	class Sequencer_SR : public Sequencer {
 	public:
 		Sequencer_SR(TwoWire& twi) : Sequencer(twi) {}
-		virtual bool Process();
+		virtual bool Process(uint8_t statHW);
 	};
 private:
 	Timer::Alarm alarm_;
