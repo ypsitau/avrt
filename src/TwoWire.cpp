@@ -40,13 +40,13 @@ void TwoWire::Close()
 
 bool TwoWire::Transmit(uint8_t sla)
 {
-	return Sequencer_Transmit(*this, sla).Start();
+	return Sequencer_MT(*this, sla).Start();
 }
 
 bool TwoWire::Transmit(uint8_t sla, uint8_t data)
 {
 	GetBuffSend().WriteData(data);
-	return Sequencer_Transmit(*this, sla).Start();
+	return Sequencer_MT(*this, sla).Start();
 }
 
 #if 0
@@ -296,10 +296,10 @@ bool TwoWire::Sequencer::Start()
 }
 
 //------------------------------------------------------------------------------
-// TwoWire::Sequencer_Transmit
+// TwoWire::Sequencer_MT
 // Table 22-2 Status codes for Master Transmitter Mode
 //------------------------------------------------------------------------------
-bool TwoWire::Sequencer_Transmit::Process()
+bool TwoWire::Sequencer_MT::Process()
 {
 	constexpr bool reqInt = false;
 	uint8_t statHW = TW_STATUS;
@@ -334,6 +334,30 @@ bool TwoWire::Sequencer_Transmit::Process()
 		stat_ = Stat::Error;
 	}
 	return stat_ == Stat::Running;
+}
+
+//------------------------------------------------------------------------------
+// TwoWire::Sequencer_MR
+//------------------------------------------------------------------------------
+bool TwoWire::Sequencer_MR::Process()
+{
+	return false;
+}
+
+//------------------------------------------------------------------------------
+// TwoWire::Sequencer_ST
+//------------------------------------------------------------------------------
+bool TwoWire::Sequencer_ST::Process()
+{
+	return false;
+}
+
+//------------------------------------------------------------------------------
+// TwoWire::Sequencer_SR
+//------------------------------------------------------------------------------
+bool TwoWire::Sequencer_SR::Process()
+{
+	return false;
 }
 
 }

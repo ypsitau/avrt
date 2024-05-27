@@ -27,11 +27,28 @@ public:
 		bool Start();
 		virtual bool Process() = 0;
 	};
-	class Sequencer_Transmit : public Sequencer {
+	class Sequencer_MT : public Sequencer {
 	private:
 		uint8_t sla_;
 	public:
-		Sequencer_Transmit(TwoWire& twi, uint8_t sla) : Sequencer(twi), sla_(sla) {}
+		Sequencer_MT(TwoWire& twi, uint8_t sla) : Sequencer(twi), sla_(sla) {}
+		virtual bool Process();
+	};
+	class Sequencer_MR : public Sequencer {
+	private:
+		uint8_t sla_;
+	public:
+		Sequencer_MR(TwoWire& twi, uint8_t sla) : Sequencer(twi), sla_(sla) {}
+		virtual bool Process();
+	};
+	class Sequencer_ST : public Sequencer {
+	public:
+		Sequencer_ST(TwoWire& twi) : Sequencer(twi) {}
+		virtual bool Process();
+	};
+	class Sequencer_SR : public Sequencer {
+	public:
+		Sequencer_SR(TwoWire& twi) : Sequencer(twi) {}
 		virtual bool Process();
 	};
 private:
