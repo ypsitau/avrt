@@ -15,13 +15,13 @@ void TwoWire::Open(uint8_t address, uint32_t freq)
 	uint8_t dataTWA = address;				// TWA: TWI (Slave) Address Register
 	uint8_t dataTWBR = static_cast<uint8_t>(((F_CPU / freq) - 16) / 2);
 											// TWBR: TWI Bit Rate Register
-	constexpr uint8_t dataTWINT = 0b1;		// TWINT: TWI Interrupt Flag = set one to clear
-	constexpr uint8_t dataTWEA = 0b0;		// TWEA: TWI Enable Acknowledge Bit
-	constexpr uint8_t dataTWIE = 0b1;		// TWIE: TWI Interrupt Enable = true
-	constexpr uint8_t dataTWEN = 0b1;		// TWEN: TWI Enable Bit = true
+	//constexpr uint8_t dataTWINT = 0b1;	// TWINT: TWI Interrupt Flag = set one to clear
+	//constexpr uint8_t dataTWEA = 0b0;		// TWEA: TWI Enable Acknowledge Bit
+	//constexpr uint8_t dataTWIE = 0b1;		// TWIE: TWI Interrupt Enable = true
+	//constexpr uint8_t dataTWEN = 0b1;		// TWEN: TWI Enable Bit = true
 	constexpr uint8_t dataTWPS = 0b00;		// TWPS: TWI Prescaler Bits = Div1
-	constexpr uint8_t dataTWSTA = 0b0;		// TWSTA: TWI START Condition Bit
-	constexpr uint8_t dataTWSTO = 0b0;		// TWSTO: TWI STOP Condition Bit
+	//constexpr uint8_t dataTWSTA = 0b0;	// TWSTA: TWI START Condition Bit
+	//constexpr uint8_t dataTWSTO = 0b0;	// TWSTO: TWI STOP Condition Bit
 	constexpr uint8_t dataTWAM = 0b0000000;	// TWAM: TWI Address Mask
 	constexpr uint8_t dataTWGCE = 0b0;		// TWGCE: TWI General Call Recognition Enable Bit
 	TWBR = dataTWBR << TWBR0;
