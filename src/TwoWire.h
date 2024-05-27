@@ -18,13 +18,21 @@ public:
 	enum class Stat { Idle, Running, Success, Error, };
 	using Buffer = FIFOBuff<uint8_t, 16>;
 public:
-	class Sequencer_Transmit {
-	private:
+	class Sequencer {
+	protected:
 		TwoWire& twi_;
+		Stat stat_;
+	public:
+		Sequencer(TwoWire& twi) : twi_(twi), stat_(Stat::Idle) {}
+		bool Start();
+		virtual bool Process() = 0;
+	};
+	class Sequencer_Transmit : public Sequencer {
+	private:
 		uint8_t sla_;
 	public:
-		Sequencer_Transmit(TwoWire& twi, uint8_t sla) : twi_(twi), sla_(sla) {}
-		void Process();
+		Sequencer_Transmit(TwoWire& twi, uint8_t sla) : Sequencer(twi), sla_(sla) {}
+		virtual bool Process();
 	};
 private:
 	Timer::Alarm alarm_;
@@ -43,43 +51,43 @@ public:
 	void Open(uint8_t address = 0x00, uint32_t freq = 100000);
 	void SetTimeout(uint32_t msec) { alarm_.SetTimeout(msec); }
 	void Close();
-	bool StartSequence(bool stopFlag);
+	//bool StartSequence(bool stopFlag);
 	bool Transmit(uint8_t sla);
 	bool Transmit(uint8_t sla, uint8_t data);
-	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2);
-	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3);
-	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);
-	bool Transmit(uint8_t sla, const uint8_t* buff, uint8_t len);
-	bool TransmitCont(uint8_t sla);
-	bool TransmitCont(uint8_t sla, uint8_t data);
-	bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2);
-	bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3);
-	bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);
-	bool TransmitCont(uint8_t sla, const uint8_t* buff, uint8_t len);
-	bool Receive(uint8_t sla, uint8_t* buff, uint8_t len);
-	bool ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len);
+	//bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2);
+	//bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3);
+	//bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);
+	//bool Transmit(uint8_t sla, const uint8_t* buff, uint8_t len);
+	//bool TransmitCont(uint8_t sla);
+	//bool TransmitCont(uint8_t sla, uint8_t data);
+	//bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2);
+	//bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3);
+	//bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);
+	//bool TransmitCont(uint8_t sla, const uint8_t* buff, uint8_t len);
+	//bool Receive(uint8_t sla, uint8_t* buff, uint8_t len);
+	//bool ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len);
 	void HandleISR_TWI();
-	public:
-	static void SetTWCR_Start() {
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b1 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
+public:
+	template<bool reqInt> static void SetTWCR_Start() {
+		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b1 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(reqInt) << TWIE);
 	}
-	static void SetTWCR_Stop() {
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) | (0b0 << TWIE);
+	template<bool reqInt> static void SetTWCR_Stop() {
+		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(reqInt) << TWIE);
 	}
-	static void SetTWCR_StopAndStart() {
-		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
+	template<bool reqInt> static void SetTWCR_StopAndStart() {
+		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(reqInt) << TWIE);
 	}
-	static void SetTWCR_Transmit() {
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
+	template<bool reqInt> static void SetTWCR_Transmit() {
+		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(reqInt) << TWIE);
 	}
-	static void SetTWCR_ReleaseBus() {
-		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
+	template<bool reqInt> static void SetTWCR_ReleaseBus() {
+		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(reqInt) << TWIE);
 	}
-	static void SetTWCR_ReplyACK() {
-		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
+	template<bool reqInt> static void SetTWCR_ReplyACK() {
+		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(reqInt) << TWIE);
 	}
-	static void SetTWCR_ReplyNACK() {
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
+	template<bool reqInt> static void SetTWCR_ReplyNACK() {
+		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(reqInt) << TWIE);
 	}
 	static void WaitTWSTOClered() {
 		while (TWCR & (1 << TWSTO)) ;

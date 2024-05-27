@@ -38,6 +38,7 @@ void TwoWire::Close()
 	TWCR &= ~(0b1 << TWEN);					// TWEN: TWI Enable Bit = false
 }
 
+#if 0
 bool TwoWire::StartSequence(bool stopFlag)
 {
 	//serial.Printf(F("StartSequence\n"));
@@ -45,7 +46,7 @@ bool TwoWire::StartSequence(bool stopFlag)
 	alarm_.Start();
 	bool rtn = false;
 	stat_ = Stat::Running;
-	SetTWCR_Start();
+	//SetTWCR_Start();
 	for (;;) {
 		Stat stat = stat_;
 		if (stat == Stat::Success) {
@@ -60,21 +61,20 @@ bool TwoWire::StartSequence(bool stopFlag)
 	stat_ = Stat::Idle;
 	return rtn;
 }
+#endif
 
 bool TwoWire::Transmit(uint8_t sla)
 {
-	slaRW_ = sla << 1;
-	return StartSequence(true);
+	return Sequencer_Transmit(*this, sla).Start();
 }
 
 bool TwoWire::Transmit(uint8_t sla, uint8_t data)
 {
-	//serial.Printf(F("Transmit(%02x)\n"), data);
-	slaRW_ = sla << 1;
-	buffSend_.WriteData(data);
-	return StartSequence(true);
+	GetBuffSend().WriteData(data);
+	return Sequencer_Transmit(*this, sla).Start();
 }
 
+#if 0
 bool TwoWire::Transmit(uint8_t sla, uint8_t data1, uint8_t data2)
 {
 	slaRW_ = sla << 1;
@@ -173,8 +173,7 @@ bool TwoWire::ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len)
 	buffRecv_.ReadBuff(buff, len);
 	return true;
 }
-
-int cnt = 0;
+#endif
 
 void TwoWire::HandleISR_TWI()
 {
@@ -302,6 +301,60 @@ const __FlashStringHelper* TwoWire::StatusToString(uint8_t statHW)
 		(statHW == TW_SR_STOP)? F("SR_STOP") :
 		(statHW == TW_NO_INFO)? F("NO_INFO") :
 		(statHW == TW_BUS_ERROR)? F("BUS_ERROR") : F("unkonwn");
+}
+
+//------------------------------------------------------------------------------
+// TwoWire::Sequencer
+//------------------------------------------------------------------------------
+bool TwoWire::Sequencer::Start()
+{
+	stat_ = Stat::Running;
+	while (Process()) ;
+	return stat_ == Stat::Success;
+}
+
+//------------------------------------------------------------------------------
+// TwoWire::Sequencer_Transmit
+// Table 22-2 Status codes for Master Transmitter Mode
+//------------------------------------------------------------------------------
+bool TwoWire::Sequencer_Transmit::Process()
+{
+	constexpr bool reqInt = false;
+	uint8_t statHW = TW_STATUS;
+	if (statHW == TW_START) {						// 0x08: start condition transmitted
+		TWDR = sla_ << 1;
+		SetTWCR_Transmit<reqInt>();
+	} else if (statHW == TW_REP_START) {			// 0x10: repeated start condition transmitted
+		TWDR = sla_ << 1;
+		SetTWCR_Transmit<reqInt>();
+	} else if (statHW == TW_MT_SLA_ACK) {			// 0x18: SLA+W transmitted, ACK received
+		Buffer& buffSend = twi_.GetBuffSend();
+		if (buffSend.HasData()) {
+			uint8_t data = buffSend.ReadData();
+			TWDR = data;
+			SetTWCR_Transmit<reqInt>();
+		} else {
+			SetTWCR_Stop<reqInt>();
+			stat_ = Stat::Success;
+		}
+	} else if (statHW == TW_MT_SLA_NACK) {			// 0x20: SLA+W transmitted, NACK received
+		SetTWCR_Stop<reqInt>();
+		stat_ = Stat::Error;
+	} else if (statHW == TW_MT_DATA_ACK) {			// 0x28: data transmitted, ACK received
+		Buffer& buffSend = twi_.GetBuffSend();
+		if (buffSend.HasData()) {
+			uint8_t data = buffSend.ReadData();
+			TWDR = data;
+			SetTWCR_Transmit<reqInt>();
+		} else {
+			SetTWCR_Stop<reqInt>();
+			stat_ = Stat::Success;
+		}
+	} else if (statHW == TW_MT_DATA_NACK) {			// 0x30: data transmitted, NACK received
+		SetTWCR_Stop<reqInt>();
+		stat_ = Stat::Error;
+	}
+	return stat_ == Stat::Running;
 }
 
 }
