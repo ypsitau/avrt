@@ -57,6 +57,7 @@ bool TwoWire::StartSequence(bool stopFlag)
 			break;
 		}
 	}
+	if (stopFlag) while (TWCR & (1 << TWSTO)) ;
 	stat_ = Stat::Idle;
 	return rtn;
 }
@@ -174,9 +175,15 @@ bool TwoWire::ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len)
 	return true;
 }
 
+//int cnt = 0;
+
 void TwoWire::HandleISR_TWI()
 {
 	uint8_t statHW = TW_STATUS;
+	//cnt++;
+	//if (cnt < 10) { 
+	//	serial.Printf(F("Hardware Status: %S\n"), StatusToString(statHW));
+	//}
 	serial.Printf(F("Hardware Status: %S\n"), StatusToString(statHW));
 	if (statHW == TW_START) {						// 0x08: start condition transmitted
 		TWDR = slaRW_;
@@ -272,6 +279,8 @@ void TwoWire::SetTWCR_Stop()
 	//uint8_t data = TWCR & ~((0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT));
 	//TWCR = data | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWINT);
 	TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) | (0b1 << TWIE);
+	//while (TWCR & (1 << TWSTO)) ;
+	//serial.Printf(F("SetTWCR_Stop end\n"));
 }
 
 void TwoWire::SetTWCR_StopAndStart()
