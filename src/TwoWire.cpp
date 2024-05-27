@@ -311,8 +311,12 @@ bool TwoWire::Sequencer::Start()
 	constexpr bool reqInt = false;
 	stat_ = Stat::Running;
 	SetTWCR_Start<reqInt>();
-	while (Process()) ;
+	for (;;) {
+		WaitForTWINTSet();
+		if (!Process()) break;
+	}
 	SetTWCR_Stop<reqInt>();
+	WaitForTWSTOCleared();
 	return stat_ == Stat::Success;
 }
 

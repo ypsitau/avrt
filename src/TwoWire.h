@@ -89,11 +89,11 @@ public:
 	template<bool reqInt> static void SetTWCR_ReplyNACK() {
 		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(reqInt) << TWIE);
 	}
-	static void WaitTWSTOClered() {
-		while (TWCR & (1 << TWSTO)) ;
-	}
-	static void WaitForTWINT() {
+	static void WaitForTWINTSet() {
 		while (!(TWCR & (1 << TWINT))) ;
+	}
+	static void WaitForTWSTOCleared() {
+		while (TWCR & (1 << TWSTO)) ;
 	}
 	static const __FlashStringHelper* StatusToString(uint8_t statHW);
 };
