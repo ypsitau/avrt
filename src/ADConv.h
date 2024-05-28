@@ -7,17 +7,17 @@
 #include "FIFOBuff.h"
 
 #define AVRT_IMPLEMENT_ADConv(variableName) \
-avrt::ADConv<> variableName;
+avrt::ADConv<0> variableName;
 
 #define AVRT_IMPLEMENT_ADConv8bit(variableName) \
-avrt::ADConv8bit<> variableName;
+avrt::ADConv8bit<0> variableName;
 
-#define AVRT_IMPLEMENT_ADConv_AutoTrigger(variableName, buffSize) \
-avrt::ADConv<buffSize> variableName; \
+#define AVRT_IMPLEMENT_ADConv_AutoTrigger(variableName, ...) \
+avrt::ADConv<__VA_ARGS__> variableName; \
 ISR(ADC_vect) { variableName.HandleISR_ADC(); }
 
-#define AVRT_IMPLEMENT_ADConv8bit_AutoTrigger(variableName, buffSize) \
-avrt::ADConv8bit<buffSize> variableName; \
+#define AVRT_IMPLEMENT_ADConv8bit_AutoTrigger(variableName, ...) \
+avrt::ADConv8bit<__VA_ARGS__> variableName; \
 ISR(ADC_vect) { variableName.HandleISR_ADC(); }
 
 namespace avrt {
@@ -25,7 +25,7 @@ namespace avrt {
 //------------------------------------------------------------------------------
 // ADConvBase
 //------------------------------------------------------------------------------
-template <typename T_Result, bool data8bitFlag = false, int buffSize = 0> class ADConvBase {
+template <typename T_Result, bool data8bitFlag, int buffSize> class ADConvBase {
 public:
 	using FIFOBuffEx = FIFOBuff<T_Result, buffSize>;
 public:
@@ -37,12 +37,14 @@ public:
 		Div32			= 5,
 		Div64			= 6,
 		Div128			= 7,
+		Default			= Div128,
 	};
 public:
 	enum class VoltRef {
 		ARef			= 0b00,
 		AVcc			= 0b01,
 		Int1V1			= 0b11,
+		Default			= AVcc,
 	};
 public:
 	enum class Trigger {
@@ -59,8 +61,7 @@ private:
 	FIFOBuffEx buffs_[(buffSize > 0)? 1 : 0];
 public:
 	ADConvBase() {}
-	FIFOBuffEx& GetBuff() { return buffs_[0]; }
-	void Init(Clock clock = Clock::Div128, VoltRef voltRef = VoltRef::AVcc) const {
+	void Init(Clock clock = Clock::Default, VoltRef voltRef = VoltRef::Default) const {
 												// REFS: Reference Selction Bits = AVcc with external capacitor at AREF pin
 		uint8_t dataADPS = static_cast<uint8_t>(clock);
 												// ADPS: ADC Prescaler Select Bits
@@ -91,7 +92,7 @@ public:
 		ADCSRA |= (0b1 << ADSC);							// ADSC: ADC Start Conversion
 	}
 	void HandleISR_ADC() {
-		volatile T_Result result = ReadRawResult();
+		T_Result result = ReadRawResult();
 		GetBuff().WriteData(result);
 	}
 	bool IsResultReady() const {
@@ -104,6 +105,7 @@ public:
 	T_Result ReadRawResult() const { if constexpr (data8bitFlag) { return ADCH; } else { return ADC; } }
 	T_Result ReadResult() const {
 		if constexpr (buffSize > 0) {
+			InterruptDisabledSection section;
 			return GetBuff().ReadData();
 		} else {
 			T_Result result = ReadRawResult();
@@ -117,10 +119,12 @@ public:
 		while (ADCSRA & (0b1 << ADSC)) ;
 		return ReadRawResult();
 	}
+private:
+	FIFOBuffEx& GetBuff() { return buffs_[0]; }
 };
 
-template<int buffSize = 0> using ADConv = ADConvBase<uint16_t, false, buffSize>;
-template<int buffSize = 0> using ADConv8bit = ADConvBase<uint8_t, true, buffSize>;
+template<int buffSize = 32> using ADConv = ADConvBase<uint16_t, false, buffSize>;
+template<int buffSize = 32> using ADConv8bit = ADConvBase<uint8_t, true, buffSize>;
 
 }
 

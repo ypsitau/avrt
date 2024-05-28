@@ -71,6 +71,74 @@ public:
 			((mode14 >> 1) << 0) | ((mode15 >> 1) << 1) | ((mode16 >> 1) << 2) | ((mode17 >> 1) << 3) |
 			((mode18 >> 1) << 4) | ((mode19 >> 1) << 5) | ((mode20 >> 1) << 6);
 	}
+#if 0
+	void ChangeMode(uint8_t pin, uint8_t mode) {
+		if (pin == 0) {
+			if (mode & 1) { Ports::dataDDRD |= (1 << 0); } else { Ports::dataDDRD &= ~(1 << 0); }
+			if (mode >> 1) { Ports::dataPORTD |= (1 << 0); } else { Ports::dataPORTD &= ~(1 << 0); }
+		} else if (pin == 1)  {
+			if (mode & 1) { Ports::dataDDRD |= (1 << 1); } else { Ports::dataDDRD &= ~(1 << 1); }
+			if (mode >> 1) { Ports::dataPORTD |= (1 << 1); } else { Ports::dataPORTD &= ~(1 << 1); }
+		} else if (pin == 2)  {
+			if (mode & 1) { Ports::dataDDRD |= (1 << 2); } else { Ports::dataDDRD &= ~(1 << 2); }
+			if (mode >> 1) { Ports::dataPORTD |= (1 << 2); } else { Ports::dataPORTD &= ~(1 << 2); }
+		} else if (pin == 3)  {
+			if (mode & 1) { Ports::dataDDRD |= (1 << 3); } else { Ports::dataDDRD &= ~(1 << 3); }
+			if (mode >> 1) { Ports::dataPORTD |= (1 << 3); } else { Ports::dataPORTD &= ~(1 << 3); }
+		} else if (pin == 4)  {
+			if (mode & 1) { Ports::dataDDRD |= (1 << 4); } else { Ports::dataDDRD &= ~(1 << 4); }
+			if (mode >> 1) { Ports::dataPORTD |= (1 << 4); } else { Ports::dataPORTD &= ~(1 << 4); }
+		} else if (pin == 5)  {
+			if (mode & 1) { Ports::dataDDRD |= (1 << 5); } else { Ports::dataDDRD &= ~(1 << 5); }
+			if (mode >> 1) { Ports::dataPORTD |= (1 << 5); } else { Ports::dataPORTD &= ~(1 << 5); }
+		} else if (pin == 6)  {
+			if (mode & 1) { Ports::dataDDRD |= (1 << 6); } else { Ports::dataDDRD &= ~(1 << 6); }
+			if (mode >> 1) { Ports::dataPORTD |= (1 << 6); } else { Ports::dataPORTD &= ~(1 << 6); }
+		} else if (pin == 7)  {
+			if (mode & 1) { Ports::dataDDRD |= (1 << 7); } else { Ports::dataDDRD &= ~(1 << 7); }
+			if (mode >> 1) { Ports::dataPORTD |= (1 << 7); } else { Ports::dataPORTD &= ~(1 << 7); }
+		} else if (pin == 8)  {
+			if (mode & 1) { Ports::dataDDRB |= (1 << 0); } else { Ports::dataDDRB &= ~(1 << 0); }
+			if (mode >> 1) { Ports::dataPORTB |= (1 << 0); } else { Ports::dataPORTB &= ~(1 << 0); }
+		} else if (pin == 9)  {
+			if (mode & 1) { Ports::dataDDRB |= (1 << 1); } else { Ports::dataDDRB &= ~(1 << 1); }
+			if (mode >> 1) { Ports::dataPORTB |= (1 << 1); } else { Ports::dataPORTB &= ~(1 << 1); }
+		} else if (pin == 10) {
+			if (mode & 1) { Ports::dataDDRB |= (1 << 2); } else { Ports::dataDDRB &= ~(1 << 2); }
+			if (mode >> 1) { Ports::dataPORTB |= (1 << 2); } else { Ports::dataPORTB &= ~(1 << 2); }
+		} else if (pin == 11) {
+			if (mode & 1) { Ports::dataDDRB |= (1 << 3); } else { Ports::dataDDRB &= ~(1 << 3); }
+			if (mode >> 1) { Ports::dataPORTB |= (1 << 3); } else { Ports::dataPORTB &= ~(1 << 3); }
+		} else if (pin == 12) {
+			if (mode & 1) { Ports::dataDDRB |= (1 << 4); } else { Ports::dataDDRB &= ~(1 << 4); }
+			if (mode >> 1) { Ports::dataPORTB |= (1 << 4); } else { Ports::dataPORTB &= ~(1 << 4); }
+		} else if (pin == 13) {
+			if (mode & 1) { Ports::dataDDRB |= (1 << 5); } else { Ports::dataDDRB &= ~(1 << 5); }
+			if (mode >> 1) { Ports::dataPORTB |= (1 << 5); } else { Ports::dataPORTB &= ~(1 << 5); }
+		} else if (pin == 14) {
+			if (mode & 1) { Ports::dataDDRC |= (1 << 0); } else { Ports::dataDDRC &= ~(1 << 0); }
+			if (mode >> 1) { Ports::dataPORTC |= (1 << 0); } else { Ports::dataPORTC &= ~(1 << 0); }
+		} else if (pin == 15) {
+			if (mode & 1) { Ports::dataDDRC |= (1 << 1); } else { Ports::dataDDRC &= ~(1 << 1); }
+			if (mode >> 1) { Ports::dataPORTC |= (1 << 1); } else { Ports::dataPORTC &= ~(1 << 1); }
+		} else if (pin == 16) {
+			if (mode & 1) { Ports::dataDDRC |= (1 << 2); } else { Ports::dataDDRC &= ~(1 << 2); }
+			if (mode >> 1) { Ports::dataPORTC |= (1 << 2); } else { Ports::dataPORTC &= ~(1 << 2); }
+		} else if (pin == 17) {
+			if (mode & 1) { Ports::dataDDRC |= (1 << 3); } else { Ports::dataDDRC &= ~(1 << 3); }
+			if (mode >> 1) { Ports::dataPORTC |= (1 << 3); } else { Ports::dataPORTC &= ~(1 << 3); }
+		} else if (pin == 18) {
+			if (mode & 1) { Ports::dataDDRC |= (1 << 4); } else { Ports::dataDDRC &= ~(1 << 4); }
+			if (mode >> 1) { Ports::dataPORTC |= (1 << 4); } else { Ports::dataPORTC &= ~(1 << 4); }
+		} else if (pin == 19) {
+			if (mode & 1) { Ports::dataDDRC |= (1 << 5); } else { Ports::dataDDRC &= ~(1 << 5); }
+			if (mode >> 1) { Ports::dataPORTC |= (1 << 5); } else { Ports::dataPORTC &= ~(1 << 5); }
+		} else if (pin == 20) {
+			if (mode & 1) { Ports::dataDDRC |= (1 << 6); } else { Ports::dataDDRC &= ~(1 << 6); }
+			if (mode >> 1) { Ports::dataPORTC |= (1 << 6); } else { Ports::dataPORTC &= ~(1 << 6); }
+		}
+	}
+#endif
 	static void DigitalHigh(uint8_t pin) {
 		if (pin == 0)		{ PORTD |= (1 << 0); }
 		else if (pin == 1)	{ PORTD |= (1 << 1); }

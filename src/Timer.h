@@ -72,7 +72,8 @@ protected:
 	Alarm *pAlarmTop_;
 public:
 	Timer() : tickCur_(0), alarmForDelay_(*this), pAlarmTop_(nullptr) {}
-	uint32_t GetTickCur() const { return tickCur_; }
+	uint32_t GetTickCur_NoSafe() const { return tickCur_; }
+	uint32_t GetTickCur() const;
 	void AddAlarm(Alarm* pAlarm);
 	void RemoveAlarm(Alarm* pAlarm);
 	void AdvanceTickCur();

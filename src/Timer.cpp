@@ -8,6 +8,12 @@ namespace avrt {
 //------------------------------------------------------------------------------
 // Timer
 //------------------------------------------------------------------------------
+uint32_t Timer::GetTickCur() const
+{
+	InterruptDisabledSection section;
+	return tickCur_;
+}
+
 void Timer::AddAlarm(Alarm* pAlarm)
 {
 	pAlarm->SetAlarmNext(pAlarmTop_);
@@ -82,7 +88,7 @@ void Timer::DelayUSec(uint32_t usec)
 void Timer::Alarm::Start()
 {
 	InterruptDisabledSection section;
-	tickStart_ = pTimer_->GetTickCur();
+	tickStart_ = pTimer_->GetTickCur_NoSafe();
 	expiredFlag_ = false;
 	pTimer_->AddAlarm(this);
 }
