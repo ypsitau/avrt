@@ -154,6 +154,34 @@ void TwoWire::HandleISR_TWI()
 {
 }
 
+void TwoWire::Detect(Stream& stream, uint8_t slaBegin = 0x03, uint8_t slaEnd = 0x78)
+{
+	uint8_t col = 0;
+	stream.Print(F("   "));
+	for (uint8_t col = 0; col < 16; col++) stream.Printf(F(" %2x"), col);
+	stream.PutChar('\n');
+	for (uint8_t sla = 0x00; sla < 0x78; sla++) {
+		if (col == 0) {
+			stream.Printf(F("%2x: "), sla);
+		} else {
+			stream.PutChar(' ');
+		}
+		if (sla < slaBegin || sla > slaEnd) {
+			stream.Print(F("  "));
+		} else if (Transmit(sla)) {
+			stream.Printf(F("%02x"), sla);
+		} else {
+			stream.Print(F("--"));
+		}
+		col++;
+		if (col == 16) {
+			stream.PutChar('\n');
+			col = 0;
+		}
+	}
+	if (col > 0) stream.PutChar('\n');
+}
+
 const __FlashStringHelper* TwoWire::StatusToString(uint8_t statHW)
 {
 	return

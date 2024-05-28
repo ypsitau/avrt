@@ -10,6 +10,8 @@ ISR(TWI_vect) { variableName.HandleISR_TWI(); }
 
 namespace avrt {
 
+class Stream;
+
 //------------------------------------------------------------------------------
 // TwoWire
 //------------------------------------------------------------------------------
@@ -83,6 +85,7 @@ public:
 	//bool Receive(uint8_t sla, uint8_t* buff, uint8_t len);
 	//bool ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len);
 	void HandleISR_TWI();
+	void Detect(Stream& stream, uint8_t slaBegin = 0x03, uint8_t slaEnd = 0x78);
 public:
 	template<bool reqInt> static void SetTWCR_Start() {
 		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b1 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(reqInt) << TWIE);
