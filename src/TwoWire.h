@@ -1,6 +1,8 @@
 //==============================================================================
 // TwoWire.h
 //==============================================================================
+#ifndef TWOWIRE_H
+#define TWOWIRE_H
 #include <avrt.h>
 #include <util/twi.h>
 
@@ -26,7 +28,7 @@ public:
 		Stat stat_;
 	public:
 		Sequencer(TwoWire& twi) : twi_(twi), stat_(Stat::Idle) {}
-		bool Start();
+		bool Start(bool stopFlag);
 		virtual bool Process(uint8_t statHW) = 0;
 	};
 	class SequencerMT : public Sequencer {
@@ -69,19 +71,8 @@ public:
 	void Open(uint8_t address = 0x00, uint32_t freq = 100000);
 	void SetTimeout(uint32_t msec) { alarm_.SetTimeout(msec); }
 	void Close();
-	//bool StartSequence(bool stopFlag);
 	bool Transmit(uint8_t sla);
 	bool Transmit(uint8_t sla, uint8_t data);
-	//bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2);
-	//bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3);
-	//bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);
-	//bool Transmit(uint8_t sla, const uint8_t* buff, uint8_t len);
-	//bool TransmitCont(uint8_t sla);
-	//bool TransmitCont(uint8_t sla, uint8_t data);
-	//bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2);
-	//bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3);
-	//bool TransmitCont(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);
-	//bool TransmitCont(uint8_t sla, const uint8_t* buff, uint8_t len);
 	//bool Receive(uint8_t sla, uint8_t* buff, uint8_t len);
 	//bool ReceiveCont(uint8_t sla, uint8_t* buff, uint8_t len);
 	void HandleISR_TWI();
@@ -118,3 +109,5 @@ public:
 };
 
 }
+
+#endif

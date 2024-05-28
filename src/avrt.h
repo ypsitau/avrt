@@ -16,6 +16,7 @@
 #include "AnalogComparator.h"
 #include "Serial.h"
 #include "Timer.h"
+#include "TwoWire.h"
 
 namespace avrt {
 }
