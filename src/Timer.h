@@ -103,6 +103,7 @@ public:
 	constexpr static uint8_t EnableInt_TIMER0_OVF	= (1 << 0);
 	constexpr static uint8_t EnableInt_TIMER0_COMPA	= (1 << 1);
 	constexpr static uint8_t EnableInt_TIMER0_COMPB	= (1 << 2);
+	constexpr static uint8_t EnableInt_All			= (1 << 0) | (1 << 1) | (1 << 2);
 	enum class Clock {
 		None		= 0,
 		Div1		= 1,
@@ -128,7 +129,7 @@ private:
 public:
 	Timer0() : pHandler_(nullptr) {}
 	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
-	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = 0) const;
+	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = EnableInt_All) const;
 	void HandleIRQ_TIMER0_COMPA() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER0_COMPA();
 	}
@@ -161,6 +162,7 @@ public:
 	constexpr static uint8_t EnableInt_TIMER1_COMPA	= (1 << 1);
 	constexpr static uint8_t EnableInt_TIMER1_COMPB	= (1 << 2);
 	constexpr static uint8_t EnableInt_TIMER1_CAPT	= (1 << 3);
+	constexpr static uint8_t EnableInt_All			= (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
 	enum class Clock {
 		None		= 0,
 		Div1		= 1,
@@ -195,7 +197,7 @@ private:
 public:
 	Timer1() : pHandler_(nullptr) {}
 	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
-	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = 0) const;
+	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = EnableInt_All) const;
 	void HandleIRQ_TIMER1_CAPT() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER1_CAPT();
 	}
@@ -228,6 +230,7 @@ public:
 	constexpr static uint8_t EnableInt_TIMER2_OVF	= (1 << 0);
 	constexpr static uint8_t EnableInt_TIMER2_COMPA	= (1 << 1);
 	constexpr static uint8_t EnableInt_TIMER2_COMPB	= (1 << 2);
+	constexpr static uint8_t EnableInt_All			= (1 << 0) | (1 << 1) | (1 << 2);
 	enum class Clock {
 		None		= 0,
 		Div1		= 1,
@@ -253,7 +256,7 @@ private:
 public:
 	Timer2() : pHandler_(nullptr) {}
 	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
-	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = 0) const;
+	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = EnableInt_All) const;
 	void HandleIRQ_TIMER2_COMPA() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER2_COMPA();
 	}

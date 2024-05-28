@@ -202,7 +202,7 @@ uint32_t Timer1::CalcFreqOVF() const
 //------------------------------------------------------------------------------
 // Timer2
 //------------------------------------------------------------------------------
-void Timer2::Start(Clock clock, Waveform waveform, uint8_t flags = 0) const
+void Timer2::Start(Clock clock, Waveform waveform, uint8_t flags) const
 {
 	uint8_t dataCS2 = static_cast<uint8_t>(clock);		// CS2: Clock Select
 	uint8_t dataWGM2 = static_cast<uint8_t>(waveform);	// WGM2: Waveform Generation Mode
