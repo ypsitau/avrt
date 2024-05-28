@@ -67,6 +67,7 @@ void Timer::DelayClocks(uint32_t clocks)
 	}
 }
 
+// The maximum number for usec is (268435455 - 100) when F_CPU is 16MHz.
 void Timer::DelayUSec(uint32_t usec)
 {
 	constexpr int clocksMisc = 100;

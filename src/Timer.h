@@ -73,13 +73,13 @@ protected:
 public:
 	Timer() : tickCur_(0), alarmForDelay_(*this), pAlarmTop_(nullptr) {}
 	uint32_t GetTickCur() const { return tickCur_; }
+	void AddAlarm(Alarm* pAlarm);
+	void RemoveAlarm(Alarm* pAlarm);
+	void AdvanceTickCur();
 	uint32_t ConvMSecToTicks(uint32_t msec) const { return (msec * CalcFreqOVF() + 500) / 1000; }
 	static uint32_t ConvUSecToClocks(uint32_t usec) { return usec * ((F_CPU + 500000) / 1000000); }
 	void DelayTicks(uint32_t ticks);
 	void DelayMSec(uint32_t msec) { DelayTicks(ConvMSecToTicks(msec)); }
-	void AddAlarm(Alarm* pAlarm);
-	void RemoveAlarm(Alarm* pAlarm);
-	void AdvanceTickCur();
 	static void DelayClocks(uint32_t clocks);
 	static void DelayUSec(uint32_t usec);
 public:
