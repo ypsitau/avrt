@@ -5,7 +5,7 @@ namespace av = avrt;
 AVRT_IMPLEMENT_Timer2(timer)
 AVRT_IMPLEMENT_Serial0(serial)
 
-av::Port<av::D4, av::Out> portLED;
+av::Port<av::D2, av::Out> portLED;
 
 void setup()
 {
