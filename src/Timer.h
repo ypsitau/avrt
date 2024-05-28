@@ -104,14 +104,15 @@ public:
 	constexpr static uint8_t EnableInt_TIMER0_COMPA	= (1 << 1);
 	constexpr static uint8_t EnableInt_TIMER0_COMPB	= (1 << 2);
 	enum class Clock {
-		None					= 0,
-		Div1					= 1,
-		Div8					= 2,
-		Div64					= 3,
-		Div256					= 4,
-		Div1024					= 5,
-		T0_Falling				= 6,
-		T0_Rising				= 7,
+		None		= 0,
+		Div1		= 1,
+		Div8		= 2,
+		Div64		= 3,
+		Div256		= 4,
+		Div1024		= 5,
+		T0_Falling	= 6,
+		T0_Rising	= 7,
+		Default		= Div64,
 	};
 	enum class Waveform {
 		Normal						= 0,
@@ -120,13 +121,14 @@ public:
 		FastPWM_UptoFF				= 3,
 		PhaseCorrectPWM_UptoOCR0A	= 5,
 		FastPWM_UptoOCR0A			= 7,
+		Default						= PhaseCorrectPWM_UptoFF,
 	};
 private:
 	Handler* pHandler_;
 public:
 	Timer0() : pHandler_(nullptr) {}
 	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
-	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const;
+	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = 0) const;
 	void HandleIRQ_TIMER0_COMPA() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER0_COMPA();
 	}
@@ -160,14 +162,15 @@ public:
 	constexpr static uint8_t EnableInt_TIMER1_COMPB	= (1 << 2);
 	constexpr static uint8_t EnableInt_TIMER1_CAPT	= (1 << 3);
 	enum class Clock {
-		None					= 0,
-		Div1					= 1,
-		Div8					= 2,
-		Div64					= 3,
-		Div256					= 4,
-		Div1024					= 5,
-		T1_Falling				= 6,
-		T1_Rising				= 7,
+		None		= 0,
+		Div1		= 1,
+		Div8		= 2,
+		Div64		= 3,
+		Div256		= 4,
+		Div1024		= 5,
+		T1_Falling	= 6,
+		T1_Rising	= 7,
+		Default		= Div64,
 	};
 	enum class Waveform {
 		Normal								= 0,
@@ -185,13 +188,14 @@ public:
 		CTC_UptoICR1						= 12,
 		FastPWM_UptoICR1					= 13,
 		FastPWM_UptoOCR1A					= 14,
+		Default								= PhaseCorrectPWM_Upto00FF,
 	};
 private:
 	Handler* pHandler_;
 public:
 	Timer1() : pHandler_(nullptr) {}
 	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
-	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const;
+	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = 0) const;
 	void HandleIRQ_TIMER1_CAPT() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER1_CAPT();
 	}
@@ -225,14 +229,15 @@ public:
 	constexpr static uint8_t EnableInt_TIMER2_COMPA	= (1 << 1);
 	constexpr static uint8_t EnableInt_TIMER2_COMPB	= (1 << 2);
 	enum class Clock {
-		None						= 0,
-		Div1						= 1,
-		Div8						= 2,
-		Div32						= 3,
-		Div64						= 4,
-		Div128						= 5,
-		Div256						= 6,
-		Div1024						= 7,
+		None		= 0,
+		Div1		= 1,
+		Div8		= 2,
+		Div32		= 3,
+		Div64		= 4,
+		Div128		= 5,
+		Div256		= 6,
+		Div1024		= 7,
+		Default		= Div64,
 	};
 	enum class Waveform {
 		Normal						= 0,
@@ -241,13 +246,14 @@ public:
 		FastPWM_UptoFF				= 3,
 		PhaseCorrectPWM_UptoOCR2A	= 5,
 		FastPWM_UptoOCR2A			= 7,
+		Default						= PhaseCorrectPWM_UptoFF,
 	};
 private:
 	Handler* pHandler_;
 public:
 	Timer2() : pHandler_(nullptr) {}
 	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
-	void Start(Clock clock, Waveform waveform, uint8_t flags = 0) const;
+	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = 0) const;
 	void HandleIRQ_TIMER2_COMPA() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER2_COMPA();
 	}
