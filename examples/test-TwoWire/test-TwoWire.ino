@@ -7,6 +7,10 @@ AVRT_IMPLEMENT_Timer1(timer)
 AVRT_IMPLEMENT_TwoWire(twi, timer)
 AVRT_IMPLEMENT_Serial0_NoRecv(serial)
 
+av::Timer::Alarm alarm(timer);
+
+av::MPU6000 mpu6000(twi);
+
 void setup()
 {
 	timer.Start();
@@ -14,15 +18,21 @@ void setup()
 	serial.Printf(F("#### test-TwoWire ####\n"));
 	twi.Open();
 	twi.Detect(serial);
+	mpu6000.Open();
 	av::MPU6000(twi).DumpRegister(serial);
-	//for (uint8_t addr = 103; addr < 118; addr++) {
-	//	twi.GetBuffer().WriteData(addr);
-	//	av::TwoWire::SequencerMT(twi, sla).Start(false);
-	//	av::TwoWire::SequencerMR(twi, sla, 1).Start(true);
-	//	serial.Printf("%02x: %02x\n", addr, twi.GetBuffer().ReadData());
-	//}
+	alarm.Start(500);
 }
+
+int y = 0;
 
 void loop()
 {
+	uint8_t dataX, dataY;
+	mpu6000.ReadByte(mpu6000.Addr_GYRO_XOUT_H, &dataX);
+	mpu6000.ReadByte(mpu6000.Addr_GYRO_YOUT_H, &dataY);
+	y += static_cast<int8_t>(dataY);
+	if (alarm.IsExpired()) {
+		serial.Printf("%5d\n", y);
+		alarm.Start();
+	}
 }
