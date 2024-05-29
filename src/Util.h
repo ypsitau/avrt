@@ -11,6 +11,8 @@ class __FlashStringHelper;
 #define F(string_literal) (reinterpret_cast<const __FlashStringHelper*>(PSTR(string_literal)))
 #endif
 
+#define ArraySizeOf(array) (sizeof(array) / sizeof(array[0]))
+
 namespace avrt {
 
 template<typename T> T ChooseMin(T a, T b) { return (a < b)? a : b; }

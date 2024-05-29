@@ -1,4 +1,5 @@
 #include <avrt.h>
+#include "avrt-MPU6000.h"
 
 namespace av = avrt;
 
@@ -12,14 +13,14 @@ void setup()
 	serial.Open(serial.Speed::Bps57600);
 	serial.Printf(F("#### test-TwoWire ####\n"));
 	twi.Open();
-	//twi.Detect(serial);
-	uint8_t sla = 0x68;
-	for (uint8_t addr = 0x23; addr < 0x24; addr++) {
-		twi.GetBuffer().WriteData(addr);
-		av::TwoWire::SequencerMT(twi, sla).Start(false);
-		av::TwoWire::SequencerMR(twi, sla, 1).Start(true);
-		serial.Printf("%02x: %02x\n", addr, twi.GetBuffer().ReadData());
-	}
+	twi.Detect(serial);
+	av::MPU6000(twi).DumpRegister(serial);
+	//for (uint8_t addr = 103; addr < 118; addr++) {
+	//	twi.GetBuffer().WriteData(addr);
+	//	av::TwoWire::SequencerMT(twi, sla).Start(false);
+	//	av::TwoWire::SequencerMR(twi, sla, 1).Start(true);
+	//	serial.Printf("%02x: %02x\n", addr, twi.GetBuffer().ReadData());
+	//}
 }
 
 void loop()
