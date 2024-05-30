@@ -3,7 +3,6 @@
 //==============================================================================
 #ifndef AVRT_MPU6000_TWI_H
 #define AVRT_MPU6000_TWI_H
-#include <avrt.h>
 #include "avrt-MPU6000.h"
 
 namespace avrt {

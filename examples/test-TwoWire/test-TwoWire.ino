@@ -1,5 +1,5 @@
 #include <avrt.h>
-#include "avrt-MPU6000.h"
+#include "avrt-MPU6000_TWI.h"
 
 namespace av = avrt;
 
