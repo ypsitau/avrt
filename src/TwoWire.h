@@ -28,7 +28,7 @@ public:
 		Stat stat_;
 	public:
 		Sequencer(TwoWire& twi) : twi_(twi), stat_(Stat::Idle) {}
-		bool Start(bool stopFlag);
+		bool StartMaster(bool stopFlag);
 		virtual bool Process(uint8_t statHW) = 0;
 	};
 	class SequencerMT : public Sequencer {
@@ -46,29 +46,14 @@ public:
 		SequencerMR(TwoWire& twi, uint8_t sla, uint8_t len) : Sequencer(twi), sla_(sla), lenRest_(len) {}
 		virtual bool Process(uint8_t statHW);
 	};
-	class SequencerST : public Sequencer {
-	public:
-		SequencerST(TwoWire& twi) : Sequencer(twi) {}
-		virtual bool Process(uint8_t statHW);
-	};
-	class SequencerSR : public Sequencer {
-	public:
-		SequencerSR(TwoWire& twi) : Sequencer(twi) {}
-		virtual bool Process(uint8_t statHW);
-	};
 private:
 	Timer::Alarm alarm_;
 	Buffer buffer_;
-	volatile Stat stat_;
-	uint8_t lenExpected_;
-	uint8_t len_;
-	volatile uint8_t slaRW_;
-	volatile bool stopFlag_;
 public:
-	TwoWire(Timer& timer) : alarm_(timer), stat_(Stat::Idle), lenExpected_(0), len_(0), slaRW_(0x00), stopFlag_(false) {}
+	TwoWire(Timer& timer) : alarm_(timer) {}
 	Buffer& GetBuffer() { return buffer_; }
 	Timer& GetTimer() { return alarm_.GetTimer(); }
-	void Open(uint8_t address = 0x00, uint32_t freq = 100000);
+	void Open(uint8_t slaThis = 0x00, uint32_t freq = 100000);
 	void SetTimeout(uint32_t msec) { alarm_.SetTimeout(msec); }
 	void Close();
 	bool TransmitGeneric(uint8_t sla, void* buffRecv = nullptr, uint8_t lenRecv = 0);
@@ -78,6 +63,7 @@ public:
 	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, void* buffRecv = nullptr, uint8_t lenRecv = 0);
 	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4, void* buffRecv = nullptr, uint8_t lenRecv = 0);
 	bool Transmit(uint8_t sla, const void* buffSend, uint8_t lenSend, void* buffRecv = nullptr, uint8_t lenRecv = 0);
+	bool StartSlave();
 	void HandleISR_TWI();
 	void Detect(Stream& stream, uint8_t slaBegin = 0x03, uint8_t slaEnd = 0x78);
 public:

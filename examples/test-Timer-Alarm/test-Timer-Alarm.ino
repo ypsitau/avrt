@@ -4,11 +4,11 @@ namespace av = avrt;
 
 AVRT_IMPLEMENT_Serial0(serial)
 
-av::Port<av::D2, av::Out> portD2;
-av::Port<av::D3, av::Out> portD3;
-av::Port<av::D4, av::Out> portLED1;
-av::Port<av::D5, av::Out> portLED2;
-av::Port<av::D6, av::Out> portLED3;
+av::Port<av::D2, av::Out> portLED1;
+av::Port<av::D3, av::Out> portLED2;
+av::Port<av::D4, av::Out> portLED3;
+av::Port<av::D5, av::Out> portTimer1Watch;
+av::Port<av::D6, av::Out> portTimer2Watch;
 
 av::Timer0 timer0;
 av::Timer1 timer1;
@@ -20,13 +20,13 @@ av::Timer::Alarm alarm3(timer1);
 
 ISR(TIMER1_OVF_vect)
 {
-	//portD2.DigitalImpulse();
+	//portTimer1Watch.DigitalImpulse();
 	timer1.HandleIRQ_TIMER1_OVF();
 }
 
 ISR(TIMER2_OVF_vect)
 {
-	portD3.DigitalToggle();
+	portTimer2Watch.DigitalToggle();
 	timer2.HandleIRQ_TIMER2_OVF();
 }
 
@@ -77,7 +77,7 @@ void setup()
 		OCR2A = 0xff;
 	} while (0);
 	serial.Printf(F("#### test-Timer-Alarm ####\n"));
-	alarm1.Start(1000);
+	alarm1.Start(100);
 	alarm2.Start(500);
 	alarm3.Start(300);
 }

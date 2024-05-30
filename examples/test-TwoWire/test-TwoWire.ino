@@ -16,23 +16,25 @@ void setup()
 	timer.Start();
 	serial.Open(serial.Speed::Bps57600);
 	serial.Printf(F("#### test-TwoWire ####\n"));
-	twi.Open();
+	twi.Open(0x78);
 	twi.Detect(serial);
-	mpu6000.Open();
-	av::MPU6000(twi).DumpRegister(serial);
-	alarm.Start(500);
+	//mpu6000.Open();
+	//av::MPU6000(twi).DumpRegister(serial);
+	//alarm.Start(500);
 }
 
 int y = 0;
 
 void loop()
 {
-	uint8_t dataX, dataY;
-	mpu6000.ReadByte(mpu6000.Addr_GYRO_XOUT_H, &dataX);
-	mpu6000.ReadByte(mpu6000.Addr_GYRO_YOUT_H, &dataY);
-	y += static_cast<int8_t>(dataY);
-	if (alarm.IsExpired()) {
-		serial.Printf("%5d\n", y);
-		alarm.Start();
-	}
+	twi.StartSlave();
+	//uint8_t dataX, dataY;
+	//mpu6000.ReadByte(mpu6000.Addr_GYRO_XOUT_H, &dataX);
+	//mpu6000.ReadByte(mpu6000.Addr_GYRO_YOUT_H, &dataY);
+	//y += static_cast<int8_t>(dataY);
+	//if (alarm.IsExpired()) {
+	//	serial.Printf("%5d\n", y);
+	//	alarm.Start();
+	//}
+
 }
