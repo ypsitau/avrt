@@ -18,8 +18,8 @@ void setup()
 	serial.Printf(F("#### test-TwoWire ####\n"));
 	twi.Open(0x78);
 	twi.Detect(serial);
-	//mpu6000.Open();
-	//av::MPU6000(twi).DumpRegister(serial);
+	mpu6000.Open();
+	mpu6000.DumpRegister(serial);
 	//alarm.Start(500);
 }
 
