@@ -63,7 +63,8 @@ public:
 	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, void* buffRecv = nullptr, uint8_t lenRecv = 0);
 	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4, void* buffRecv = nullptr, uint8_t lenRecv = 0);
 	bool Transmit(uint8_t sla, const void* buffSend, uint8_t lenSend, void* buffRecv = nullptr, uint8_t lenRecv = 0);
-	bool PollRequest(void* buff, uint8_t lenBuff, uint8_t* pLenRecv);
+	bool PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv);
+	void Reply(uint8_t data);
 	void HandleISR_TWI();
 	void Detect(Stream& stream, uint8_t slaBegin = 0x03, uint8_t slaEnd = 0x78);
 public:

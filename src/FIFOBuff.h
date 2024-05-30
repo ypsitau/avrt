@@ -44,8 +44,10 @@ public:
 	void WriteBuff(const T_Elem* buff, T_Size len) {
 		for ( ; len > 0; len--, buff++) WriteData(*buff);
 	}
-	void ReadBuff(T_Elem* buff, T_Size len) {
-		for ( ; len > 0; len--, buff++) *buff = ReadData();
+	void ReadBuff(T_Elem* buff, T_Size len, T_Size* pLenRead = nullptr) {
+		T_Elem* p = buff;
+		for ( ; len > 0 && HasData(); len--, p++) *p = ReadData();
+		if (pLenRead) *pLenRead = p - buff;
 	}
 };
 
