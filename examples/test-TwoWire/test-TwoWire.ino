@@ -9,7 +9,7 @@ AVRT_IMPLEMENT_Serial0_NoRecv(serial)
 
 av::Timer::Alarm alarm(timer);
 
-av::MPU6000 mpu6000(twi);
+av::MPU6000_TWI mpu6000(twi);
 
 void setup()
 {
