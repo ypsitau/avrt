@@ -63,7 +63,7 @@ public:
 	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, void* buffRecv = nullptr, uint8_t lenRecv = 0);
 	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4, void* buffRecv = nullptr, uint8_t lenRecv = 0);
 	bool Transmit(uint8_t sla, const void* buffSend, uint8_t lenSend, void* buffRecv = nullptr, uint8_t lenRecv = 0);
-	bool StartSlave();
+	bool PollRequest(void* buff, uint8_t lenBuff, uint8_t* pLenRecv);
 	void HandleISR_TWI();
 	void Detect(Stream& stream, uint8_t slaBegin = 0x03, uint8_t slaEnd = 0x78);
 public:
@@ -88,12 +88,9 @@ public:
 	template<bool intDriven> static void SetTWCR_ReplyNACK() {
 		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(intDriven) << TWIE);
 	}
-	static void WaitForTWINTSet() {
-		while (!(TWCR & (1 << TWINT))) ;
-	}
-	static void WaitForTWSTOCleared() {
-		while (TWCR & (1 << TWSTO)) ;
-	}
+	static bool PollTWINTSet() { return (TWCR & (1 << TWINT)) != 0; }
+	static void WaitForTWINTSet() { while (TWCR & (1 << TWINT)); }
+	static void WaitForTWSTOCleared() { while (TWCR & (1 << TWSTO)) ; }
 	static const __FlashStringHelper* StatusToString(uint8_t statHW);
 };
 

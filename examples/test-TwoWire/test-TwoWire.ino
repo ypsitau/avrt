@@ -17,9 +17,9 @@ void setup()
 	serial.Open(serial.Speed::Bps57600);
 	serial.Printf(F("#### test-TwoWire ####\n"));
 	twi.Open(0x78);
-	twi.Detect(serial);
-	mpu6000.Open();
-	mpu6000.DumpRegister(serial);
+	//twi.Detect(serial);
+	//mpu6000.Open();
+	//mpu6000.DumpRegister(serial);
 	//alarm.Start(500);
 }
 
@@ -27,7 +27,10 @@ int y = 0;
 
 void loop()
 {
-	twi.StartSlave();
+	uint8_t buff[8];
+	uint8_t lenRecv;
+	if (twi.PollRequest(buff, sizeof(buff), &lenRecv)) {
+	}
 	//uint8_t dataX, dataY;
 	//mpu6000.ReadByte(mpu6000.Addr_GYRO_XOUT_H, &dataX);
 	//mpu6000.ReadByte(mpu6000.Addr_GYRO_YOUT_H, &dataY);
