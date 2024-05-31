@@ -31,19 +31,19 @@ public:
 		bool StartMaster(bool stopFlag);
 		virtual bool Process(uint8_t statHW) = 0;
 	};
-	class SequencerMT : public Sequencer {
+	class SequencerMasterTransmitter : public Sequencer {
 	private:
 		uint8_t sla_;
 	public:
-		SequencerMT(TwoWire& twi, uint8_t sla) : Sequencer(twi), sla_(sla) {}
+		SequencerMasterTransmitter(TwoWire& twi, uint8_t sla) : Sequencer(twi), sla_(sla) {}
 		virtual bool Process(uint8_t statHW);
 	};
-	class SequencerMR : public Sequencer {
+	class SequencerMasterReceiver : public Sequencer {
 	private:
 		uint8_t sla_;
 		uint8_t lenRest_;
 	public:
-		SequencerMR(TwoWire& twi, uint8_t sla, uint8_t len) : Sequencer(twi), sla_(sla), lenRest_(len) {}
+		SequencerMasterReceiver(TwoWire& twi, uint8_t sla, uint8_t len) : Sequencer(twi), sla_(sla), lenRest_(len) {}
 		virtual bool Process(uint8_t statHW);
 	};
 	class SequencerSlave : public Sequencer {
@@ -55,8 +55,9 @@ private:
 	Timer::Alarm alarm_;
 	Buffer buffSend_;
 	Buffer buffRecv_;
+	SequencerSlave sequencerSlave_;
 public:
-	TwoWire(Timer& timer) : alarm_(timer) {}
+	TwoWire(Timer& timer) : alarm_(timer), sequencerSlave_(*this) {}
 	Buffer& GetBuffSend() { return buffSend_; }
 	Buffer& GetBuffRecv() { return buffRecv_; }
 	Timer& GetTimer() { return alarm_.GetTimer(); }

@@ -27,6 +27,7 @@ int y = 0;
 
 void loop()
 {
+#if 0
 	uint8_t buff[8];
 	uint8_t lenRecv;
 	if (twi.PollRequest(buff, sizeof(buff), &lenRecv)) {
@@ -38,6 +39,7 @@ void loop()
 		}
 		twi.Reply(0x88);
 	}
+#endif
 	//uint8_t dataX, dataY;
 	//mpu6000.ReadByte(mpu6000.Addr_GYRO_XOUT_H, &dataX);
 	//mpu6000.ReadByte(mpu6000.Addr_GYRO_YOUT_H, &dataY);

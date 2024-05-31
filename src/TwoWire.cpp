@@ -40,16 +40,16 @@ void TwoWire::Close()
 
 bool TwoWire::TransmitGeneric(uint8_t sla, void* buffRecv, uint8_t lenRecv)
 {
-	if (!buffRecv) return SequencerMT(*this, sla).StartMaster(true);
-	if (!TwoWire::SequencerMT(*this, sla).StartMaster(false)) return false;
-	if (!TwoWire::SequencerMR(*this, sla, lenRecv).StartMaster(true)) return false;
+	if (!buffRecv) return SequencerMasterTransmitter(*this, sla).StartMaster(true);
+	if (!TwoWire::SequencerMasterTransmitter(*this, sla).StartMaster(false)) return false;
+	if (!TwoWire::SequencerMasterReceiver(*this, sla, lenRecv).StartMaster(true)) return false;
 	GetBuffRecv().ReadBuff(buffRecv, lenRecv);
 	return true;
 }
 
 bool TwoWire::Transmit(uint8_t sla)
 {
-	return SequencerMT(*this, sla).StartMaster(true);
+	return SequencerMasterTransmitter(*this, sla).StartMaster(true);
 }
 
 bool TwoWire::Transmit(uint8_t sla, uint8_t data, void* buffRecv, uint8_t lenRecv)
@@ -94,62 +94,8 @@ bool TwoWire::PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
 	constexpr bool intDriven = false;
 	if (!PollTWINTSet()) return false;
 	uint8_t statHW = TW_STATUS;
-	serial.Printf(F("statHW = %S\n"), StatusToString(statHW));
-
-	// Table 22-3. Status codes for Slave Receiver Mode
-	if (statHW == TW_SR_SLA_ACK) {					// 0x60: SLA+W received, ACK returned
-		//buffRecv.Clear();
-		SetTWCR_ReplyACK<intDriven>();
-	} else if (statHW == TW_SR_DATA_ACK) {			// 0x80: data received, ACK returned
-		uint8_t data = TWDR;
-		//serial.Printf(F("[%02x]\n"), data);
-		GetBuffRecv().WriteData(data);
-		SetTWCR_ReplyACK<intDriven>();
-	} else if (statHW == TW_SR_DATA_NACK) {			// 0x88:data received, NACK returned
-		uint8_t data = TWDR;
-		GetBuffRecv().WriteData(data);
-		SetTWCR_ReplyACK<intDriven>();
-	} else if (statHW == TW_SR_GCALL_ACK) {			// 0x70: general call received, ACK returned
-		SetTWCR_ReplyACK<intDriven>();
-	} else if (statHW == TW_SR_GCALL_DATA_ACK) {	// 0x90: general call data received, ACK returned
-		uint8_t data = TWDR;
-		GetBuffRecv().WriteData(data);
-		SetTWCR_ReplyACK<intDriven>();
-	} else if (statHW == TW_SR_GCALL_DATA_NACK) {	// 0x98: general call data received, NACK returned
-		uint8_t data = TWDR;
-		GetBuffRecv().WriteData(data);
-		SetTWCR_ReplyACK<intDriven>();
-	} else if (statHW == TW_SR_STOP) {				// 0xA0: stop or repeated start condition received while selected
-		//SetTWCR_ReplyNACK<intDriven>();
-		//SetTWCR_ReplyACK<intDriven>();
-		//SetTWCR_StartWithACK<intDriven>();
-		SetTWCR_ReleaseBus<intDriven>();
-		GetBuffRecv().ReadBuff(buffRecv, lenRecvMax, pLenRecv);
-		rtn = true;
-	} else if (statHW == TW_SR_ARB_LOST_SLA_ACK) {	// 0x68: arbitration lost in SLA+RW, SLA+W received, ACK returned
-		//stat_ = Stat::Error;
-	} else if (statHW == TW_SR_ARB_LOST_GCALL_ACK) {// 0x78: arbitration lost in SLA+RW, general call received, ACK returned
-		//stat_ = Stat::Error;
-	// Table 22-4. Status codes for Slave Transmitter Mode
-	} else if (statHW == TW_ST_SLA_ACK ||			// 0xA8: SLA+R received, ACK returned
-			statHW == TW_ST_DATA_ACK) {				// 0xB8: data transmitted, ACK received
-		uint8_t data = GetBuffSend().HasData()? GetBuffSend().ReadData() : 0x00;
-		TWDR = data;
-		SetTWCR_ReplyACK<intDriven>();
-	} else if (statHW == TW_ST_DATA_NACK) {			// 0xC0: data transmitted, NACK received
-		uint8_t data = GetBuffSend().HasData()? GetBuffSend().ReadData() : 0x00;
-		TWDR = data;
-		SetTWCR_ReplyACK<intDriven>();
-	} else if (statHW == TW_ST_LAST_DATA) {			// 0xC8: last data byte transmitted, ACK received
-		//stat_ = Stat::Success;
-		SetTWCR_ReplyACK<intDriven>();
-	} else if (statHW == TW_ST_ARB_LOST_SLA_ACK) {	// 0xB0: arbitration lost in SLA+RW, SLA+R received, ACK returned
-		//stat_ = Stat::Error;
-	} else if (statHW == TW_NO_INFO) {				// 0xF8: no state information available
-		//stat_ = Stat::Error;
-	} else if (statHW == TW_BUS_ERROR) {			// 0x00: illegal start or stop condition
-		//stat_ = Stat::Error;
-	}
+	serial.Printf(F("PollRequest(statHW = %S)\n"), StatusToString(statHW));
+	sequencerSlave_.Process(statHW);
 	return rtn;
 }
 
@@ -160,6 +106,9 @@ void TwoWire::Reply(uint8_t data)
 
 void TwoWire::HandleISR_TWI()
 {
+	uint8_t statHW = TW_STATUS;
+	serial.Printf(F("HandieISR_TWI(statHW = %S)\n"), StatusToString(statHW));
+	sequencerSlave_.Process(statHW);	
 }
 
 void TwoWire::Detect(Stream& stream, uint8_t slaBegin = 0x03, uint8_t slaEnd = 0x78)
@@ -234,7 +183,7 @@ bool TwoWire::Sequencer::StartMaster(bool stopFlag)
 	for (;;) {
 		WaitForTWINTSet();
 		uint8_t statHW = TW_STATUS;
-		//serial.Printf(F("statHW = %S\n"), StatusToString(statHW));
+		//serial.Printf(F("StartMaster(statHW = %S)\n"), StatusToString(statHW));
 		if (statHW == TW_NO_INFO) {						// 0xF8: no state information available
 			stat_ = Stat::Error;
 			break;
@@ -251,10 +200,10 @@ bool TwoWire::Sequencer::StartMaster(bool stopFlag)
 }
 
 //------------------------------------------------------------------------------
-// TwoWire::SequencerMT
+// TwoWire::SequencerMasterTransmitter
 // Table 22-2 Status codes for Master Transmitter Mode
 //------------------------------------------------------------------------------
-bool TwoWire::SequencerMT::Process(uint8_t statHW)
+bool TwoWire::SequencerMasterTransmitter::Process(uint8_t statHW)
 {
 	constexpr bool intDriven = false;
 	if (statHW == TW_START ||						// START(0x08): start condition transmitted
@@ -282,10 +231,10 @@ bool TwoWire::SequencerMT::Process(uint8_t statHW)
 }
 
 //------------------------------------------------------------------------------
-// TwoWire::SequencerMR
+// TwoWire::SequencerMasterReceiver
 // Table 22-3. Status codes for Master Receiver Mode
 //------------------------------------------------------------------------------
-bool TwoWire::SequencerMR::Process(uint8_t statHW)
+bool TwoWire::SequencerMasterReceiver::Process(uint8_t statHW)
 {
 	constexpr bool intDriven = false;
 	if (statHW == TW_START ||						// START(0x08): start condition transmitted
@@ -324,7 +273,7 @@ bool TwoWire::SequencerMR::Process(uint8_t statHW)
 //------------------------------------------------------------------------------
 bool TwoWire::SequencerSlave::Process(uint8_t statHW)
 {
-	constexpr bool intDriven = false;
+	constexpr bool intDriven = true;
 	// Table 22-3. Status codes for Slave Receiver Mode
 	if (statHW == TW_SR_SLA_ACK) {					// 0x60: SLA+W received, ACK returned
 		//buffRecv.Clear();
