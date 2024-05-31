@@ -143,13 +143,20 @@ bool Stream::PrintfV(const __FlashStringHelper* format, va_list ap)
 	return PrintfV(format_, ap);
 }
 
-void Stream::Dump(const void* buff, int bytes)
+void Stream::Dump(const void* buff, int bytes, bool printAddrFlag)
 {
+	const __FlashStringHelper* formatAddr = F("%04x");
+	const __FlashStringHelper* formatData = F("%02x");
 	const uint8_t* p = reinterpret_cast<const uint8_t*>(buff);
 	uint8_t col = 0;
 	for (int i = 0; i < bytes; i++, p++) {
-		if (col == 0) Printf(F("%04x "), i);
-		Printf(F(" %02x"), *p);
+		if (col > 0) {
+			PutChar(' ');
+		} else if (printAddrFlag) {
+			Printf(formatAddr, i);
+			Print(F("  "));
+		}
+		Printf(formatData, *p);
 		col++;
 		if (col == 16) {
 			Println();
