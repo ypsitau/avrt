@@ -72,6 +72,10 @@ public:
 		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b1 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) |
 				(static_cast<uint8_t>(intDriven) << TWIE);
 	}
+	template<bool intDriven> static void SetTWCR_StartWithACK() {
+		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b1 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) |
+				(static_cast<uint8_t>(intDriven) << TWIE);
+	}
 	template<bool intDriven> static void SetTWCR_Stop() {
 		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) |
 				(static_cast<uint8_t>(intDriven) << TWIE);

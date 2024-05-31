@@ -104,6 +104,7 @@ bool TwoWire::PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
 		uint8_t data = TWDR;
 		buff.WriteData(data);
 		SetTWCR_ReplyACK<intDriven>();
+		//SetTWCR_ReplyNACK<intDriven>();
 	} else if (statHW == TW_SR_DATA_NACK) {			// 0x88:data received, NACK returned
 		uint8_t data = TWDR;
 		buff.WriteData(data);
@@ -119,7 +120,9 @@ bool TwoWire::PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
 		buff.WriteData(data);
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_STOP) {				// 0xA0: stop or repeated start condition received while selected
+		//SetTWCR_ReplyNACK<intDriven>();
 		SetTWCR_ReplyACK<intDriven>();
+		//SetTWCR_StartWithACK<intDriven>();
 		buff.ReadBuff(buffRecv, lenRecvMax, pLenRecv);
 		rtn = true;
 	} else if (statHW == TW_SR_ARB_LOST_SLA_ACK) {	// 0x68: arbitration lost in SLA+RW, SLA+W received, ACK returned
