@@ -3,7 +3,7 @@
 //==============================================================================
 #include "TwoWire.h"
 
-AVRT_DECLARE_Srial0_NoRecv(serial)
+AVRT_DECLARE_Serial0_NoRecv(serial)
 
 namespace avrt {
 
@@ -92,7 +92,7 @@ bool TwoWire::PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
 {
 	if (!PollTWINTSet()) return false;
 	uint8_t statHW = TW_STATUS;
-	serial.Printf(F("PollRequest(statHW = %S)\n"), StatusToString(statHW));
+	//**** TW_SR_DATA_ACK must be processed in a very short time ***
 	sequencerSlave_.StartPolling();
 	if (sequencerSlave_.Process(statHW)) return false;
 	if (sequencerSlave_.GetStatus() == Stat::Success) {
@@ -286,10 +286,10 @@ bool TwoWire::SequencerSlave::Process(uint8_t statHW)
 		//buffRecv.Clear();
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_DATA_ACK) {			// 0x80: data received, ACK returned
+		// ******** time critical job ********
 		uint8_t data = TWDR;
-		//serial.Printf(F("[%02x]\n"), data);
-		twi_.GetBuffRecv().WriteData(data);
 		SetTWCR_ReplyACK<intDriven>();
+		twi_.GetBuffRecv().WriteData(data);
 	} else if (statHW == TW_SR_DATA_NACK) {			// 0x88:data received, NACK returned
 		uint8_t data = TWDR;
 		twi_.GetBuffRecv().WriteData(data);
