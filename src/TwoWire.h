@@ -69,25 +69,32 @@ public:
 	void Detect(Stream& stream, uint8_t slaBegin = 0x03, uint8_t slaEnd = 0x78);
 public:
 	template<bool intDriven> static void SetTWCR_Start() {
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b1 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(intDriven) << TWIE);
+		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b1 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) |
+				(static_cast<uint8_t>(intDriven) << TWIE);
 	}
 	template<bool intDriven> static void SetTWCR_Stop() {
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(intDriven) << TWIE);
+		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) |
+				(static_cast<uint8_t>(intDriven) << TWIE);
 	}
 	template<bool intDriven> static void SetTWCR_StopAndStart() {
-		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(intDriven) << TWIE);
+		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b1 << TWSTA) | (0b1 << TWSTO) | (0b1 << TWEN) |
+				(static_cast<uint8_t>(intDriven) << TWIE);
 	}
 	template<bool intDriven> static void SetTWCR_Transmit() {
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(intDriven) << TWIE);
+		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) |
+				(static_cast<uint8_t>(intDriven) << TWIE);
 	}
 	template<bool intDriven> static void SetTWCR_ReleaseBus() {
-		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(intDriven) << TWIE);
+		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) |
+				(static_cast<uint8_t>(intDriven) << TWIE);
 	}
 	template<bool intDriven> static void SetTWCR_ReplyACK() {
-		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(intDriven) << TWIE);
+		TWCR = (0b1 << TWINT) | (0b1 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) |
+				(static_cast<uint8_t>(intDriven) << TWIE);
 	}
 	template<bool intDriven> static void SetTWCR_ReplyNACK() {
-		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) | (static_cast<uint8_t>(intDriven) << TWIE);
+		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) |
+				(static_cast<uint8_t>(intDriven) << TWIE);
 	}
 	static bool PollTWINTSet() { return (TWCR & (1 << TWINT)) != 0; }
 	static void WaitForTWINTSet() { while (TWCR & (1 << TWINT)); }

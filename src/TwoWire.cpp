@@ -103,17 +103,21 @@ bool TwoWire::PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
 	} else if (statHW == TW_SR_DATA_ACK) {			// 0x80: data received, ACK returned
 		uint8_t data = TWDR;
 		buff.WriteData(data);
-		SetTWCR_Transmit<intDriven>();
+		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_DATA_NACK) {			// 0x88:data received, NACK returned
+		uint8_t data = TWDR;
+		buff.WriteData(data);
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_GCALL_ACK) {			// 0x70: general call received, ACK returned
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_GCALL_DATA_ACK) {	// 0x90: general call data received, ACK returned
 		uint8_t data = TWDR;
 		buff.WriteData(data);
-		SetTWCR_Transmit<intDriven>();
+		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_GCALL_DATA_NACK) {		// 0x98: general call data received, NACK returned
-		SetTWCR_ReplyNACK<intDriven>();
+		uint8_t data = TWDR;
+		buff.WriteData(data);
+		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_STOP) {				// 0xA0: stop or repeated start condition received while selected
 		SetTWCR_ReplyACK<intDriven>();
 		buff.ReadBuff(buffRecv, lenRecvMax, pLenRecv);
@@ -127,7 +131,7 @@ bool TwoWire::PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
 			statHW == TW_ST_DATA_ACK) {				// 0xB8: data transmitted, ACK received
 		uint8_t data = buff.HasData()? buff.ReadData() : 0x00;
 		TWDR = data;
-		SetTWCR_Transmit<intDriven>();
+		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_ST_DATA_NACK) {			// 0xC0: data transmitted, NACK received
 		//stat_ = Stat::Success;
 		SetTWCR_ReplyACK<intDriven>();

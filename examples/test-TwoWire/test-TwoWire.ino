@@ -31,8 +31,9 @@ void loop()
 	uint8_t lenRecv;
 	if (twi.PollRequest(buff, sizeof(buff), &lenRecv)) {
 		if (lenRecv == 0) {
-			serial.Println("(no data)");
+			serial.Println(F("(no data)"));
 		} else {
+			serial.Print(F("Received: "));
 			serial.Dump(buff, lenRecv, false);
 		}
 		twi.Reply(0x88);
