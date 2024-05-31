@@ -143,6 +143,22 @@ bool Stream::PrintfV(const __FlashStringHelper* format, va_list ap)
 	return PrintfV(format_, ap);
 }
 
+void Stream::Dump(const void* buff, int bytes)
+{
+	const uint8_t* p = reinterpret_cast<const uint8_t*>(buff);
+	uint8_t col = 0;
+	for (int i = 0; i < bytes; i++, p++) {
+		if (col == 0) Printf(F("%04x "), i);
+		Printf(F(" %02x"), *p);
+		col++;
+		if (col == 16) {
+			Println();
+			col = 0;
+		}
+	}
+	if (col > 0) Println();
+}
+
 bool Stream::PrintfV(StringPtr& format, va_list ap)
 {
 	enum class Stat {

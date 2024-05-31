@@ -30,7 +30,8 @@ void loop()
 	uint8_t buff[8];
 	uint8_t lenRecv;
 	if (twi.PollRequest(buff, sizeof(buff), &lenRecv)) {
-		serial.Printf(F("%02x\n"), buff[0]);
+		serial.Dump(buff, 100);
+		//serial.Printf(F("%02x\n"), buff[0]);
 		twi.Reply(0x88);
 	}
 	//uint8_t dataX, dataY;

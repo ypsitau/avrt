@@ -242,6 +242,7 @@ public:
 	void Println() { PutChar('\n'); }
 	void Println(const char* str);
 	void Println(const __FlashStringHelper* str);
+	void Dump(const void* buff, int bytes);
 	bool Printf(const char* format, ...);
 	bool Printf(const __FlashStringHelper* format, ...);
 	bool PrintfV(const char* format, va_list ap);
