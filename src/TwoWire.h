@@ -46,12 +46,19 @@ public:
 		SequencerMR(TwoWire& twi, uint8_t sla, uint8_t len) : Sequencer(twi), sla_(sla), lenRest_(len) {}
 		virtual bool Process(uint8_t statHW);
 	};
+	class SequencerSlave : public Sequencer {
+	public:
+		SequencerSlave(TwoWire& twi) : Sequencer(twi) {}
+		virtual bool Process(uint8_t statHW);
+	};
 private:
 	Timer::Alarm alarm_;
-	Buffer buffer_;
+	Buffer buffSend_;
+	Buffer buffRecv_;
 public:
 	TwoWire(Timer& timer) : alarm_(timer) {}
-	Buffer& GetBuffer() { return buffer_; }
+	Buffer& GetBuffSend() { return buffSend_; }
+	Buffer& GetBuffRecv() { return buffRecv_; }
 	Timer& GetTimer() { return alarm_.GetTimer(); }
 	void Open(uint8_t slaThis = 0x00, uint32_t freq = 100000);
 	void SetTimeout(uint32_t msec) { alarm_.SetTimeout(msec); }
