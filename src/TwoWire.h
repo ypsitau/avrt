@@ -28,27 +28,33 @@ public:
 		Stat stat_;
 	public:
 		Sequencer(TwoWire& twi) : twi_(twi), stat_(Stat::Idle) {}
-		bool StartMaster(bool stopFlag);
+		Stat GetStatus() { return stat_; }
 		virtual bool Process(uint8_t statHW) = 0;
 	};
-	class SequencerMasterTransmitter : public Sequencer {
+	class SequencerMaster : public Sequencer {
+	public:
+		SequencerMaster(TwoWire& twi) : Sequencer(twi) {}
+		bool StartMaster(bool stopFlag);
+	};
+	class SequencerMasterTransmitter : public SequencerMaster {
 	private:
 		uint8_t sla_;
 	public:
-		SequencerMasterTransmitter(TwoWire& twi, uint8_t sla) : Sequencer(twi), sla_(sla) {}
+		SequencerMasterTransmitter(TwoWire& twi, uint8_t sla) : SequencerMaster(twi), sla_(sla) {}
 		virtual bool Process(uint8_t statHW);
 	};
-	class SequencerMasterReceiver : public Sequencer {
+	class SequencerMasterReceiver : public SequencerMaster {
 	private:
 		uint8_t sla_;
 		uint8_t lenRest_;
 	public:
-		SequencerMasterReceiver(TwoWire& twi, uint8_t sla, uint8_t len) : Sequencer(twi), sla_(sla), lenRest_(len) {}
+		SequencerMasterReceiver(TwoWire& twi, uint8_t sla, uint8_t len) : SequencerMaster(twi), sla_(sla), lenRest_(len) {}
 		virtual bool Process(uint8_t statHW);
 	};
 	class SequencerSlave : public Sequencer {
 	public:
 		SequencerSlave(TwoWire& twi) : Sequencer(twi) {}
+		void StartPolling() { stat_ = Stat::Running; }
 		virtual bool Process(uint8_t statHW);
 	};
 private:
