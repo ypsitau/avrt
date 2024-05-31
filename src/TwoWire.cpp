@@ -123,7 +123,11 @@ bool TwoWire::PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
 {
 	if (!PollTWINTSet()) return false;
 	uint8_t statHW = TW_STATUS;
-	//**** TW_SR_DATA_ACK must be processed in a very short time ***
+	if (statHW != TW_SR_DATA_ACK) {
+		// When the status is TW_SR_DATA_ACK, time-consuming process like follows can not be executed
+		// because it must be processed in a very short time.
+		serial.Printf(F("StartMaster(statHW = %S)\n"), StatusToString(statHW));
+	}
 	sequencerSlave_.StartPolling();
 	if (sequencerSlave_.Process(statHW)) return false;
 	if (sequencerSlave_.GetStatus() == Stat::Success) {
@@ -309,7 +313,7 @@ bool TwoWire::SequencerSlave::Process(uint8_t statHW)
 	constexpr bool intDriven = false;
 	// Table 22-3. Status codes for Slave Receiver Mode
 	if (statHW == TW_SR_SLA_ACK) {					// 0x60: SLA+W received, ACK returned
-		//buffRecv.Clear();
+		twi_.GetBuffSend().Clear();
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_DATA_ACK) {			// 0x80: data received, ACK returned
 		// ******** time critical job ********
@@ -331,11 +335,7 @@ bool TwoWire::SequencerSlave::Process(uint8_t statHW)
 		twi_.GetBuffRecv().WriteData(data);
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_STOP) {				// 0xA0: stop or repeated start condition received while selected
-		//SetTWCR_ReplyNACK<intDriven>();
-		//SetTWCR_ReplyACK<intDriven>();
-		//SetTWCR_StartWithACK<intDriven>();
-		SetTWCR_ReleaseBus<intDriven>();
-		//rtn = true;
+		SetTWCR_ReplyACK<intDriven>();
 		stat_ = Stat::Success;
 	} else if (statHW == TW_SR_ARB_LOST_SLA_ACK) {	// 0x68: arbitration lost in SLA+RW, SLA+W received, ACK returned
 		stat_ = Stat::Error;
