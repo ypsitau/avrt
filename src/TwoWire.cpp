@@ -88,6 +88,37 @@ bool TwoWire::Transmit(uint8_t sla, const void* buffSend, uint8_t lenSend, void*
 	return TransmitGeneric(sla, buffRecv, lenRecv);
 }
 
+void TwoWire::Reply(uint8_t data)
+{
+	GetBuffSend().WriteData(data);
+}
+
+void TwoWire::Reply(uint8_t data1, uint8_t data2)
+{
+	GetBuffSend().WriteData(data1);
+	GetBuffSend().WriteData(data2);
+}
+
+void TwoWire::Reply(uint8_t data1, uint8_t data2, uint8_t data3)
+{
+	GetBuffSend().WriteData(data1);
+	GetBuffSend().WriteData(data2);
+	GetBuffSend().WriteData(data3);
+}
+
+void TwoWire::Reply(uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4)
+{
+	GetBuffSend().WriteData(data1);
+	GetBuffSend().WriteData(data2);
+	GetBuffSend().WriteData(data3);
+	GetBuffSend().WriteData(data4);
+}
+
+void TwoWire::Reply(const void* buffSend, uint8_t lenSend)
+{
+	GetBuffSend().WriteBuff(buffSend, lenSend);
+}
+
 bool TwoWire::PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
 {
 	if (!PollTWINTSet()) return false;
@@ -100,11 +131,6 @@ bool TwoWire::PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
 		return true;
 	}
 	return false;
-}
-
-void TwoWire::Reply(uint8_t data)
-{
-	GetBuffSend().WriteData(data);
 }
 
 void TwoWire::HandleISR_TWI()

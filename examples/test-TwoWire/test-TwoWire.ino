@@ -30,7 +30,6 @@ void loop()
 #if 1
 	uint8_t buff[8];
 	uint8_t lenRecv;
-	//av::Timer::DelayUSec(30);
 	if (twi.PollRequest(buff, sizeof(buff), &lenRecv)) {
 		if (lenRecv == 0) {
 			serial.Println(F("(no data)"));
@@ -38,7 +37,9 @@ void loop()
 			serial.Print(F("Received: "));
 			serial.Dump(buff, lenRecv, false);
 		}
-		twi.Reply(0x88);
+		//twi.Reply("hello", 5);
+		twi.Reply(0xba, 0x12);
+		av::Timer::DelayUSec(1000);
 	}
 #endif
 	//uint8_t dataX, dataY;
