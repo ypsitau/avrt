@@ -28,6 +28,7 @@ public:
 		Stat stat_;
 	public:
 		Sequencer(TwoWire& twi) : twi_(twi), stat_(Stat::Idle) {}
+		void SetStatus(Stat stat) { stat_ = stat; }
 		Stat GetStatus() { return stat_; }
 		virtual bool Process(uint8_t statHW) = 0;
 	};
@@ -54,7 +55,6 @@ public:
 	class SequencerSlave : public Sequencer {
 	public:
 		SequencerSlave(TwoWire& twi) : Sequencer(twi) {}
-		void StartPolling() { stat_ = Stat::Running; }
 		virtual bool Process(uint8_t statHW);
 	};
 private:
@@ -77,7 +77,7 @@ public:
 	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, void* buffRecv = nullptr, uint8_t lenRecv = 0);
 	bool Transmit(uint8_t sla, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4, void* buffRecv = nullptr, uint8_t lenRecv = 0);
 	bool Transmit(uint8_t sla, const void* buffSend, uint8_t lenSend, void* buffRecv = nullptr, uint8_t lenRecv = 0);
-	bool PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv);
+	bool PeekRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv);
 	void Reply(uint8_t data);
 	void Reply(uint8_t data1, uint8_t data2);
 	void Reply(uint8_t data1, uint8_t data2, uint8_t data3);
@@ -118,8 +118,8 @@ public:
 		TWCR = (0b1 << TWINT) | (0b0 << TWEA) | (0b0 << TWSTA) | (0b0 << TWSTO) | (0b1 << TWEN) |
 				(static_cast<uint8_t>(intDriven) << TWIE);
 	}
-	static bool PollTWINTSet() { return (TWCR & (1 << TWINT)) != 0; }
-	static void WaitForTWINTSet() { while (TWCR & (1 << TWINT)); }
+	static uint8_t PeekTWINT() { return TWCR & (1 << TWINT); }
+	static void WaitForTWINT() { while (TWCR & (1 << TWINT)); }
 	static void WaitForTWSTOCleared() { while (TWCR & (1 << TWSTO)) ; }
 	static const __FlashStringHelper* StatusToString(uint8_t statHW);
 };

@@ -119,16 +119,16 @@ void TwoWire::Reply(const void* buffSend, uint8_t lenSend)
 	GetBuffSend().WriteBuff(buffSend, lenSend);
 }
 
-bool TwoWire::PollRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
+bool TwoWire::PeekRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
 {
-	if (!PollTWINTSet()) return false;
+	if (!PeekTWINT()) return false;
 	uint8_t statHW = TW_STATUS;
 	if (statHW != TW_SR_DATA_ACK) {
-		// When the status is TW_SR_DATA_ACK, time-consuming process like follows can not be executed
-		// because it must be processed in a very short time.
+		// When the status is TW_SR_DATA_ACK (0x80), time-consuming process like
+		// the follows can not be executed because it must be processed in a very short time.
 		serial.Printf(F("StartMaster(statHW = %S)\n"), StatusToString(statHW));
 	}
-	sequencerSlave_.StartPolling();
+	sequencerSlave_.SetStatus(Stat::Running);
 	if (sequencerSlave_.Process(statHW)) return false;
 	if (sequencerSlave_.GetStatus() == Stat::Success) {
 		GetBuffRecv().ReadBuff(buffRecv, lenRecvMax, pLenRecv);
@@ -218,7 +218,7 @@ bool TwoWire::SequencerMaster::StartMaster(bool stopFlag)
 	stat_ = Stat::Running;
 	SetTWCR_Start<intDriven>();
 	for (;;) {
-		WaitForTWINTSet();
+		WaitForTWINT();
 		uint8_t statHW = TW_STATUS;
 		//serial.Printf(F("StartMaster(statHW = %S)\n"), StatusToString(statHW));
 		if (statHW == TW_NO_INFO) {						// 0xF8: no state information available
