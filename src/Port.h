@@ -249,6 +249,7 @@ template<int pin_, int mode_ = In> class Port {
 public:
 	constexpr static uint8_t pin = pin_;
 	constexpr static uint8_t mode = mode_;
+	template<int n> constexpr static bool false_v = false;
 public:
 	Port() {
 		if constexpr (pin == 0) {
@@ -450,13 +451,6 @@ public:
 		else if constexpr (pin == 18)	{ PORTC = (PORTC & ~(1 << 4)) | (logic << 4); }
 		else if constexpr (pin == 19)	{ PORTC = (PORTC & ~(1 << 5)) | (logic << 5); }
 		else if constexpr (pin == 20)	{ PORTC = (PORTC & ~(1 << 6)) | (logic << 6); }
-#if 0
-		if (logic) {
-			DigitalHigh();
-		} else {
-			DigitalLow();
-		}
-#endif
 	}
 	void DigitalImpulse() const {
 		DigitalHigh();
@@ -547,6 +541,8 @@ public:
 			TCCR1A = TCCR1A & ~(0b11 << COM1B0) | (data << COM1B0);	// Connects OC1B pin to PB2
 		} else if constexpr (pin == 11) {
 			TCCR2A = TCCR2A & ~(0b11 << COM2A0) | (data << COM2A0);	// Connects OC2A pin to PB3
+		} else {
+			static_assert(false_v<pin>, "the pin doesn't have PWM function");
 		}
 	}
 	void PWMDisable() const {
@@ -562,6 +558,8 @@ public:
 			TCCR1A = TCCR1A & ~(0b11 << COM1B0);					// Disconnects OC1B pin to PB2
 		} else if constexpr (pin == 11) {
 			TCCR2A = TCCR2A & ~(0b11 << COM2A0);					// Disconnects OC2A pin to PB3
+		} else {
+			static_assert(false_v<pin>, "the pin doesn't have PWM function");
 		}
 	}
 	void PWMOutput(uint8_t value) const {
@@ -577,19 +575,29 @@ public:
 			OCR1B = value;											// Set compare value for OC1B
 		} else if constexpr (pin == 11) {
 			OCR2A = value;											// Set compare value for OC2A
+		} else {
+			static_assert(false_v<pin>, "the pin doesn't have PWM function");
 		}
 	}
 	uint16_t AnalogInput() const {
-		ADMUX = ADMUX & ~(0b1111 << MUX0) & ~(0b1 << ADLAR) | (PinToADCMux(pin) << MUX0);
-		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
-		while (ADCSRA & (0b1 << ADSC)) ;
-		return ADC;
+		if constexpr (pin == A0 || pin == A1 || pin == A2 || pin == A3 || pin == A4 || pin == A5 || pin == A6) {
+			ADMUX = ADMUX & ~(0b1111 << MUX0) & ~(0b1 << ADLAR) | (PinToADCMux(pin) << MUX0);
+			ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
+			while (ADCSRA & (0b1 << ADSC)) ;
+			return ADC;
+		} else {
+			static_assert(false_v<pin>, "the pin doesn't have A/D function");
+		}
 	}
 	uint8_t AnalogInput8bit() const {
-		ADMUX = ADMUX & ~(0b1111 << MUX0) | (0b1 << ADLAR) | (PinToADCMux(pin) << MUX0);
-		ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
-		while (ADCSRA & (0b1 << ADSC)) ;
-		return ADCH;
+		if constexpr (pin == A0 || pin == A1 || pin == A2 || pin == A3 || pin == A4 || pin == A5 || pin == A6) {
+			ADMUX = ADMUX & ~(0b1111 << MUX0) | (0b1 << ADLAR) | (PinToADCMux(pin) << MUX0);
+			ADCSRA |= (0b1 << ADSC);	// ADSC: ADC Start Conversion = 1
+			while (ADCSRA & (0b1 << ADSC)) ;
+			return ADCH;
+		} else {
+			static_assert(false_v<pin>, "the pin doesn't have A/D function");
+		}
 	}
 	void EnableExternalInt(Sense sense) const {
 		if constexpr (pin == 2) {			// INT0
@@ -598,6 +606,8 @@ public:
 		} else if constexpr (pin == 3) {	// INT1
 			EICRA = EICRA & ~(0b11 << ISC10) | (static_cast<uint8_t>(sense) << ISC10);
 			EIMSK |= 0b1 << INT1;
+		} else {
+			static_assert(false_v<pin>, "the pin is not assigned as External Int");
 		}
 	}
 	void DisableExternalInt(Sense sense) const {
@@ -605,6 +615,8 @@ public:
 			EIMSK &= ~(0b1 << INT0);
 		} else if constexpr (pin == 3) {	// INT1
 			EIMSK &= ~(0b1 << INT1);
+		} else {
+			static_assert(false_v<pin>, "the pin is not assigned as External Int");
 		}
 	}
 	void EnablePinChangeInt() const {
