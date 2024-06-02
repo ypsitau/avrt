@@ -16,5 +16,6 @@ void setup()
 	twi.Detect(serial);
 }
 
-void loop() {
+void loop()
+{
 }

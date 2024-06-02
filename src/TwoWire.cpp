@@ -90,17 +90,20 @@ bool TwoWire::Transmit(uint8_t sla, const void* buffSend, uint8_t lenSend, void*
 
 void TwoWire::Reply(uint8_t data)
 {
+	GetBuffSend().SetRewindPosToWritePos();
 	GetBuffSend().WriteData(data);
 }
 
 void TwoWire::Reply(uint8_t data1, uint8_t data2)
 {
+	GetBuffSend().SetRewindPosToWritePos();
 	GetBuffSend().WriteData(data1);
 	GetBuffSend().WriteData(data2);
 }
 
 void TwoWire::Reply(uint8_t data1, uint8_t data2, uint8_t data3)
 {
+	GetBuffSend().SetRewindPosToWritePos();
 	GetBuffSend().WriteData(data1);
 	GetBuffSend().WriteData(data2);
 	GetBuffSend().WriteData(data3);
@@ -108,6 +111,7 @@ void TwoWire::Reply(uint8_t data1, uint8_t data2, uint8_t data3)
 
 void TwoWire::Reply(uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4)
 {
+	GetBuffSend().SetRewindPosToWritePos();
 	GetBuffSend().WriteData(data1);
 	GetBuffSend().WriteData(data2);
 	GetBuffSend().WriteData(data3);
@@ -116,6 +120,7 @@ void TwoWire::Reply(uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4)
 
 void TwoWire::Reply(const void* buffSend, uint8_t lenSend)
 {
+	GetBuffSend().SetRewindPosToWritePos();
 	GetBuffSend().WriteBuff(buffSend, lenSend);
 }
 
@@ -123,11 +128,11 @@ bool TwoWire::PeekRequest(void* buffRecv, uint8_t lenRecvMax, uint8_t* pLenRecv)
 {
 	if (!PeekTWINT()) return false;
 	uint8_t statHW = TW_STATUS;
-	if (statHW != TW_SR_DATA_ACK) {
-		// When the status is TW_SR_DATA_ACK (0x80), time-consuming process like
-		// the follows can not be executed because it must be processed in a very short time.
-		serial.Printf(F("StartMaster(statHW = %S)\n"), StatusToString(statHW));
-	}
+	//if ((statHW & 0xf0) != 0x80 && (statHW & 0xf0) != 0x90) {
+	//	// TW_SR_DATA_ACK (0x80), TW_SR_DATA_NACK (0x88), TW_SR_GCALL_DATA_ACK (0x90),
+	//	// and TW_SR_GCALL_DATA_NACK (0x98) are time critical.
+	//	serial.Printf(F("StartMaster(statHW = %S)\n"), StatusToString(statHW));
+	//}
 	sequencerSlave_.SetStatus(Stat::Running);
 	if (sequencerSlave_.Process(statHW)) return false;
 	if (sequencerSlave_.GetStatus() == Stat::Success) {
@@ -313,7 +318,7 @@ bool TwoWire::SequencerSlave::Process(uint8_t statHW)
 	constexpr bool intDriven = false;
 	// Table 22-3. Status codes for Slave Receiver Mode
 	if (statHW == TW_SR_SLA_ACK) {					// 0x60: SLA+W received, ACK returned
-		twi_.GetBuffSend().Clear();
+		//twi_.GetBuffSend().Clear();
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_DATA_ACK) {			// 0x80: data received, ACK returned
 		// ******** time critical job ********
@@ -321,21 +326,25 @@ bool TwoWire::SequencerSlave::Process(uint8_t statHW)
 		SetTWCR_ReplyACK<intDriven>();
 		twi_.GetBuffRecv().WriteData(data);
 	} else if (statHW == TW_SR_DATA_NACK) {			// 0x88:data received, NACK returned
+		// ******** time critical job ********
 		uint8_t data = TWDR;
 		twi_.GetBuffRecv().WriteData(data);
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_GCALL_ACK) {			// 0x70: general call received, ACK returned
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_GCALL_DATA_ACK) {	// 0x90: general call data received, ACK returned
+		// ******** time critical job ********
 		uint8_t data = TWDR;
 		twi_.GetBuffRecv().WriteData(data);
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_GCALL_DATA_NACK) {	// 0x98: general call data received, NACK returned
+		// ******** time critical job ********
 		uint8_t data = TWDR;
 		twi_.GetBuffRecv().WriteData(data);
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_SR_STOP) {				// 0xA0: stop or repeated start condition received while selected
 		SetTWCR_ReplyACK<intDriven>();
+		twi_.GetBuffSend().Clear();
 		stat_ = Stat::Success;
 	} else if (statHW == TW_SR_ARB_LOST_SLA_ACK) {	// 0x68: arbitration lost in SLA+RW, SLA+W received, ACK returned
 		stat_ = Stat::Error;
@@ -343,16 +352,13 @@ bool TwoWire::SequencerSlave::Process(uint8_t statHW)
 		stat_ = Stat::Error;
 	// Table 22-4. Status codes for Slave Transmitter Mode
 	} else if (statHW == TW_ST_SLA_ACK ||			// 0xA8: SLA+R received, ACK returned
-			statHW == TW_ST_DATA_ACK) {				// 0xB8: data transmitted, ACK received
-		uint8_t data = twi_.GetBuffSend().HasData()? twi_.GetBuffSend().ReadData() : 0x00;
-		TWDR = data;
-		SetTWCR_ReplyACK<intDriven>();
-	} else if (statHW == TW_ST_DATA_NACK) {			// 0xC0: data transmitted, NACK received
+			statHW == TW_ST_DATA_ACK ||				// 0xB8: data transmitted, ACK received
+			statHW == TW_ST_DATA_NACK) {			// 0xC0: data transmitted, NACK received
+		if (!twi_.GetBuffSend().HasData()) twi_.GetBuffSend().RewindReadPos();
 		uint8_t data = twi_.GetBuffSend().HasData()? twi_.GetBuffSend().ReadData() : 0x00;
 		TWDR = data;
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_ST_LAST_DATA) {			// 0xC8: last data byte transmitted, ACK received
-		//stat_ = Stat::Success;
 		SetTWCR_ReplyACK<intDriven>();
 	} else if (statHW == TW_ST_ARB_LOST_SLA_ACK) {	// 0xB0: arbitration lost in SLA+RW, SLA+R received, ACK returned
 		stat_ = Stat::Error;

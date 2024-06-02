@@ -410,31 +410,6 @@ void CompileTest_Port_PWMOutput()
 	portD20.PWMOutput(data8);
 }
 
-void CompileTest_Port_PWMOutputFine()
-{
-	portD0.PWMOutputFine(data8);
-	portD1.PWMOutputFine(data8);
-	portD2.PWMOutputFine(data8);
-	portD3.PWMOutputFine(data8);
-	portD4.PWMOutputFine(data8);
-	portD5.PWMOutputFine(data8);
-	portD6.PWMOutputFine(data8);
-	portD7.PWMOutputFine(data8);
-	portD8.PWMOutputFine(data8);
-	portD9.PWMOutputFine(data8);
-	portD10.PWMOutputFine(data8);
-	portD11.PWMOutputFine(data8);
-	portD12.PWMOutputFine(data8);
-	portD13.PWMOutputFine(data8);
-	portD14.PWMOutputFine(data8);
-	portD15.PWMOutputFine(data8);
-	portD16.PWMOutputFine(data8);
-	portD17.PWMOutputFine(data8);
-	portD18.PWMOutputFine(data8);
-	portD19.PWMOutputFine(data8);
-	portD20.PWMOutputFine(data8);
-}
-
 void CompileTest_Port_AnalogInput()
 {
 	data16 = portA0.AnalogInput();
@@ -460,7 +435,6 @@ void setup()
 	CompileTest_Port_PWMEnable();
 	CompileTest_Port_PWMDisable();
 	CompileTest_Port_PWMOutput();
-	CompileTest_Port_PWMOutputFine();
 	CompileTest_Port_AnalogInput();
 }
 

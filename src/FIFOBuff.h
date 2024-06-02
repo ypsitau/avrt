@@ -14,13 +14,18 @@ public:
 	static constexpr T_Size sizeMinusOne = static_cast<T_Size>(buffSize - 1);
 private:
 	volatile T_Size posRead_;
+	volatile T_Size posRewind_;
 	volatile T_Size posWrite_;
 	volatile T_Elem buff_[buffSize];
 public:
-	FIFOBuff() : posRead_(0), posWrite_(0) {}
-	void Clear() { posRead_ = posWrite_ = 0; }
+	FIFOBuff() : posRead_(0), posRewind_(0), posWrite_(0) {}
+	void Clear() { posRead_ = posRewind_ = posWrite_ = 0; }
 	bool IsEmpty() const { return posRead_ == posWrite_; }
 	bool HasData() const { return posRead_ != posWrite_; }
+	T_Size GetReadPos() const { return posRead_; }
+	T_Size GetWritePos() const { return posWrite_; }
+	void SetRewindPosToWritePos() { posRewind_ = posWrite_; }
+	void RewindReadPos() { posRead_ = posRewind_; }
 	bool IsFull() const {
 		T_Size posWriteNext = (posWrite_ == sizeMinusOne)? 0 : posWrite_ + 1;
 		return posWriteNext == posRead_;
