@@ -130,7 +130,7 @@ private:
 public:
 	Timer0() : pHandler_(nullptr) {}
 	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
-	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = EnableInt_All) const;
+	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = EnableInt_None) const;
 	void HandleIRQ_TIMER0_COMPA() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER0_COMPA();
 	}
@@ -198,7 +198,7 @@ private:
 public:
 	Timer1() : pHandler_(nullptr) {}
 	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
-	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = EnableInt_All) const;
+	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = EnableInt_None) const;
 	void HandleIRQ_TIMER1_CAPT() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER1_CAPT();
 	}
@@ -257,7 +257,7 @@ private:
 public:
 	Timer2() : pHandler_(nullptr) {}
 	void SetHandler(Handler* pHandler) { pHandler_ = pHandler; }
-	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = EnableInt_All) const;
+	void Start(Clock clock = Clock::Default, Waveform waveform = Waveform::Default, uint8_t flags = EnableInt_None) const;
 	void HandleIRQ_TIMER2_COMPA() {
 		if (pHandler_) pHandler_->HandleIRQ_TIMER2_COMPA();
 	}

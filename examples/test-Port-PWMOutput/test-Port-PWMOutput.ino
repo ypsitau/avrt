@@ -2,12 +2,12 @@
 
 namespace av = avrt;
 
-av::Port<av::D3, av::Out> portD3;
-av::Port<av::D5, av::Out> portD5;
-av::Port<av::D6, av::Out> portD6;
-av::Port<av::D9, av::Out> portD9;
-av::Port<av::D10, av::Out> portD10;
-av::Port<av::D11, av::Out> portD11;
+av::Port<av::D3, av::PWM> portD3;
+av::Port<av::D5, av::PWM> portD5;
+av::Port<av::D6, av::PWM> portD6;
+av::Port<av::D9, av::PWM> portD9;
+av::Port<av::D10, av::PWM> portD10;
+av::Port<av::D11, av::PWM> portD11;
 
 av::Port<av::A0> portA0;
 

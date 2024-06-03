@@ -22,10 +22,12 @@ using Logic = uint8_t;
 constexpr uint8_t Low		= 0;
 constexpr uint8_t High		= 1;
 
-constexpr uint8_t In		= 0;
-constexpr uint8_t Out		= 1;
-constexpr uint8_t InPullup	= 2;
-constexpr uint8_t OutHigh	= 3;
+constexpr uint8_t In		= (0b0 << 0);
+constexpr uint8_t Out		= (0b1 << 0);
+constexpr uint8_t InPullup	= (0b1 << 1) | (0b0 << 0);
+constexpr uint8_t OutHigh	= (0b1 << 1) | (0b1 << 0);
+constexpr uint8_t PWM		= (0b0 << 3) | (0b1 << 2) | (0b1 << 0);
+constexpr uint8_t PWMInv	= (0b1 << 3) | (0b1 << 2) | (0b1 << 0);
 
 enum class Sense {
 	Low		= 0,
